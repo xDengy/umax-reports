@@ -158,7 +158,7 @@ export default {
       return curIndex;
     },
     elementDelete(parent, curElement) {
-      this.elementswraps[parent].elems[curElement] = null;
+      this.elementswraps[parent].elems.splice(curElement, 1);
     },
     screenDel() {
       this.$emit("screenClose", {});

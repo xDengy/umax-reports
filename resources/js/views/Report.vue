@@ -1,7 +1,7 @@
 <template>
   <section class="page-glob" id="Newreport">
     <MenuReports />
-    <div class="newreport wrap-glob">
+    <div class="newreport wrap-glob" v-if="Object.values(this.report).length > 0">
       <h2>Новый отчёт</h2>
       <form class="newreport-form" method="post" enctype="multipart/form-data" action="/report">
         <input type="hidden" name="_token" :value="csrf">
@@ -178,14 +178,17 @@
         </div>
       </form>
     </div>
+    <ErrorPage v-else />
   </section>
 </template>
 <script>
 import MenuReports from "../components/MenuReports.vue";
+import ErrorPage from "./ErrorPage.vue";
 export default {
   name: "Newreport",
   components: {
     MenuReports,
+    ErrorPage
   },
   data: () => ({
     user: document.querySelector('meta[name="user"]').getAttribute('value'),
@@ -248,7 +251,8 @@ export default {
       id: id,
       user: this.user
     }).then(result => {
-      this.report = result.data;
+      if(result.data)
+        this.report = result.data;
     })
   }
 };

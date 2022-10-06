@@ -151,6 +151,8 @@ export default {
     changeUserAvatar() {
       document.querySelector(".input-file__text").textContent =
         document.querySelector(".input-file input").files[0].name;
+        console.log(document.querySelector(".input-file input").files[0]);
+      this.userData.image = null
     },
     exit() {
       axios.post('/exit').then(responce => {

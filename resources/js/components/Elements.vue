@@ -1,5 +1,5 @@
 <template>
-  <div :class="'elements-item count-' + count" :id="activeType" v-if="type !== 'object'">
+  <div :class="'elements-item count-' + count" :id="activeType">
     <div class="elements__del" @click="elementDel()">
       <svg
         width="15"

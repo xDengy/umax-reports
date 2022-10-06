@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\Report;
 use App\Models\Setting;
+use App\Models\Element;
 use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -104,6 +105,67 @@ class IndexController extends Controller
         return redirect('/settings');
     }
 
+    public function reportElements(Request $request)
+    {
+        $data = $request->all();
+
+        $data['0_title'] = $data['title'];
+        unset($data['title']);
+        $fullAr = [];
+
+        $sort = [];
+        foreach($data as $key => $value) {
+            $splited = explode('_', $key);
+            if($splited[1] !== strval(intval($splited[1])) && $splited[1] !== 'title') {
+                $data['0_' . $key] = $value;
+                unset($data[$key]);
+            }
+            if($splited[1] == 'sort') {
+                $sort[] = $value;
+            }
+            if($splited[1] == 'report') {
+                $report = $value;
+            }
+        }
+
+        foreach($data as $key => $value) {
+            $splited = explode('_', $key);
+            $fullAr[$splited[0]]['title'] = $data[$splited[0] . '_title'];
+            if(str_contains($key, 'count')) {
+                $fullAr[$splited[0]][$splited[1]]['count'] = $data[$splited[0] . '_' . $splited[1] . '_count'];
+            }
+            if(str_contains($key, 'elements')) {
+                $elementsKeyData = explode($splited[0] . '_' . $splited[1] . '_elements_', $key)[1];
+                $elements = explode('_', $elementsKeyData);
+                if(str_contains($elementsKeyData, 'type')) {
+                    $fullAr[$splited[0]][$splited[1]]['elements'][$elements[0]]['type'] = $value;
+                } else {
+                    if( $fullAr[$splited[0]][$splited[1]]['elements'][$elements[0]]['type'] == 'img' && gettype($value) == 'object') {
+                        $fileName = time() . '_' . $value->getClientOriginalName();
+                        $fileStore = $value
+                            ->storeAs('uploads', $fileName, 'public');
+                        $filePath = '/storage/' . $fileStore;
+                        $value = $filePath;
+                    }
+                    $fullAr[$splited[0]][$splited[1]]['elements'][$elements[0]]['value'][$elements[2]] = $value;
+                }
+            }
+        }
+        $template = $sort;
+        $template = array_combine($template, array_fill(0, count($template), []));
+        foreach($fullAr as $v) {
+            $template[$v['title']][] = $v;
+        }
+        $addAr['report_id'] = $report;
+        $addAr['values'] = strval(json_encode(array_values($template)));
+        $element = Element::where('report_id', $report)->first();
+        if($element) {
+            $element->update($addAr);
+        } else {
+            Element::create($addAr);
+        }
+    }
+
     public function personal(Request $request)
     {
         $data = $request->all();
@@ -129,6 +191,17 @@ class IndexController extends Controller
     public function getUserReports($id)
     {
         return Report::where('user_id', $id)->get();
+    }
+
+    public function getReportElements(Request $request)
+    {
+        $data = $request->all();
+        $report = Report::where('id', $data['id'])->where('user_id', $data['user'])->first();
+        if($report) {
+            return Element::where('report_id', $data['id'])->first();
+        } else {
+            return [];
+        }
     }
 
     public function deleteReport($id)

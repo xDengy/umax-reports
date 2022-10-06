@@ -27,3 +27,5 @@ Route::post('deleteReport/{id}', [IndexController::class, 'deleteReport'])->name
 Route::post('getReport', [IndexController::class, 'getReport'])->name('getReport');
 Route::post('loginCheck', [IndexController::class, 'loginCheck'])->name('loginCheck');
 Route::get('getSettings/{id}', [IndexController::class, 'getSettings'])->name('getSettings');
+Route::post('reportElements', [IndexController::class, 'reportElements'])->name('reportElements');
+Route::post('getReportElements', [IndexController::class, 'getReportElements'])->name('getReportElements');
