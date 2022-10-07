@@ -1,9 +1,9 @@
 <template>
   <div class="input-group">
     <label>Изображение</label>
-    <div class="input__wrapper">
-      <input name="file" type="file" id="input__file" class="input input__file" @change="setImg($event.target)">
-      <label for="input__file" class="input__file-button">
+    <div class="input__wrapper" :class="values ? 'loaded' : ''">
+      <input name="file" type="file" :id="'input__file-'+this.elementId" class="input input__file" @change="setImg($event.target)">
+      <label :for="'input__file-'+this.elementId" class="input__file-button">
         <span class="input__file-icon-wrapper">
           <svg width="20" height="20" viewBox="0 0 23 23" fill="none" xmlns="http://www.w3.org/2000/svg">
             <path fill-rule="evenodd" clip-rule="evenodd"
@@ -13,7 +13,7 @@
         </span>
         <span class="input__file-button-text">Добавить изображение</span>
       </label>
-      <div class="img__wrapper">
+      <div class="img__wrapper" :class="values ? 'active' : ''">
         <div class="elements__del">
           <svg width="15" height="15" viewBox="0 0 15 15" fill="none" xmlns="http://www.w3.org/2000/svg"
             @click="delImg($event.target)">
@@ -22,20 +22,22 @@
             <path d="M1 13.293L13.2929 1.00008" stroke="#222222" stroke-width="1.5" stroke-linecap="round"></path>
           </svg>
         </div>
-        <img src="">
+        <img :src="values ? values[0] : null" >
       </div>
     </div>
   </div>
   <div class="input-group">
     <label>Подпись</label>
     <div class="input-group__wrap">
-      <input type="text" placeholder="Подпись к изображению" />
+      <input type="text" placeholder="Подпись к изображению" :value="values ? values[1] : null" />
     </div>
   </div>
 </template>
 
 <script>
 export default {
+  name: "Image",
+  props: ["values", 'elementId'],
   methods: {
     setImg(el) {
       var elem = el.parentNode;

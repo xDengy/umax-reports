@@ -122,10 +122,10 @@
               </svg>
               <input
                 type="text"
-                :value="item.title"
+                :value="item[0].title"
                 @input="setTitle(index, $event.target.value)"
               />
-              <a @click="scroll('#screen-' + (index + 1))">{{ item.title }}</a>
+              <a @click="scroll('#screen-' + (index + 1))">{{ item[0].title }}</a>
             </div>
             <svg
               width="14"
@@ -243,7 +243,7 @@ export default {
   },
   methods: {
     setTitle(id, title) {
-      this.$.parent.data.current[id].title = title;
+      this.$.parent.data.current[id][0].title = title;
     },
     scroll(selector) {
       document.querySelector(selector).scrollIntoView({

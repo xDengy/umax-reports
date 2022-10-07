@@ -1,11 +1,10 @@
 <template>
-  <section class="page-glob" id="ClickPassword">
-    <MenuReports />
+  <section class="" id="NewPassword" v-if="this.user">
     <div class="password wrap-glob">
       <h2>Смена пароля</h2>
       <form class="password-form" method="POST" @submit.prevent="checkPass" enctype="multipart/form-data" action="/changePassword">
         <input type="hidden" name="_token" :value="csrf">
-        <input type="hidden" name="id" :value="user">
+        <input type="hidden" name="id" :value="user.id">
         <div class="input-group password__field--password">
           <label class="password__label" for="password"
             >Введите новый пароль</label
@@ -83,19 +82,28 @@
       </form>
     </div>
   </section>
+  <ErrorPage v-else />
 </template>
 <script>
-import MenuReports from "../components/MenuReports.vue";
+import ErrorPage from "./ErrorPage.vue";
 export default {
-  name: "ClickPassword",
+  name: "NewPassword",
+  components: {
+    ErrorPage
+  },
   data: () => ({
     password: null,
     submitPass: null,
     csrf: document.querySelector('meta[name="csrf-token"]').getAttribute('content'),
-    user: document.querySelector('meta[name="user"]').getAttribute('value'),
+    token: window.location.href.split('/'),
+    user: false,
   }),
-  components: {
-    MenuReports,
+  beforeMount() {
+    let token = this.token[this.token.length - 1]
+    axios.get('/api/getUserByToken/' + token,).then(result => {
+      if(result.data)
+        this.user = result.data;
+    })
   },
   methods: {
     checkPass() {

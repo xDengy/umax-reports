@@ -10,6 +10,7 @@ import Password from "../views/Password.vue";
 import Reports from "../views/Reports.vue";
 import Report from "../views/Report.vue";
 import ErrorPage from "../views/ErrorPage.vue";
+import NewPassword from "../views/NewPassword.vue";
 
 const routes = [
   {
@@ -65,6 +66,12 @@ const routes = [
     name: "Password",
     component: Password,
     meta: { requiresAuth: true },
+  },
+  {
+    path: "/newpassword/:token",
+    name: "NewPassword",
+    component: NewPassword,
+    meta: { requiresAuth: false },
   },
   {
     path: "/reports/:id",

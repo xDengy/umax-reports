@@ -11,7 +11,7 @@
                         data-v-59c35ec8=""></path>
                 </svg>
             </div>
-            <input type="text" placeholder="Подзаголовок" />
+            <input type="text" placeholder="Подзаголовок" :value="values ? values[0] : null" />
         </div>
     </div>
 </template>
@@ -19,6 +19,7 @@
 <script>
     export default {
         name: "SubTitle",
+        props: ["values", 'elementId'],
         data: () => ({
 
          }),

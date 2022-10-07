@@ -181,8 +181,8 @@
           :key="i"
         >
           <div class="listreports-card__textblock">
-            <div class="listreports-card__data">{{ card.data }}</div>
-            <div class="listreports-card__name">{{ card.name }}</div>
+            <div class="listreports-card__data">{{ new Date(card.created_at).toISOString().split('T')[0] }}</div>
+            <div class="listreports-card__name">{{ card.title }}</div>
           </div>
           <div class="listreports-card__navblock">
             <div class="listreports-card__button">
@@ -321,164 +321,6 @@ export default {
     user: document.querySelector('meta[name="user"]').getAttribute('value'),
     // поиск
     fioq: "",
-    // listcards: [
-    //   {
-    //     data: "01.06.2022 - 31.06.2022",
-    //     name: "12Название отчета",
-    //     elements: [
-    //       {
-  //           name: '1 экран',
-  //           count: 4,
-  //           elements: [
-  //             {
-  //               type: 'listIcon',
-  //               value: [
-  //                 'Значение 1',
-  //                 'Значение 2',
-  //                 'Значение 3',
-  //               ]
-  //             },
-  //             {
-  //               type: 'table',
-  //               value: [
-  //                 [
-  //                   '',
-  //                   'Показатели в %',
-  //                   'Показатели в %'
-  //                 ],
-  //                 [
-  //                   'Значение 1',
-  //                   'Значение 2',
-  //                   'Значение 3',
-  //                 ]
-  //               ]
-  //             },
-  //             {
-  //               type: 'h1',
-  //               value: 'asdasdasd'
-  //             },
-  //             {
-  //               type: 'h3',
-  //               value: 'eeeeeeeee'
-  //             },
-  //           ]
-  //         },
-  //         '2 экран': {
-  //           count: 4,
-  //           elements: [
-  //             {
-  //               type: 'text',
-  //               value: 'asdddasd asdas dasdasd asdasdasdas das da'
-  //             },
-  //             {
-  //               type: 'img',
-  //               value: {
-  //                 path: "/img/logotip.5cc426ed.svg",
-  //                 text: 'asdasdasdasd'
-  //               }
-  //             },
-  //             {
-  //               type: 'graph',
-  //               value: [
-  //                 [
-  //                   '',
-  //                   'Показатели в %',
-  //                   'Показатели в %'
-  //                 ],
-  //                 [
-  //                   'Значение 1',
-  //                   'Значение 2',
-  //                   'Значение 3',
-  //                 ]
-  //               ]
-  //             },
-  //             {
-  //               type: 'listNumeric',
-  //               value: [
-  //                 'Значение 1',
-  //                 'Значение 2',
-  //                 'Значение 3',
-  //               ]
-  //             },
-  //           ]
-  //         },
-  //         '3 экран': {
-  //           count: 3,
-  //           elements: [
-  //             {
-  //               type: 'listMarc',
-  //               value: [
-  //                 'Значение 1',
-  //                 'Значение 2',
-  //                 'Значение 3',
-  //               ]
-  //             },
-  //             {
-  //               type: 'tableGraph',
-  //               value: [
-  //                 100,
-  //                 100,
-  //                 100,
-  //                 100,
-  //                 100,
-  //                 100,
-  //               ]
-  //             },
-  //             {
-  //               type: 'btn',
-  //               value: {
-  //                 h1: 'asdasdasd',
-  //                 link: 'asdasdasdasd',
-  //                 background: '#fff',
-  //                 color: '#000',
-  //                 border: '#333'
-  //               }
-  //             },
-  //           ]
-  //         }
-    //     ]
-    //   },
-    //   {
-    //     data: "02.06.2022 - 31.06.2022",
-    //     name: "33Название отчета",
-    //   },
-    //   {
-    //     data: "03.06.2022 - 31.06.2022",
-    //     name: "24Название отчета",
-    //   },
-    //   {
-    //     data: "01.06.2022 - 31.06.2022",
-    //     name: "56Название отчета",
-    //   },
-    //   {
-    //     data: "01.06.2022 - 31.06.2022",
-    //     name: "Название отчета",
-    //   },
-    //   {
-    //     data: "01.06.2022 - 31.06.2022",
-    //     name: "Название отчета",
-    //   },
-    //   {
-    //     data: "01.06.2022 - 31.06.2022",
-    //     name: "Название отчета",
-    //   },
-    //   {
-    //     data: "01.06.2022 - 31.06.2022",
-    //     name: "Название отчета",
-    //   },
-    //   {
-    //     data: "01.06.2022 - 31.06.2022",
-    //     name: "Название отчета",
-    //   },
-    //   {
-    //     data: "01.06.2022 - 31.06.2022",
-    //     name: "Название отчета",
-    //   },
-    //   {
-    //     data: "01.06.2022 - 31.06.2022",
-    //     name: "Название отчета",
-    //   },
-    // ],
     listcards: [],
     brandsSurname2: [
       {
@@ -503,8 +345,8 @@ export default {
       for (let i in arr) {
         let el = arr[i];
         if (
-          el.dateStart.toLowerCase().indexOf(serach) != -1 ||
-          el.name.toLowerCase().indexOf(serach) != -1
+          el.created_at.toLowerCase().indexOf(serach) != -1 ||
+          el.title.toLowerCase().indexOf(serach) != -1
         )
           newArray.push(el);
       }
@@ -537,11 +379,11 @@ export default {
     },
 
     sortByKey(array,key){
-    return array.sort(function(a,b){
-        let x = a[key];
-        let y = b[key];
-        return((x<y)?-1:((x>y)?1:0));
-    })
+      return array.sort(function(a,b){
+          let x = a[key];
+          let y = b[key];
+          return((x<y)?-1:((x>y)?1:0));
+      })
     },
     generateReport () {
       this.$refs.html2Pdf.generatePdf()

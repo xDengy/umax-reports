@@ -2,7 +2,7 @@
   <div class="numbered-list">
     <p class="numbered-list__title">Cписок c иконками</p>
     <ul class="numbered-list__ul">
-      <li v-for="(liCount, i) in ul" :key="i"><input type="text" :placeholder="liCount"></li>
+      <li v-for="(liCount, i) in ul" :key="i"><input type="text" :placeholder="liCount" :value="values ? liCount : null"></li>
     </ul>
     <div class="numbered-list__button" @click="addLi()">
       <svg width="19" height="19" viewBox="0 0 50 50" fill="none" xmlns="http://www.w3.org/2000/svg">
@@ -18,6 +18,7 @@
 <script>
 export default {
   name: "BulletList",
+  props: ["values", 'elementId'],
   data: () => ({
     ul: [
       "Значение 1",
@@ -25,6 +26,10 @@ export default {
       "Значение 3"
     ],
   }),
+  beforeMount() {
+    if(this.values)
+      this.ul = this.values
+  },
   methods: {
     addLi() {
       this.ul.push('Значение ' + (parseInt(this.ul.length) + 1))

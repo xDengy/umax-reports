@@ -489,17 +489,17 @@
       >
         <div @click="hide('isOpenButton')">Кнопка</div>
       </div>
-      <Title v-if="isOpenTitle" />
-      <SubTitle v-if="isOpenSubTitle" />
-      <TextArea v-if="isOpenTextArea" />
-      <Image v-if="isOpenImage" />
-      <PieCharts v-if="isOpenPieCharts" />
-      <Button v-if="isOpenButton" />
-      <BulletList v-if="isOpenListUl" />
-      <NumberedList v-if="isOpenListOl" />
-      <ImageList v-if="isOpenListImage" />
-      <Table v-if="isOpenTable" :setTr="tr" :setTd="td" />
-      <TableGraph v-if="isOpenTableGraph" />
+      <Title v-if="isOpenTitle" :values="curElement.value" :elementId="this.elementId" />
+      <SubTitle v-if="isOpenSubTitle" :values="curElement.value" :elementId="this.elementId" />
+      <TextArea v-if="isOpenTextArea" :values="curElement.value" :elementId="this.elementId" />
+      <Image v-if="isOpenImage" :values="curElement.value" :elementId="this.elementId" />
+      <PieCharts v-if="isOpenPieCharts" :values="curElement.value" :elementId="this.elementId" />
+      <Button v-if="isOpenButton" :values="curElement.value" :elementId="this.elementId" />
+      <BulletList v-if="isOpenListUl" :values="curElement.value" :elementId="this.elementId" />
+      <NumberedList v-if="isOpenListOl" :values="curElement.value" :elementId="this.elementId" />
+      <ImageList v-if="isOpenListImage" :values="curElement.value" :elementId="this.elementId" />
+      <Table v-if="isOpenTable" :setTr="tr" :setTd="td" :values="curElement.value" :elementId="this.elementId" />
+      <TableGraph v-if="isOpenTableGraph" :values="curElement.value" :elementId="this.elementId" />
     </div>
   </div>
 </template>
@@ -517,7 +517,7 @@ import Button from "./Button.vue";
 import TableGraph from "./TableGraph.vue";
 export default {
   name: "Elements",
-  props: ["type", "count"],
+  props: ["type", "count", 'element', 'elementId'],
   data: () => ({
     isOpenTitle: false,
     isOpenSubTitle: false,
@@ -546,15 +546,26 @@ export default {
       isOpenTextArea: 'text',
       isOpenImage: 'img',
       isOpenPieCharts: 'graph',
-      isActiveTable: 'table',
+      isOpenTable: 'table',
       isOpenListUl: 'listMarc',
       isOpenListOl: 'listNumeric',
       isOpenListImage: 'listIcon',
       isOpenButton: 'btn',
       isOpenTableGraph: 'tableGraph'
     },
+    curElement: null,
     activeType: '',
   }),
+  beforeMount() {
+    this.curElement = this.element
+    for (const key in this.tagname) {
+      if (this.tagname[key] == this.curElement.type) {
+        this.global = false;
+        this.activeType = this.tagname[key]
+        this[key] = true;
+      }
+    }
+  },
   methods: {
     elementDel() {
       this.$emit("elementClose", {});

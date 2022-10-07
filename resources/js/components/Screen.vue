@@ -3,7 +3,7 @@
     <div class="screen__top">
       <div class="screen__top-title">
         <input type="text" :value="title" @input="setTitle(screenNumber - 1, $event.target.value)">
-        <span>{{title}}</span>
+        <span>{{curScreenItem[0].title}}</span>
         <svg width="14" height="16" viewBox="0 0 14 16" fill="none" xmlns="http://www.w3.org/2000/svg" @click="editTitle(screenNumber)">
           <path fill-rule="evenodd" clip-rule="evenodd"
             d="M9.43785 0.0483159C9.19458 0.0997631 8.82307 0.250573 8.55271 0.407665C8.41928 0.485211 7.45003 1.43552 4.6529 4.23124C1.18643 7.69596 0.923072 7.96663 0.820021 8.17039C0.759197 8.29072 0.69381 8.43841 0.674775 8.49858C0.65574 8.55874 0.499304 9.28301 0.327178 10.1081C0.101228 11.1909 0.0143056 11.6691 0.0146495 11.8271C0.0164623 12.6953 0.590009 13.346 1.46252 13.4698C1.6689 13.499 1.7422 13.4875 3.26045 13.1858C4.13096 13.0128 4.91355 12.8492 4.9995 12.8221C5.43959 12.6837 5.28828 12.8241 9.13526 8.98532C11.1177 7.00714 12.8083 5.30316 12.8921 5.1987C13.6763 4.2222 13.7083 2.76505 12.9685 1.72826C12.7586 1.43414 11.8467 0.53072 11.6357 0.407884C11.356 0.245009 10.9906 0.099263 10.7285 0.0459404C10.4223 -0.0163214 9.73762 -0.0150712 9.43785 0.0483159ZM10.5873 1.74173C10.7399 1.817 10.8809 1.93758 11.2411 2.30099C11.6261 2.68929 11.7172 2.79962 11.8037 2.9825C11.8968 3.17913 11.9071 3.22851 11.9071 3.482C11.9071 3.73408 11.8966 3.7854 11.8063 3.97609C11.7114 4.17641 11.496 4.3998 8.13754 7.78085C5.26577 10.6719 4.55057 11.3763 4.472 11.3907C3.9423 11.4876 1.63949 11.8606 1.63949 11.8495C1.63949 11.8414 1.76658 11.1862 1.92189 10.3933L2.20432 8.95179L5.74292 5.41068C7.68917 3.46309 9.32848 1.84016 9.38584 1.80421C9.72037 1.59455 10.2348 1.56779 10.5873 1.74173ZM0.599229 14.4711C0.354151 14.5292 0.182181 14.6704 0.0912265 14.8882C0.0270268 15.0419 0.0240262 15.3882 0.0856629 15.5357C0.153144 15.6972 0.308768 15.8597 0.467423 15.9342L0.607356 16L6.71042 15.9997L12.8135 15.9994L12.9715 15.9258C13.4784 15.6898 13.5737 15.0258 13.1536 14.6569C12.9004 14.4346 13.4725 14.4534 6.76546 14.448C3.28596 14.4451 0.667242 14.455 0.599229 14.4711Z"
@@ -33,9 +33,9 @@
           <path d="M1 13.293L13.2929 1.00008" stroke="#222222" stroke-width="1.5" stroke-linecap="round" />
         </svg>
       </div>
-      <div class="screen__elements" v-for="(items, i) in elementswraps" :key="i">
-        <Elements v-for="(item, key) in items.elems" @elementClose="elementDelete(i, key)" :key="key" :prop="key"
-          :count="items.elems.length" :type="typeof item" />
+      <div class="screen__elements" v-for="(items, i) in curScreenItem[0]" :key="i">
+        <Elements v-for="(item, key) in items.elements" @elementClose="elementDelete(i, key)" :key="key" :elementId="i"
+          :count="items.elements.length" :type="typeof item" :element="item" />
       </div>
       <div class="screen__columns">
         <div class="screen__column" id="1" @click="testcur($event.target)">
@@ -94,13 +94,17 @@ import TextArea from "./TextArea.vue";
 export default {
   name: "Screen",
   components: { Elements, Title, SubTitle, TextArea },
-  props: ["types", "screenNumber", 'screens', 'title'],
+  props: ["types", "screenNumber", 'screens', 'title', 'screenItem'],
   data: () => ({
     current: 4,
     elementswraps: [],
     elements: [],
     test: 0,
+    curScreenItem: []
   }),
+  beforeMount() {
+    this.curScreenItem = this.screenItem
+  },
   methods: {
     setTitle(id, title) {
       this.$emit("setTitle", {id, title});
@@ -158,7 +162,7 @@ export default {
       return curIndex;
     },
     elementDelete(parent, curElement) {
-      this.elementswraps[parent].elems.splice(curElement, 1);
+      this.curScreenItem[0][Object.values(this.curScreenItem[0]).length - 2].elements.splice(curElement, 1);
     },
     screenDel() {
       this.$emit("screenClose", {});
@@ -176,10 +180,14 @@ export default {
       for (let index = 0; index < this.current; index++) {
         arr.push(index);
       }
-      this.elements[this.current - 1] = arr;
-      this.elementswraps.push({
-        elems: this.elements[this.current - 1],
-      });
+      this.elements[this.current - 1] = [];
+      this.curScreenItem[0][Object.values(this.curScreenItem[0]).length - 1] = {
+        count: this.current,
+        elements: []
+      };
+      for(let i = 0; i < arr.length; i++) {
+        this.curScreenItem[0][Object.values(this.curScreenItem[0]).length - 2].elements.push(this.elements[this.current - 1]);
+      }
     },
   },
 };

@@ -23,3 +23,5 @@ Route::post('/login', [IndexController::class, 'login'])->name('login');
 Route::post('/exit', [IndexController::class, 'exit'])->name('exit');
 Route::post('/settings', [IndexController::class, 'settings'])->name('settings');
 Route::post('/personal', [IndexController::class, 'personal'])->name('personal');
+Route::post('/changePassword', [IndexController::class, 'changePassword'])->name('changePassword');
+Route::post('/resetPassword', [IndexController::class, 'resetPassword'])->name('resetPassword');

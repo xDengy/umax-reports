@@ -113,6 +113,7 @@
             <div class="input-file__text">Название изображения.jpg</div>
           </label>
         </div>
+        <div class="error">Такой пользователь уже существует</div>
         <button class="blue-btn">
           <svg
             width="15"
@@ -210,6 +211,8 @@ export default {
         }).then(result => {
           if(!result.data) {
             document.querySelector('.autorization__form').submit();
+          } else {
+
           }
         })
       }
@@ -221,5 +224,13 @@ export default {
 <style lang="scss" scoped>
 .autorization {
   height: 100%;
+}
+.error {
+  color: red;
+  margin-bottom: 30px;
+  display: none;
+}
+.error.active {
+  display: block;
 }
 </style>

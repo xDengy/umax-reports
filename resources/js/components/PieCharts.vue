@@ -11,62 +11,86 @@
       <p>x</p>
       <div class="table-label__size__columns">
         <label>столбцы</label>
-        <input maxlength="3" type="text" :value="td" @input="setValue('td', $event.target.value)">
+        <input readonly type="text" value="4">
       </div>
     </div>
   </div>
   <div class="table-pieCharts">
     <div class="table-pieCharts__titles" v-for="i in tr" :key="i">
       <div v-for="index in td" :key="index" :class="'table-pieCharts__elements table-pieCharts__elements--col' + index">
-        <input type="text">
+        <input type="text" :value="values ? tables[i - 1][index - 1] : null">
       </div>
     </div>
-
   </div>
 </template>
 
 <script>
 export default {
   name: "PieCharts",
-  props: ["setTr", "setTd"],
+  props: ["setTr", "setTd", "values", 'elementId'],
   data: () => ({
     tr: 3,
-    td: 3,
+    td: 4,
     tables: [
-      {
-        col1: " ",
-        col2: "цвет",
-        col3: "показатели в %"
-      },
-      {
-        col1: "Значение 1",
-        col2: "#123121",
-        col3: "12"
-      },
-      {
-        col1: "Значение 2",
-        col2: "#123121",
-        col3: "15"
-      },
-      {
-        col1: "Значение 3",
-        col2: "#123121",
-        col3: "11"
-      },
-
     ],
   }),
+  beforeMount() {
+    if(this.values) {
+      let curTable = []
+      let tr = this.values[0]
+      let td = this.values[1]
+      delete this.values[0]
+      delete this.values[1]
+      let curValues = array_values(this.values)
+      curTable = split(curValues, td)
+      this.tables = curTable
+      this.tr = this.tables.length
+      this.td = this.tables[0].length
+    }
+  },
   methods: {
-      close(){
-          document.getElementById("input-group__title").remove();
-      },
-      setValue(name, value) {
-          if(value && value !== '' && value > 0) {
-              if((name == 'tr' && value < 6) || (name == 'td' && value < 10))
-                  this[name] = parseInt(value)
-          }
-      }
+    close(){
+        document.getElementById("input-group__title").remove();
+    },
+    setValue(name, value) {
+        if(value && value !== '' && value > 0) {
+            if(name == 'tr') {
+              this[name] = parseInt(value)
+              if(this.tables[parseInt(value) - 1]) {
+                // this.tables[parseInt(value) - 1] = [
+                //   this.tables[parseInt(value) - 1][0],
+                //   this.tables[parseInt(value) - 1][1],
+                //   this.tables[parseInt(value) - 1][2],
+                //   this.tables[parseInt(value) - 1][3]
+                // ]
+              } else {
+                this.tables[parseInt(value) - 1] = [
+                  null,
+                  null,
+                  null,
+                  null
+                ]
+              }
+            }
+        }
+    }
   }
+}
+function split(array, n) {
+  let [...arr]  = array;
+  var res = [];
+  while (arr.length) {
+    res.push(arr.splice(0, n));
+  }
+  return res;
+}
+function array_values( input ) {
+ var tmp_arr = new Array(), cnt = 0;
+ for (let key in input ){
+  tmp_arr[cnt] = input[key];
+  cnt++;
+ }
+ return tmp_arr;
 }
 </script>
 

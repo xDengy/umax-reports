@@ -92,6 +92,7 @@
         :screenNumber="i + 1"
         :screens="current.length"
         :types="typeof item"
+        :screenItem="item"
         :id="'screenElement-' + i"
       />
       <div class="reports__add">
@@ -149,8 +150,12 @@ export default {
       id: id,
       user: this.user
     }).then(result => {
-      if(result.data)
-        this.current = JSON.parse(result.data.values);
+      if(result.data) {
+        if(result.data.values) {
+          this.current = JSON.parse(result.data.values);
+        }
+      }
+      this.$refs.menuList.updateAr(this.current);
     })
   },
   methods: {
@@ -171,10 +176,11 @@ export default {
       this.current[el.id].title = el.title;
     },
     addSreen() {
-      this.current.push({
+      console.log(this.current);
+      this.current.push([{
         id: this.current.length,
         title: this.current.length + 1 + " экран",
-      });
+      }]);
       this.$refs.menuList.updateAr(this.current);
     },
     screenDown(res) {
@@ -233,7 +239,6 @@ export default {
       for (let i = 0; i < arLength; i++) {
         arr[arr.length - 1].sort.push(arr[i].title);
       }
-
       axios.post("/api/reportElements", arr, {
         headers: {
           "Content-Type": "multipart/form-data",
@@ -242,7 +247,6 @@ export default {
     },
     generateReport() {
       let arr = this.generateArray();
-      console.log(arr);
       // html2Pdf(res)
     },
     generateArray() {
@@ -279,7 +283,12 @@ export default {
             };
             for (let v = 0; v < inputValue.length; v++) {
               if (inputValue[v].getAttribute("type") == "file") {
-                arr[i][j].elements[z].value.push(inputValue[v].files[0]);
+                if(typeof inputValue[v].files[0] == 'undefined') {
+                  let img = inputValue[v].parentNode.querySelector('img')
+                  arr[i][j].elements[z].value.push(img.getAttribute('src'));
+                }
+                else
+                  arr[i][j].elements[z].value.push(inputValue[v].files[0]);
               } else {
                 arr[i][j].elements[z].value.push(inputValue[v].value);
               }

@@ -4,10 +4,11 @@
       <div class="autorization__logo">
         <img src="../assets/images/logotip.svg" alt="" />
       </div>
-      <form class="autorization__form">
+      <form class="autorization__form" method="POST" @submit.prevent="checkMail" enctype="multipart/form-data" action="/resetPassword">
+        <input type="hidden" name="_token" :value="csrf">
         <div class="input-group">
           <label for="">E-mail</label>
-          <input type="text" placeholder="info@mail.ru" name="user-email" />
+          <input type="text" placeholder="info@mail.ru" name="email" v-model="email" @input="input" />
         </div>
         <button class="blue-btn">
           <svg
@@ -35,7 +36,28 @@
 </template>
 
 <script>
-export default {};
+export default {
+  data: () => ({
+    email: null,
+    csrf: document.querySelector('meta[name="csrf-token"]').getAttribute('content'),
+  }),
+  methods: {
+    checkMail() {
+      axios.post('/api/emailExist', {
+        email: this.email
+      }).then(result => {
+        if(result.data) {
+          document.querySelector('.autorization__form').submit();
+        } else {
+          document.querySelector('input[name="email"]').style.borderColor = 'red'
+        }
+      })
+    },
+    input() {
+      document.querySelector('input[name="email"]').style.borderColor = 'rgba(3, 0, 135, 0.3)';
+    },
+  }
+};
 </script>
 
 <style lang="scss"></style>

@@ -11,7 +11,7 @@
                         data-v-59c35ec8=""></path>
                 </svg>
             </div>
-            <textarea name="" id="" cols="30" rows="10"></textarea>
+            <textarea name="" id="" cols="30" rows="10" :value="values ? values[0] : null"></textarea>
         </div>
     </div>
 </template>
@@ -19,6 +19,7 @@
 <script>
     export default {
         name: "TextArea",
+        props: ["values", 'elementId'],
         data: () => ({
 
          }),
