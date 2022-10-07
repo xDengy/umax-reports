@@ -2,7 +2,7 @@
   <div class="screen" :id="'screen-'+screenNumber">
     <div class="screen__top">
       <div class="screen__top-title">
-        <input type="text" :value="title" @input="setTitle(screenNumber - 1, $event.target.value)">
+        <input type="text" :value="curScreenItem[0].title" @input="setTitle(screenNumber - 1, $event.target.value)">
         <span>{{curScreenItem[0].title}}</span>
         <svg width="14" height="16" viewBox="0 0 14 16" fill="none" xmlns="http://www.w3.org/2000/svg" @click="editTitle(screenNumber)">
           <path fill-rule="evenodd" clip-rule="evenodd"
@@ -107,6 +107,7 @@ export default {
   },
   methods: {
     setTitle(id, title) {
+      this.curScreenItem[0].title = title
       this.$emit("setTitle", {id, title});
     },
     setImg(el) {
@@ -168,7 +169,8 @@ export default {
       this.$emit("screenClose", {});
     },
     editTitle(id) {
-      document.querySelector('#screen-' + id + ' .screen__top-title').classList.toggle('active')
+      console.log(id);
+      document.querySelector('#screenElement-' + (id - 1) + ' .screen__top-title').classList.toggle('active')
     },
     testcur(e) {
       if (e.id !== "") {

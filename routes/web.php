@@ -15,7 +15,6 @@ use \App\Http\Controllers\IndexController;
 */
 
 Route::get('/{any}', [IndexController::class, 'renderMain'])->where('any','.*');
-
 Route::post('/register', [IndexController::class, 'register'])->name('register');
 Route::post('/newReport', [IndexController::class, 'newReport'])->name('newReport');
 Route::post('/report', [IndexController::class, 'newReport'])->name('report');

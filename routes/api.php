@@ -1,7 +1,6 @@
 <?php
 
 use App\Http\Controllers\IndexController;
-use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 
 /*
@@ -15,13 +14,8 @@ use Illuminate\Support\Facades\Route;
 |
 */
 
-Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
-    return $request->user();
-});
-
 Route::post('userExist', [IndexController::class, 'userExist'])->name('userExist');
 Route::post('emailExist', [IndexController::class, 'emailExist'])->name('emailExist');
-
 Route::get('user/{id}', [IndexController::class, 'getUser'])->name('getUser');
 Route::get('getUserReports/{id}', [IndexController::class, 'getUserReports'])->name('getUserReports');
 Route::post('deleteReport/{id}', [IndexController::class, 'deleteReport'])->name('deleteReport');

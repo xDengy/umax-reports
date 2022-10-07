@@ -73,9 +73,7 @@
         </router-link>
       </div>
       <div v-if="window.includes('/reports/')" class="menureports-cont-list">
-        <div class="menureports-buttons__button">
-          Список слайдов
-        </div>
+        <div class="menureports-buttons__button">Список слайдов</div>
         <draggable
           class="menureports-buttons__button menureports-buttons__button--list"
           v-model="currentAr"
@@ -125,49 +123,54 @@
                 :value="item[0].title"
                 @input="setTitle(index, $event.target.value)"
               />
-              <a @click="scroll('#screen-' + (index + 1))">{{ item[0].title }}</a>
+              <a @click="scroll('#screen-' + (index + 1))">{{
+                item[0].title
+              }}</a>
             </div>
-            <svg
-              width="14"
-              height="16"
-              viewBox="0 0 14 16"
-              fill="none"
-              xmlns="http://www.w3.org/2000/svg"
-              @click="editTitle(index)"
-            >
-              <path
-                fill-rule="evenodd"
-                clip-rule="evenodd"
-                d="M9.43785 0.0483159C9.19458 0.0997631 8.82307 0.250573 8.55271 0.407665C8.41928 0.485211 7.45003 1.43552 4.6529 4.23124C1.18643 7.69596 0.923072 7.96663 0.820021 8.17039C0.759197 8.29072 0.69381 8.43841 0.674775 8.49858C0.65574 8.55874 0.499304 9.28301 0.327178 10.1081C0.101228 11.1909 0.0143056 11.6691 0.0146495 11.8271C0.0164623 12.6953 0.590009 13.346 1.46252 13.4698C1.6689 13.499 1.7422 13.4875 3.26045 13.1858C4.13096 13.0128 4.91355 12.8492 4.9995 12.8221C5.43959 12.6837 5.28828 12.8241 9.13526 8.98532C11.1177 7.00714 12.8083 5.30316 12.8921 5.1987C13.6763 4.2222 13.7083 2.76505 12.9685 1.72826C12.7586 1.43414 11.8467 0.53072 11.6357 0.407884C11.356 0.245009 10.9906 0.099263 10.7285 0.0459404C10.4223 -0.0163214 9.73762 -0.0150712 9.43785 0.0483159ZM10.5873 1.74173C10.7399 1.817 10.8809 1.93758 11.2411 2.30099C11.6261 2.68929 11.7172 2.79962 11.8037 2.9825C11.8968 3.17913 11.9071 3.22851 11.9071 3.482C11.9071 3.73408 11.8966 3.7854 11.8063 3.97609C11.7114 4.17641 11.496 4.3998 8.13754 7.78085C5.26577 10.6719 4.55057 11.3763 4.472 11.3907C3.9423 11.4876 1.63949 11.8606 1.63949 11.8495C1.63949 11.8414 1.76658 11.1862 1.92189 10.3933L2.20432 8.95179L5.74292 5.41068C7.68917 3.46309 9.32848 1.84016 9.38584 1.80421C9.72037 1.59455 10.2348 1.56779 10.5873 1.74173ZM0.599229 14.4711C0.354151 14.5292 0.182181 14.6704 0.0912265 14.8882C0.0270268 15.0419 0.0240262 15.3882 0.0856629 15.5357C0.153144 15.6972 0.308768 15.8597 0.467423 15.9342L0.607356 16L6.71042 15.9997L12.8135 15.9994L12.9715 15.9258C13.4784 15.6898 13.5737 15.0258 13.1536 14.6569C12.9004 14.4346 13.4725 14.4534 6.76546 14.448C3.28596 14.4451 0.667242 14.455 0.599229 14.4711Z"
-                fill="#030087"
-              />
-            </svg>
-            <svg
-              width="15"
-              height="15"
-              viewBox="0 0 15 15"
-              fill="none"
-              xmlns="http://www.w3.org/2000/svg"
-              data-v-59c35ec8="" @click="deleteItem(index)"
-            >
-              <line
-                x1="1.06066"
-                y1="1"
-                x2="13"
-                y2="12.9393"
-                stroke="#222222"
-                stroke-width="1.5"
-                stroke-linecap="round"
+            <div class="icons">
+              <svg
+                width="14"
+                height="16"
+                viewBox="0 0 14 16"
+                fill="none"
+                xmlns="http://www.w3.org/2000/svg"
+                @click="editTitle(index)"
+              >
+                <path
+                  fill-rule="evenodd"
+                  clip-rule="evenodd"
+                  d="M9.43785 0.0483159C9.19458 0.0997631 8.82307 0.250573 8.55271 0.407665C8.41928 0.485211 7.45003 1.43552 4.6529 4.23124C1.18643 7.69596 0.923072 7.96663 0.820021 8.17039C0.759197 8.29072 0.69381 8.43841 0.674775 8.49858C0.65574 8.55874 0.499304 9.28301 0.327178 10.1081C0.101228 11.1909 0.0143056 11.6691 0.0146495 11.8271C0.0164623 12.6953 0.590009 13.346 1.46252 13.4698C1.6689 13.499 1.7422 13.4875 3.26045 13.1858C4.13096 13.0128 4.91355 12.8492 4.9995 12.8221C5.43959 12.6837 5.28828 12.8241 9.13526 8.98532C11.1177 7.00714 12.8083 5.30316 12.8921 5.1987C13.6763 4.2222 13.7083 2.76505 12.9685 1.72826C12.7586 1.43414 11.8467 0.53072 11.6357 0.407884C11.356 0.245009 10.9906 0.099263 10.7285 0.0459404C10.4223 -0.0163214 9.73762 -0.0150712 9.43785 0.0483159ZM10.5873 1.74173C10.7399 1.817 10.8809 1.93758 11.2411 2.30099C11.6261 2.68929 11.7172 2.79962 11.8037 2.9825C11.8968 3.17913 11.9071 3.22851 11.9071 3.482C11.9071 3.73408 11.8966 3.7854 11.8063 3.97609C11.7114 4.17641 11.496 4.3998 8.13754 7.78085C5.26577 10.6719 4.55057 11.3763 4.472 11.3907C3.9423 11.4876 1.63949 11.8606 1.63949 11.8495C1.63949 11.8414 1.76658 11.1862 1.92189 10.3933L2.20432 8.95179L5.74292 5.41068C7.68917 3.46309 9.32848 1.84016 9.38584 1.80421C9.72037 1.59455 10.2348 1.56779 10.5873 1.74173ZM0.599229 14.4711C0.354151 14.5292 0.182181 14.6704 0.0912265 14.8882C0.0270268 15.0419 0.0240262 15.3882 0.0856629 15.5357C0.153144 15.6972 0.308768 15.8597 0.467423 15.9342L0.607356 16L6.71042 15.9997L12.8135 15.9994L12.9715 15.9258C13.4784 15.6898 13.5737 15.0258 13.1536 14.6569C12.9004 14.4346 13.4725 14.4534 6.76546 14.448C3.28596 14.4451 0.667242 14.455 0.599229 14.4711Z"
+                  fill="#030087"
+                />
+              </svg>
+              <svg
+                width="15"
+                height="15"
+                viewBox="0 0 15 15"
+                fill="none"
+                xmlns="http://www.w3.org/2000/svg"
                 data-v-59c35ec8=""
-              ></line>
-              <path
-                d="M1 13.293L13.2929 1.00008"
-                stroke="#222222"
-                stroke-width="1.5"
-                stroke-linecap="round"
-                data-v-59c35ec8=""
-              ></path>
-            </svg>
+                @click="deleteItem(index)"
+              >
+                <line
+                  x1="1.06066"
+                  y1="1"
+                  x2="13"
+                  y2="12.9393"
+                  stroke="#222222"
+                  stroke-width="1.5"
+                  stroke-linecap="round"
+                  data-v-59c35ec8=""
+                ></line>
+                <path
+                  d="M1 13.293L13.2929 1.00008"
+                  stroke="#222222"
+                  stroke-width="1.5"
+                  stroke-linecap="round"
+                  data-v-59c35ec8=""
+                ></path>
+              </svg>
+            </div>
           </div>
         </draggable>
       </div>
@@ -178,7 +181,7 @@
           </div>
           <div class="menureports-user__wrap">
             <div class="menureports-user__name">
-              <p>{{this.user?.name}}</p>
+              <p>{{ this.user?.name }}</p>
             </div>
             <div class="menureports-user__author"><p>Автор отчета</p></div>
           </div>
@@ -232,14 +235,14 @@ export default {
   name: "MenuReports",
   data: () => ({
     currentAr: [],
-    userId: document.querySelector('meta[name="user"]').getAttribute('value'),
+    userId: document.querySelector('meta[name="user"]').getAttribute("value"),
     user: null,
-    window: window.location.pathname
+    window: window.location.pathname,
   }),
   beforeMount() {
-    axios.get('/api/user/' + this.userId).then(result => {
+    axios.get("/api/user/" + this.userId).then((result) => {
       this.user = result.data;
-    })
+    });
   },
   methods: {
     setTitle(id, title) {
@@ -264,18 +267,21 @@ export default {
       this.currentAr = ar;
     },
     drag(res) {
-      this.$.parent.data.current = this.currentAr
+      this.$.parent.data.current = this.currentAr;
 
       this.$.parent.type.methods.changeWrap(res.moved);
     },
     deleteItem(index) {
-      this.$.parent.type.methods.screenDelete(index, this.$.parent.data.current)
+      this.$.parent.type.methods.screenDelete(
+        index,
+        this.$.parent.data.current
+      );
     },
     exit() {
-      axios.post('/exit').then(responce => {
-        window.location.href = window.location.origin
-      })
-    }
+      axios.post("/exit").then((responce) => {
+        window.location.href = window.location.origin;
+      });
+    },
   },
   components: {
     draggable: VueDraggableNext,
@@ -502,5 +508,15 @@ export default {
   .hide-menu {
     display: none;
   }
+}
+
+.icons {
+  display: flex;
+  align-items: center;
+  margin-left: 10px;
+}
+
+.elements__text a {
+  word-break: break-word;
 }
 </style>
