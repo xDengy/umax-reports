@@ -274,6 +274,7 @@ export default {
     axios.get('/api/getSettings/' + this.user).then(res => {
       this.settings = res.data;
     })
+    document.querySelector('title').textContent = 'Новый отчёт'
   }
 };
 </script>

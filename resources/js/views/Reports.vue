@@ -144,6 +144,7 @@ export default {
       .getAttribute("content"),
   }),
   beforeMount() {
+    document.querySelector('title').textContent = 'Отчёт по SEO продвижению'
     let id = this.id[this.id.length - 1]
     axios.post('/api/getReportElements',
     {

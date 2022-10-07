@@ -335,6 +335,7 @@ export default {
     axios.get('/api/getUserReports/' + this.user).then(result => {
       this.listcards = result.data;
     })
+    document.querySelector('title').textContent = 'Список отчётов'
   },
   // поиск
   computed: {

@@ -146,6 +146,7 @@ export default {
     axios.get('/api/user/' + this.userId).then(result => {
       this.userData = result.data;
     })
+    document.querySelector('title').textContent = 'Личный кабинет'
   },
   methods: {
     changeUserAvatar() {

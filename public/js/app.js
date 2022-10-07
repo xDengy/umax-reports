@@ -21012,6 +21012,9 @@ __webpack_require__.r(__webpack_exports__);
   },
   components: {
     MenuReports: _components_MenuReports_vue__WEBPACK_IMPORTED_MODULE_0__["default"]
+  },
+  beforeMount: function beforeMount() {
+    document.querySelector('title').textContent = 'Страница не найдена';
   }
 });
 
@@ -21037,6 +21040,9 @@ __webpack_require__.r(__webpack_exports__);
       csrf: document.querySelector('meta[name="csrf-token"]').getAttribute('content'),
       password: null
     };
+  },
+  beforeMount: function beforeMount() {
+    document.querySelector('title').textContent = 'Вход';
   },
   methods: {
     showPass: function showPass() {
@@ -21107,6 +21113,7 @@ __webpack_require__.r(__webpack_exports__);
     axios.get('/api/getUserReports/' + this.user).then(function (result) {
       _this.listcards = result.data;
     });
+    document.querySelector('title').textContent = 'Список отчётов';
   },
   // поиск
   computed: {
@@ -21201,6 +21208,7 @@ __webpack_require__.r(__webpack_exports__);
     axios.get('/api/getUserByToken/' + token).then(function (result) {
       if (result.data) _this.user = result.data;
     });
+    document.querySelector('title').textContent = 'Смена пароля';
   },
   methods: {
     checkPass: function checkPass() {
@@ -21301,6 +21309,7 @@ __webpack_require__.r(__webpack_exports__);
     axios.get('/api/getSettings/' + this.user).then(function (res) {
       _this.settings = res.data;
     });
+    document.querySelector('title').textContent = 'Новый отчёт';
   }
 });
 
@@ -21328,6 +21337,9 @@ __webpack_require__.r(__webpack_exports__);
   },
   components: {
     MenuReports: _components_MenuReports_vue__WEBPACK_IMPORTED_MODULE_0__["default"]
+  },
+  beforeMount: function beforeMount() {
+    document.querySelector('title').textContent = 'Смена пароля';
   },
   methods: {
     checkPass: function checkPass() {
@@ -21375,6 +21387,7 @@ __webpack_require__.r(__webpack_exports__);
     axios.get('/api/user/' + this.userId).then(function (result) {
       _this.userData = result.data;
     });
+    document.querySelector('title').textContent = 'Личный кабинет';
   },
   methods: {
     changeUserAvatar: function changeUserAvatar() {
@@ -21415,6 +21428,9 @@ __webpack_require__.r(__webpack_exports__);
       submitPass: null,
       csrf: document.querySelector('meta[name="csrf-token"]').getAttribute('content')
     };
+  },
+  beforeMount: function beforeMount() {
+    document.querySelector('title').textContent = 'Регистрация';
   },
   methods: {
     showPass: function showPass() {
@@ -21497,6 +21513,7 @@ __webpack_require__.r(__webpack_exports__);
       user: document.querySelector('meta[name="user"]').getAttribute('value'),
       csrf: document.querySelector('meta[name="csrf-token"]').getAttribute('content'),
       id: window.location.href.split('/'),
+      curId: null,
       inputcolors: [{
         id: "color1",
         color: "#37BEFF"
@@ -21544,7 +21561,11 @@ __webpack_require__.r(__webpack_exports__);
       id: id,
       user: this.user
     }).then(function (result) {
-      if (result.data) _this.report = result.data;
+      if (result.data) {
+        _this.report = result.data;
+        _this.curId = _this.report.id;
+        document.querySelector('title').textContent = _this.report.title;
+      }
     });
   }
 });
@@ -21584,6 +21605,7 @@ __webpack_require__.r(__webpack_exports__);
   beforeMount: function beforeMount() {
     var _this = this;
 
+    document.querySelector('title').textContent = 'Отчёт по SEO продвижению';
     var id = this.id[this.id.length - 1];
     axios.post('/api/getReportElements', {
       id: id,
@@ -21762,6 +21784,9 @@ __webpack_require__.r(__webpack_exports__);
       csrf: document.querySelector('meta[name="csrf-token"]').getAttribute('content')
     };
   },
+  beforeMount: function beforeMount() {
+    document.querySelector('title').textContent = 'Восстановиить пароль';
+  },
   methods: {
     checkMail: function checkMail() {
       axios.post('/api/emailExist', {
@@ -21815,6 +21840,7 @@ __webpack_require__.r(__webpack_exports__);
     axios.get('/api/getSettings/' + this.user).then(function (result) {
       _this.settings = result.data;
     });
+    document.querySelector('title').textContent = 'Настройки';
   }
 });
 
@@ -24308,7 +24334,7 @@ var _hoisted_2 = {
   "class": "error-block"
 };
 
-var _hoisted_3 = /*#__PURE__*/(0,vue__WEBPACK_IMPORTED_MODULE_0__.createStaticVNode)("<svg class=\"error__element\" width=\"262\" height=\"95\" viewBox=\"0 0 262 95\" fill=\"none\" xmlns=\"http://www.w3.org/2000/svg\"><g clip-path=\"url(#clip0_923_2272)\"><path d=\"M139.716 53.6502C135.226 53.6502 131.792 52.3416 129.415 49.9862C127.038 47.6309 125.718 43.967 125.718 39.2562V20.9367H132.849V39.2562C132.849 41.8733 133.377 43.7052 134.698 45.2755C136.018 46.584 137.603 47.3692 139.716 47.3692C141.829 47.3692 143.677 46.584 144.734 45.2755C146.054 43.967 146.583 42.135 146.583 39.5179V20.9367H153.714V39.2562C153.714 43.967 152.393 47.6309 150.016 49.9862C147.375 52.6033 143.942 53.6502 139.716 53.6502ZM160.845 53.3884V21.1984H168.504L176.956 34.8072L185.407 21.1984H193.067V53.3884H185.935V32.4518L176.956 46.3223H176.692L167.712 32.7135V53.6502H160.845V53.3884ZM230.571 53.3884L241.927 36.9009L231.099 21.1984H239.286L246.153 31.6667L253.02 21.1984H260.944L250.115 36.9009L261.208 53.3884H253.02L245.889 42.3967L238.494 53.3884H230.571ZM195.444 53.3884L209.177 20.9367H215.78L229.514 53.3884H222.119L219.742 47.6309H204.952L202.575 53.3884H195.444ZM207.593 41.3499H217.101L212.347 29.573L207.593 41.3499ZM125.454 63.5951H129.151C132.585 63.5951 134.962 65.9504 134.962 69.0909C134.962 72.2314 132.585 74.5868 129.151 74.5868H125.454V63.5951ZM129.151 73.2783C131.792 73.2783 133.641 71.4463 133.641 69.0909C133.641 66.7355 131.792 64.9036 129.151 64.9036H126.51V73.2783H129.151ZM137.867 63.5951H139.188V74.3251H137.867V63.5951ZM141.829 69.0909C141.829 66.2121 143.942 63.5951 147.375 63.5951C149.224 63.5951 150.28 64.1185 151.337 65.1653L150.544 65.9504C149.752 65.1653 148.696 64.6419 147.111 64.6419C144.734 64.6419 142.885 66.7355 142.885 69.0909C142.885 71.708 144.47 73.54 147.111 73.54C148.431 73.54 149.488 73.0165 150.28 72.4931V69.8761H146.847V68.8292H151.337V73.2783C150.28 74.0634 148.696 74.8485 146.847 74.8485C143.942 74.5868 141.829 72.2314 141.829 69.0909ZM154.506 63.5951H155.827V74.3251H154.506V63.5951ZM161.901 64.9036H158.204V63.8568H166.919V64.9036H163.222V74.5868H161.901V64.9036ZM171.938 63.5951H172.994L178.012 74.5868H176.692L175.371 71.708H169.296L167.976 74.5868H166.655L171.938 63.5951ZM174.843 70.6612L172.466 65.1653L169.825 70.6612H174.843ZM180.125 63.5951H181.446V73.2783H187.52V74.3251H180.125V63.5951ZM198.613 63.5951H199.669L204.687 74.5868H203.367L202.046 71.708H195.972L194.651 74.5868H193.331L198.613 63.5951ZM201.518 70.6612L199.141 65.1653L196.764 70.6612H201.518ZM205.744 69.0909C205.744 66.2121 207.857 63.5951 211.29 63.5951C213.139 63.5951 214.196 64.1185 215.252 65.1653L214.46 66.2121C213.667 65.427 212.611 64.9036 211.026 64.9036C208.649 64.9036 206.8 66.9973 206.8 69.3526C206.8 71.9697 208.385 73.8017 211.026 73.8017C212.347 73.8017 213.403 73.2783 214.196 72.7548V70.1378H211.29V69.0909H215.78V73.54C214.724 74.3251 213.139 75.1102 211.29 75.1102C207.857 74.5868 205.744 72.2314 205.744 69.0909ZM218.421 63.5951H226.345V64.6419H219.742V68.3058H225.817V69.3526H219.742V73.2783H226.609V74.3251H218.685V63.5951H218.421ZM228.986 63.5951H230.042L236.909 72.2314V63.5951H238.23V74.5868H237.173L230.042 65.6887V74.5868H228.722V63.5951H228.986ZM240.871 69.0909C240.871 65.9504 243.248 63.5951 246.417 63.5951C248.53 63.5951 249.587 64.3802 250.643 65.427L249.851 66.2121C249.058 65.427 248.002 64.6419 246.417 64.6419C244.04 64.6419 242.192 66.4738 242.192 69.0909C242.192 71.708 244.04 73.54 246.417 73.54C248.002 73.54 248.794 73.0165 249.851 71.9697L250.643 72.7548C249.587 73.8017 248.266 74.5868 246.153 74.5868C243.248 74.5868 240.871 72.2314 240.871 69.0909ZM256.19 70.1378L251.7 63.5951H253.284L256.982 69.0909L260.679 63.5951H262L257.51 70.1378V74.3251H256.19V70.1378ZM39.881 47.1075C37.7681 47.1075 35.6552 46.584 34.3347 45.2755C33.0141 43.967 32.4859 42.135 32.4859 39.7796V30.3582H36.1835V39.5179C36.1835 40.8265 36.4476 41.8733 36.9758 42.3967C37.504 43.1818 38.8246 43.4435 39.881 43.4435C40.9375 43.4435 41.994 43.1818 42.7863 42.3967C43.3145 41.6116 43.5786 40.8265 43.5786 39.5179V30.0964H47.2762V39.2562C47.2762 41.6116 46.748 43.4436 45.4274 44.7521C44.1069 46.3223 42.2581 47.1075 39.881 47.1075ZM55.7278 46.8457V30.6199H59.6895L63.9153 36.6391L68.1411 30.6199H72.1028V46.8457H68.6693V36.1157L64.1794 42.135L59.6895 36.1157V46.584H55.7278V46.8457ZM31.6935 69.6143L38.5605 53.1267H41.9939L48.8609 69.6143H45.1633L43.8427 66.7356H36.4476L35.3911 69.6143H31.6935ZM37.7681 63.5951H42.5222L40.4093 57.5758L37.7681 63.5951ZM55.9919 69.6143L61.5383 61.2397L55.9919 53.1267H60.2177L63.6512 58.3609L67.0847 53.1267H71.0464L65.5 60.978L71.0464 69.3526H66.8206L63.123 63.8568L59.4254 69.3526H55.9919V69.6143ZM66.8206 6.01931L64.7077 3.14052C62.5948 0.785153 59.1613 -0.523387 55.9919 2.91094e-05L20.6008 4.97248C17.4315 5.7576 14.7903 7.85127 13.7339 10.9918L0.528226 47.3692C-0.528226 50.5097 0 53.9119 2.1129 56.2672L26.1472 84.0083C27.2036 85.3168 28.5242 86.1019 29.8448 86.6254C31.1653 87.6722 32.75 88.4573 34.3347 88.719L70.7823 94.7383C73.9516 95.2617 77.3851 93.9532 79.498 91.5978L104.853 58.6226C106.966 56.0055 107.494 52.6033 106.437 49.7245L91.6472 20.1515C90.5907 17.011 87.6855 14.9174 84.5161 14.394L81.0827 14.1323L78.9698 10.4683C77.3851 7.58956 74.2157 6.01931 71.0464 6.01931H66.8206ZM7.92339 42.9201C6.33871 45.7989 6.33871 49.2011 7.92339 52.0799L23.7702 78.5124L3.69758 55.2204C1.84879 53.1267 1.32056 50.5097 2.37702 47.8926L15.5827 11.5152C16.375 9.15981 18.4879 7.32785 21.129 6.80444L56.5202 1.83198C59.1613 1.30857 61.8024 2.3554 63.3871 4.18736L64.7077 6.01931L33.8064 6.28102C30.6371 6.28102 27.4677 8.11298 25.8831 10.9918L7.92339 42.9201ZM15.8468 39.7796C13.7339 42.3967 13.2056 45.7989 14.2621 48.6777L25.0907 77.4656L9.24395 51.0331C7.92339 48.6777 7.92339 46.0606 9.24395 43.7053L27.4677 11.7769C28.7883 9.42152 31.1653 8.11298 33.8064 8.11298L66.0282 7.85127L69.7258 13.0854L45.9556 10.9918C42.7863 10.4683 39.6169 11.7769 37.504 14.1323L15.8468 39.7796ZM78.7056 13.8706L72.1028 13.0854L68.1411 7.85127H70.7823C73.4234 7.85127 75.8004 9.15981 77.121 11.5152L78.7056 13.8706ZM97.7218 52.865C99.3064 49.9862 99.3064 46.584 97.7218 43.7053L81.875 15.7025L83.9879 15.9642C86.629 16.4876 88.7419 18.3196 89.5343 20.675L89.7984 20.9367L104.589 50.5097C105.381 52.865 105.117 55.7438 103.268 57.5758L77.9133 90.551C76.3286 92.6446 73.6875 93.4298 71.0464 93.1681L40.1452 88.1956L71.5746 87.9339C74.7439 87.9339 77.9133 86.1019 79.498 83.2232L97.7218 52.865ZM45.9556 12.8237L71.3105 14.9174L86.629 35.854C88.4778 37.9477 88.7419 40.5648 87.9496 43.1818L76.5927 73.8017C75.8004 76.157 73.6875 77.989 71.0464 78.5124L34.8629 85.3168C33.5423 85.5785 32.4859 85.5785 31.1653 85.0551C30.373 84.27 29.5806 83.2232 29.3165 82.1763L16.1109 48.1543C15.5827 46.8457 15.5827 45.5372 15.8468 44.4904C15.8468 43.1818 16.375 41.8733 17.1673 40.8265L38.8246 15.4408C40.4093 13.3471 43.0504 12.3003 45.9556 12.8237ZM87.9496 34.8072L73.6875 15.1791L79.7621 15.7025L96.1371 44.7521C97.4577 47.1075 97.4577 49.7245 96.1371 52.0799L77.9133 82.1763C76.5927 84.5317 74.2157 85.8402 71.5746 85.8402L40.1452 86.1019L71.3105 80.3444C74.4798 79.821 77.121 77.4656 78.1774 74.3251L89.5343 43.4435C90.5907 40.5648 90.0625 37.1626 87.9496 34.8072Z\" fill=\"black\"></path></g><defs><clipPath id=\"clip0_923_2272\"><rect width=\"262\" height=\"95\" fill=\"white\"></rect></clipPath></defs></svg><span class=\"error__element error__text\"> Страница не найдена </span>", 2);
+var _hoisted_3 = /*#__PURE__*/(0,vue__WEBPACK_IMPORTED_MODULE_0__.createStaticVNode)("<svg class=\"error__element\" width=\"262\" height=\"95\" viewBox=\"0 0 262 95\" fill=\"none\" xmlns=\"http://www.w3.org/2000/svg\"><g clip-path=\"url(#clip0_923_2272)\"><path d=\"M139.716 53.6502C135.226 53.6502 131.792 52.3416 129.415 49.9862C127.038 47.6309 125.718 43.967 125.718 39.2562V20.9367H132.849V39.2562C132.849 41.8733 133.377 43.7052 134.698 45.2755C136.018 46.584 137.603 47.3692 139.716 47.3692C141.829 47.3692 143.677 46.584 144.734 45.2755C146.054 43.967 146.583 42.135 146.583 39.5179V20.9367H153.714V39.2562C153.714 43.967 152.393 47.6309 150.016 49.9862C147.375 52.6033 143.942 53.6502 139.716 53.6502ZM160.845 53.3884V21.1984H168.504L176.956 34.8072L185.407 21.1984H193.067V53.3884H185.935V32.4518L176.956 46.3223H176.692L167.712 32.7135V53.6502H160.845V53.3884ZM230.571 53.3884L241.927 36.9009L231.099 21.1984H239.286L246.153 31.6667L253.02 21.1984H260.944L250.115 36.9009L261.208 53.3884H253.02L245.889 42.3967L238.494 53.3884H230.571ZM195.444 53.3884L209.177 20.9367H215.78L229.514 53.3884H222.119L219.742 47.6309H204.952L202.575 53.3884H195.444ZM207.593 41.3499H217.101L212.347 29.573L207.593 41.3499ZM125.454 63.5951H129.151C132.585 63.5951 134.962 65.9504 134.962 69.0909C134.962 72.2314 132.585 74.5868 129.151 74.5868H125.454V63.5951ZM129.151 73.2783C131.792 73.2783 133.641 71.4463 133.641 69.0909C133.641 66.7355 131.792 64.9036 129.151 64.9036H126.51V73.2783H129.151ZM137.867 63.5951H139.188V74.3251H137.867V63.5951ZM141.829 69.0909C141.829 66.2121 143.942 63.5951 147.375 63.5951C149.224 63.5951 150.28 64.1185 151.337 65.1653L150.544 65.9504C149.752 65.1653 148.696 64.6419 147.111 64.6419C144.734 64.6419 142.885 66.7355 142.885 69.0909C142.885 71.708 144.47 73.54 147.111 73.54C148.431 73.54 149.488 73.0165 150.28 72.4931V69.8761H146.847V68.8292H151.337V73.2783C150.28 74.0634 148.696 74.8485 146.847 74.8485C143.942 74.5868 141.829 72.2314 141.829 69.0909ZM154.506 63.5951H155.827V74.3251H154.506V63.5951ZM161.901 64.9036H158.204V63.8568H166.919V64.9036H163.222V74.5868H161.901V64.9036ZM171.938 63.5951H172.994L178.012 74.5868H176.692L175.371 71.708H169.296L167.976 74.5868H166.655L171.938 63.5951ZM174.843 70.6612L172.466 65.1653L169.825 70.6612H174.843ZM180.125 63.5951H181.446V73.2783H187.52V74.3251H180.125V63.5951ZM198.613 63.5951H199.669L204.687 74.5868H203.367L202.046 71.708H195.972L194.651 74.5868H193.331L198.613 63.5951ZM201.518 70.6612L199.141 65.1653L196.764 70.6612H201.518ZM205.744 69.0909C205.744 66.2121 207.857 63.5951 211.29 63.5951C213.139 63.5951 214.196 64.1185 215.252 65.1653L214.46 66.2121C213.667 65.427 212.611 64.9036 211.026 64.9036C208.649 64.9036 206.8 66.9973 206.8 69.3526C206.8 71.9697 208.385 73.8017 211.026 73.8017C212.347 73.8017 213.403 73.2783 214.196 72.7548V70.1378H211.29V69.0909H215.78V73.54C214.724 74.3251 213.139 75.1102 211.29 75.1102C207.857 74.5868 205.744 72.2314 205.744 69.0909ZM218.421 63.5951H226.345V64.6419H219.742V68.3058H225.817V69.3526H219.742V73.2783H226.609V74.3251H218.685V63.5951H218.421ZM228.986 63.5951H230.042L236.909 72.2314V63.5951H238.23V74.5868H237.173L230.042 65.6887V74.5868H228.722V63.5951H228.986ZM240.871 69.0909C240.871 65.9504 243.248 63.5951 246.417 63.5951C248.53 63.5951 249.587 64.3802 250.643 65.427L249.851 66.2121C249.058 65.427 248.002 64.6419 246.417 64.6419C244.04 64.6419 242.192 66.4738 242.192 69.0909C242.192 71.708 244.04 73.54 246.417 73.54C248.002 73.54 248.794 73.0165 249.851 71.9697L250.643 72.7548C249.587 73.8017 248.266 74.5868 246.153 74.5868C243.248 74.5868 240.871 72.2314 240.871 69.0909ZM256.19 70.1378L251.7 63.5951H253.284L256.982 69.0909L260.679 63.5951H262L257.51 70.1378V74.3251H256.19V70.1378ZM39.881 47.1075C37.7681 47.1075 35.6552 46.584 34.3347 45.2755C33.0141 43.967 32.4859 42.135 32.4859 39.7796V30.3582H36.1835V39.5179C36.1835 40.8265 36.4476 41.8733 36.9758 42.3967C37.504 43.1818 38.8246 43.4435 39.881 43.4435C40.9375 43.4435 41.994 43.1818 42.7863 42.3967C43.3145 41.6116 43.5786 40.8265 43.5786 39.5179V30.0964H47.2762V39.2562C47.2762 41.6116 46.748 43.4436 45.4274 44.7521C44.1069 46.3223 42.2581 47.1075 39.881 47.1075ZM55.7278 46.8457V30.6199H59.6895L63.9153 36.6391L68.1411 30.6199H72.1028V46.8457H68.6693V36.1157L64.1794 42.135L59.6895 36.1157V46.584H55.7278V46.8457ZM31.6935 69.6143L38.5605 53.1267H41.9939L48.8609 69.6143H45.1633L43.8427 66.7356H36.4476L35.3911 69.6143H31.6935ZM37.7681 63.5951H42.5222L40.4093 57.5758L37.7681 63.5951ZM55.9919 69.6143L61.5383 61.2397L55.9919 53.1267H60.2177L63.6512 58.3609L67.0847 53.1267H71.0464L65.5 60.978L71.0464 69.3526H66.8206L63.123 63.8568L59.4254 69.3526H55.9919V69.6143ZM66.8206 6.01931L64.7077 3.14052C62.5948 0.785153 59.1613 -0.523387 55.9919 2.91094e-05L20.6008 4.97248C17.4315 5.7576 14.7903 7.85127 13.7339 10.9918L0.528226 47.3692C-0.528226 50.5097 0 53.9119 2.1129 56.2672L26.1472 84.0083C27.2036 85.3168 28.5242 86.1019 29.8448 86.6254C31.1653 87.6722 32.75 88.4573 34.3347 88.719L70.7823 94.7383C73.9516 95.2617 77.3851 93.9532 79.498 91.5978L104.853 58.6226C106.966 56.0055 107.494 52.6033 106.437 49.7245L91.6472 20.1515C90.5907 17.011 87.6855 14.9174 84.5161 14.394L81.0827 14.1323L78.9698 10.4683C77.3851 7.58956 74.2157 6.01931 71.0464 6.01931H66.8206ZM7.92339 42.9201C6.33871 45.7989 6.33871 49.2011 7.92339 52.0799L23.7702 78.5124L3.69758 55.2204C1.84879 53.1267 1.32056 50.5097 2.37702 47.8926L15.5827 11.5152C16.375 9.15981 18.4879 7.32785 21.129 6.80444L56.5202 1.83198C59.1613 1.30857 61.8024 2.3554 63.3871 4.18736L64.7077 6.01931L33.8064 6.28102C30.6371 6.28102 27.4677 8.11298 25.8831 10.9918L7.92339 42.9201ZM15.8468 39.7796C13.7339 42.3967 13.2056 45.7989 14.2621 48.6777L25.0907 77.4656L9.24395 51.0331C7.92339 48.6777 7.92339 46.0606 9.24395 43.7053L27.4677 11.7769C28.7883 9.42152 31.1653 8.11298 33.8064 8.11298L66.0282 7.85127L69.7258 13.0854L45.9556 10.9918C42.7863 10.4683 39.6169 11.7769 37.504 14.1323L15.8468 39.7796ZM78.7056 13.8706L72.1028 13.0854L68.1411 7.85127H70.7823C73.4234 7.85127 75.8004 9.15981 77.121 11.5152L78.7056 13.8706ZM97.7218 52.865C99.3064 49.9862 99.3064 46.584 97.7218 43.7053L81.875 15.7025L83.9879 15.9642C86.629 16.4876 88.7419 18.3196 89.5343 20.675L89.7984 20.9367L104.589 50.5097C105.381 52.865 105.117 55.7438 103.268 57.5758L77.9133 90.551C76.3286 92.6446 73.6875 93.4298 71.0464 93.1681L40.1452 88.1956L71.5746 87.9339C74.7439 87.9339 77.9133 86.1019 79.498 83.2232L97.7218 52.865ZM45.9556 12.8237L71.3105 14.9174L86.629 35.854C88.4778 37.9477 88.7419 40.5648 87.9496 43.1818L76.5927 73.8017C75.8004 76.157 73.6875 77.989 71.0464 78.5124L34.8629 85.3168C33.5423 85.5785 32.4859 85.5785 31.1653 85.0551C30.373 84.27 29.5806 83.2232 29.3165 82.1763L16.1109 48.1543C15.5827 46.8457 15.5827 45.5372 15.8468 44.4904C15.8468 43.1818 16.375 41.8733 17.1673 40.8265L38.8246 15.4408C40.4093 13.3471 43.0504 12.3003 45.9556 12.8237ZM87.9496 34.8072L73.6875 15.1791L79.7621 15.7025L96.1371 44.7521C97.4577 47.1075 97.4577 49.7245 96.1371 52.0799L77.9133 82.1763C76.5927 84.5317 74.2157 85.8402 71.5746 85.8402L40.1452 86.1019L71.3105 80.3444C74.4798 79.821 77.121 77.4656 78.1774 74.3251L89.5343 43.4435C90.5907 40.5648 90.0625 37.1626 87.9496 34.8072Z\" fill=\"black\"></path></g><defs><clipPath id=\"clip0_923_2272\"><rect width=\"262\" height=\"95\" fill=\"white\"></rect></clipPath></defs></svg><span class=\"error__element error__text\"> Страница не найдена</span>", 2);
 
 function render(_ctx, _cache, $props, $setup, $data, $options) {
   var _component_MenuReports = (0,vue__WEBPACK_IMPORTED_MODULE_0__.resolveComponent)("MenuReports");
@@ -26111,19 +26137,13 @@ var _hoisted_2 = {
   key: 0,
   "class": "newreport wrap-glob"
 };
-
-var _hoisted_3 = /*#__PURE__*/_withScopeId(function () {
-  return /*#__PURE__*/(0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("h2", null, "Новый отчёт", -1
-  /* HOISTED */
-  );
-});
-
-var _hoisted_4 = {
+var _hoisted_3 = {
   "class": "newreport-form",
   method: "post",
   enctype: "multipart/form-data",
   action: "/report"
 };
+var _hoisted_4 = ["value"];
 var _hoisted_5 = ["value"];
 var _hoisted_6 = {
   "class": "input-group newreport__field--heading"
@@ -26231,11 +26251,12 @@ var _hoisted_26 = /*#__PURE__*/_withScopeId(function () {
 });
 
 var _hoisted_27 = ["src"];
-var _hoisted_28 = {
+var _hoisted_28 = ["value"];
+var _hoisted_29 = {
   "class": "input-group newreport__field--name"
 };
 
-var _hoisted_29 = /*#__PURE__*/_withScopeId(function () {
+var _hoisted_30 = /*#__PURE__*/_withScopeId(function () {
   return /*#__PURE__*/(0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("label", {
     "class": "newreport__label",
     "for": "name"
@@ -26244,12 +26265,12 @@ var _hoisted_29 = /*#__PURE__*/_withScopeId(function () {
   );
 });
 
-var _hoisted_30 = ["value"];
-var _hoisted_31 = {
+var _hoisted_31 = ["value"];
+var _hoisted_32 = {
   "class": "input-group newreport__field--mail"
 };
 
-var _hoisted_32 = /*#__PURE__*/_withScopeId(function () {
+var _hoisted_33 = /*#__PURE__*/_withScopeId(function () {
   return /*#__PURE__*/(0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("label", {
     "class": "newreport__label",
     "for": "mail"
@@ -26258,12 +26279,12 @@ var _hoisted_32 = /*#__PURE__*/_withScopeId(function () {
   );
 });
 
-var _hoisted_33 = ["value"];
-var _hoisted_34 = {
+var _hoisted_34 = ["value"];
+var _hoisted_35 = {
   "class": "input-group newreport__field--phone"
 };
 
-var _hoisted_35 = /*#__PURE__*/_withScopeId(function () {
+var _hoisted_36 = /*#__PURE__*/_withScopeId(function () {
   return /*#__PURE__*/(0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("label", {
     "class": "newreport__label",
     "for": "phone"
@@ -26272,12 +26293,12 @@ var _hoisted_35 = /*#__PURE__*/_withScopeId(function () {
   );
 });
 
-var _hoisted_36 = ["value"];
-var _hoisted_37 = {
+var _hoisted_37 = ["value"];
+var _hoisted_38 = {
   "class": "input-group newreport__field--slogan"
 };
 
-var _hoisted_38 = /*#__PURE__*/_withScopeId(function () {
+var _hoisted_39 = /*#__PURE__*/_withScopeId(function () {
   return /*#__PURE__*/(0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("label", {
     "class": "newreport__label",
     "for": "slogan"
@@ -26286,12 +26307,12 @@ var _hoisted_38 = /*#__PURE__*/_withScopeId(function () {
   );
 });
 
-var _hoisted_39 = ["value"];
-var _hoisted_40 = {
+var _hoisted_40 = ["value"];
+var _hoisted_41 = {
   "class": "input-group"
 };
 
-var _hoisted_41 = /*#__PURE__*/_withScopeId(function () {
+var _hoisted_42 = /*#__PURE__*/_withScopeId(function () {
   return /*#__PURE__*/(0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("label", {
     "class": "newreport__label",
     "for": "photo-menedger"
@@ -26300,11 +26321,11 @@ var _hoisted_41 = /*#__PURE__*/_withScopeId(function () {
   );
 });
 
-var _hoisted_42 = {
+var _hoisted_43 = {
   "class": "input-file input-file2"
 };
 
-var _hoisted_43 = /*#__PURE__*/_withScopeId(function () {
+var _hoisted_44 = /*#__PURE__*/_withScopeId(function () {
   return /*#__PURE__*/(0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("label", {
     "for": "photo-menedger"
   }, [/*#__PURE__*/(0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("div", {
@@ -26320,12 +26341,13 @@ var _hoisted_43 = /*#__PURE__*/_withScopeId(function () {
   );
 });
 
-var _hoisted_44 = ["src"];
-var _hoisted_45 = {
+var _hoisted_45 = ["src"];
+var _hoisted_46 = ["value"];
+var _hoisted_47 = {
   "class": "newreport-buttons"
 };
 
-var _hoisted_46 = /*#__PURE__*/_withScopeId(function () {
+var _hoisted_48 = /*#__PURE__*/_withScopeId(function () {
   return /*#__PURE__*/(0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("button", {
     "class": "newreport-buttons__newreports"
   }, " Сохранить ", -1
@@ -26333,7 +26355,7 @@ var _hoisted_46 = /*#__PURE__*/_withScopeId(function () {
   );
 });
 
-var _hoisted_47 = /*#__PURE__*/_withScopeId(function () {
+var _hoisted_49 = /*#__PURE__*/_withScopeId(function () {
   return /*#__PURE__*/(0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("div", {
     "class": "newreport-buttons__cancel"
   }, "Отменить", -1
@@ -26350,10 +26372,18 @@ function render(_ctx, _cache, $props, $setup, $data, $options) {
 
   var _directive_maska = (0,vue__WEBPACK_IMPORTED_MODULE_0__.resolveDirective)("maska");
 
-  return (0,vue__WEBPACK_IMPORTED_MODULE_0__.openBlock)(), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementBlock)("section", _hoisted_1, [(0,vue__WEBPACK_IMPORTED_MODULE_0__.createVNode)(_component_MenuReports), Object.values(this.report).length > 0 ? ((0,vue__WEBPACK_IMPORTED_MODULE_0__.openBlock)(), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementBlock)("div", _hoisted_2, [_hoisted_3, (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("form", _hoisted_4, [(0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("input", {
+  return (0,vue__WEBPACK_IMPORTED_MODULE_0__.openBlock)(), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementBlock)("section", _hoisted_1, [(0,vue__WEBPACK_IMPORTED_MODULE_0__.createVNode)(_component_MenuReports), Object.values(this.report).length > 0 ? ((0,vue__WEBPACK_IMPORTED_MODULE_0__.openBlock)(), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementBlock)("div", _hoisted_2, [(0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("h2", null, (0,vue__WEBPACK_IMPORTED_MODULE_0__.toDisplayString)(_ctx.report.title), 1
+  /* TEXT */
+  ), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("form", _hoisted_3, [(0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("input", {
     type: "hidden",
     name: "_token",
     value: _ctx.csrf
+  }, null, 8
+  /* PROPS */
+  , _hoisted_4), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("input", {
+    type: "hidden",
+    name: "id",
+    value: _ctx.curId
   }, null, 8
   /* PROPS */
   , _hoisted_5), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("div", _hoisted_6, [_hoisted_7, (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("input", {
@@ -26431,7 +26461,13 @@ function render(_ctx, _cache, $props, $setup, $data, $options) {
     src: _ctx.report.logo
   }, null, 8
   /* PROPS */
-  , _hoisted_27)])]), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("div", _hoisted_28, [_hoisted_29, (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("input", {
+  , _hoisted_27), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("input", {
+    type: "hidden",
+    name: "hideLogo",
+    value: _ctx.report.logo
+  }, null, 8
+  /* PROPS */
+  , _hoisted_28)])]), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("div", _hoisted_29, [_hoisted_30, (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("input", {
     "class": "newreport__input",
     type: "text",
     id: "name",
@@ -26440,7 +26476,7 @@ function render(_ctx, _cache, $props, $setup, $data, $options) {
     placeholder: "Имя Фамилия"
   }, null, 8
   /* PROPS */
-  , _hoisted_30)]), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("div", _hoisted_31, [_hoisted_32, (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("input", {
+  , _hoisted_31)]), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("div", _hoisted_32, [_hoisted_33, (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("input", {
     "class": "newreport__input",
     type: "text",
     name: "email",
@@ -26449,7 +26485,7 @@ function render(_ctx, _cache, $props, $setup, $data, $options) {
     placeholder: "seo@umax.agency"
   }, null, 8
   /* PROPS */
-  , _hoisted_33)]), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("div", _hoisted_34, [_hoisted_35, (0,vue__WEBPACK_IMPORTED_MODULE_0__.withDirectives)((0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("input", {
+  , _hoisted_34)]), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("div", _hoisted_35, [_hoisted_36, (0,vue__WEBPACK_IMPORTED_MODULE_0__.withDirectives)((0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("input", {
     "class": "newreport__input",
     type: "text",
     id: "phone",
@@ -26458,7 +26494,7 @@ function render(_ctx, _cache, $props, $setup, $data, $options) {
     placeholder: "+7 (928) 132-45-67"
   }, null, 8
   /* PROPS */
-  , _hoisted_36), [[_directive_maska, '+7 (###) ###-##-##']])]), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("div", _hoisted_37, [_hoisted_38, (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("input", {
+  , _hoisted_37), [[_directive_maska, '+7 (###) ###-##-##']])]), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("div", _hoisted_38, [_hoisted_39, (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("input", {
     "class": "newreport__input",
     type: "text",
     id: "slogan",
@@ -26467,7 +26503,7 @@ function render(_ctx, _cache, $props, $setup, $data, $options) {
     placeholder: "Текст"
   }, null, 8
   /* PROPS */
-  , _hoisted_39)]), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("div", _hoisted_40, [_hoisted_41, (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("div", _hoisted_42, [(0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("input", {
+  , _hoisted_40)]), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("div", _hoisted_41, [_hoisted_42, (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("div", _hoisted_43, [(0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("input", {
     type: "file",
     name: "photo",
     id: "photo-menedger",
@@ -26476,11 +26512,17 @@ function render(_ctx, _cache, $props, $setup, $data, $options) {
     })
   }, null, 32
   /* HYDRATE_EVENTS */
-  ), _hoisted_43, (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("img", {
+  ), _hoisted_44, (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("img", {
     src: _ctx.report.photo
   }, null, 8
   /* PROPS */
-  , _hoisted_44)])]), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("div", _hoisted_45, [_hoisted_46, (0,vue__WEBPACK_IMPORTED_MODULE_0__.createVNode)(_component_router_link, {
+  , _hoisted_45), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("input", {
+    type: "hidden",
+    name: "hidePhoto",
+    value: _ctx.report.photo
+  }, null, 8
+  /* PROPS */
+  , _hoisted_46)])]), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("div", _hoisted_47, [_hoisted_48, (0,vue__WEBPACK_IMPORTED_MODULE_0__.createVNode)(_component_router_link, {
     "class": "newreport-buttons__newreports",
     to: '/reports/' + this.id[this.id.length - 1]
   }, {
@@ -26492,7 +26534,7 @@ function render(_ctx, _cache, $props, $setup, $data, $options) {
 
   }, 8
   /* PROPS */
-  , ["to"]), _hoisted_47])])])) : ((0,vue__WEBPACK_IMPORTED_MODULE_0__.openBlock)(), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createBlock)(_component_ErrorPage, {
+  , ["to"]), _hoisted_49])])])) : ((0,vue__WEBPACK_IMPORTED_MODULE_0__.openBlock)(), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createBlock)(_component_ErrorPage, {
     key: 1
   }))]);
 }

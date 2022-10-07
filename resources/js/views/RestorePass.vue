@@ -41,6 +41,9 @@ export default {
     email: null,
     csrf: document.querySelector('meta[name="csrf-token"]').getAttribute('content'),
   }),
+  beforeMount() {
+    document.querySelector('title').textContent = 'Восстановиить пароль'
+  },
   methods: {
     checkMail() {
       axios.post('/api/emailExist', {

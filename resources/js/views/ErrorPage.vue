@@ -22,7 +22,7 @@
           </clipPath>
         </defs>
       </svg>
-      <span class="error__element error__text"> Страница не найдена </span>
+      <span class="error__element error__text"> Страница не найдена</span>
       <router-link class="error__element" :to="user ? '/listreports' : '/'">
         Вернуться на главный экран
       </router-link>
@@ -39,6 +39,9 @@ export default {
   components: {
     MenuReports,
   },
+  beforeMount() {
+    document.querySelector('title').textContent = 'Страница не найдена'
+  }
 };
 </script>
 

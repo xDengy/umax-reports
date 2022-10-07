@@ -157,6 +157,9 @@ export default {
     submitPass: null,
     csrf: document.querySelector('meta[name="csrf-token"]').getAttribute('content'),
   }),
+  beforeMount() {
+    document.querySelector('title').textContent = 'Регистрация'
+  },
   methods: {
     showPass() {
       let pass = document.querySelector(".input-group--password input").type;

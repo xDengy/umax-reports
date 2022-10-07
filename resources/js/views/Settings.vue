@@ -193,6 +193,7 @@ export default {
     axios.get('/api/getSettings/' + this.user).then(result => {
       this.settings = result.data;
     })
+    document.querySelector('title').textContent = 'Настройки'
   }
 };
 </script>

@@ -2,9 +2,10 @@
   <section class="page-glob" id="Newreport">
     <MenuReports />
     <div class="newreport wrap-glob" v-if="Object.values(this.report).length > 0">
-      <h2>Новый отчёт</h2>
+      <h2>{{report.title}}</h2>
       <form class="newreport-form" method="post" enctype="multipart/form-data" action="/report">
         <input type="hidden" name="_token" :value="csrf">
+        <input type="hidden" name="id" :value="curId">
         <div class="input-group newreport__field--heading">
           <label class="newreport__label" for="heading">Заголовок</label>
           <input
@@ -95,6 +96,7 @@
               <div class="input-file__text">Название изображения.jpg</div>
             </label>
             <img :src="report.logo">
+            <input type="hidden" name="hideLogo" :value="report.logo">
           </div>
         </div>
         <div class="input-group newreport__field--name">
@@ -165,6 +167,7 @@
               </div>
             </label>
             <img :src="report.photo">
+            <input type="hidden" name="hidePhoto" :value="report.photo">
           </div>
         </div>
         <div class="newreport-buttons">
@@ -194,6 +197,7 @@ export default {
     user: document.querySelector('meta[name="user"]').getAttribute('value'),
     csrf: document.querySelector('meta[name="csrf-token"]').getAttribute('content'),
     id: window.location.href.split('/'),
+    curId: null,
     inputcolors: [
       {
         id: "color1",
@@ -251,8 +255,11 @@ export default {
       id: id,
       user: this.user
     }).then(result => {
-      if(result.data)
+      if(result.data) {
         this.report = result.data;
+        this.curId = this.report.id
+        document.querySelector('title').textContent = this.report.title
+      }
     })
   }
 };

@@ -91,6 +91,37 @@ class IndexController extends Controller
         return redirect('/reports/' . $report->id);
     }
 
+    public function updateReport(Request $request)
+    {
+        $data = $request->all();
+
+        $data['user_id'] = auth()->user()->id;
+
+        if ($request->file('logo')) {
+            $fileName = time() . '_' . $request->file('logo')->getClientOriginalName();
+            $fileStore = $request->file('logo')
+                ->storeAs('uploads', $fileName, 'public');
+            $filePath = '/storage/' . $fileStore;
+            $data['logo'] = $filePath;
+        } else {
+            $data['logo'] = $data['hideLogo'];
+        }
+
+        if ($request->file('photo')) {
+            $fileName = time() . '_' . $request->file('photo')->getClientOriginalName();
+            $fileStore = $request->file('photo')
+                ->storeAs('uploads', $fileName, 'public');
+            $filePath = '/storage/' . $fileStore;
+            $data['photo'] = $filePath;
+        } else {
+            $data['photo'] = $data['hidePhoto'];
+        }
+
+        $report = Report::where('id', $data['id'])->first();
+        $report->update($data);
+        return redirect('/report/' . $report->id);
+    }
+
     public function settings(Request $request)
     {
         $data = $request->all();

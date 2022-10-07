@@ -97,6 +97,9 @@ export default {
   components: {
     MenuReports,
   },
+  beforeMount() {
+    document.querySelector('title').textContent = 'Смена пароля'
+  },
   methods: {
     checkPass() {
       if(this.password !== this.submitPass) {

@@ -104,6 +104,7 @@ export default {
       if(result.data)
         this.user = result.data;
     })
+    document.querySelector('title').textContent = 'Смена пароля'
   },
   methods: {
     checkPass() {

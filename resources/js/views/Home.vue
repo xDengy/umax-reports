@@ -76,6 +76,9 @@ export default {
     csrf: document.querySelector('meta[name="csrf-token"]').getAttribute('content'),
     password: null,
   }),
+  beforeMount() {
+    document.querySelector('title').textContent = 'Вход'
+  },
   methods: {
     showPass() {
       let pass = document.querySelector(".input-group--password input").type;
