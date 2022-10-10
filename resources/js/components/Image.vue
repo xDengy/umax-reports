@@ -1,9 +1,9 @@
 <template>
-  <div class="input-group">
+  <div class="input-group image">
     <label>Изображение</label>
     <div class="input__wrapper" :class="values ? 'loaded' : ''">
-      <input name="file" type="file" :id="'input__file-'+this.elementId" class="input input__file" @change="setImg($event.target)">
-      <label :for="'input__file-'+this.elementId" class="input__file-button">
+      <input name="file" type="file" :id="'input__file-'+screenId + '-' + elementNumber + '-' + elementId" class="input input__file" @change="setImg($event.target)">
+      <label :for="'input__file-'+screenId + '-' + elementNumber + '-' + elementId" class="input__file-button">
         <span class="input__file-icon-wrapper">
           <svg width="20" height="20" viewBox="0 0 23 23" fill="none" xmlns="http://www.w3.org/2000/svg">
             <path fill-rule="evenodd" clip-rule="evenodd"
@@ -37,7 +37,7 @@
 <script>
 export default {
   name: "Image",
-  props: ["values", 'elementId'],
+  props: ["values", 'elementId', 'screenId', 'elementNumber'],
   methods: {
     setImg(el) {
       var elem = el.parentNode;
@@ -67,6 +67,10 @@ export default {
 </script>
 
 <style>
+.input-group.image label {
+  display: flex;
+  align-items: center;
+}
 .input__wrapper {
   width: 100%;
   position: relative;
@@ -151,5 +155,10 @@ export default {
   right: 10px;
   z-index: 2;
   cursor: pointer;
+}
+
+.input-group.image .close {
+  margin-left: 10px;
+  height: 15px;
 }
 </style>

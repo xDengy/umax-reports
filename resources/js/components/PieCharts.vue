@@ -6,12 +6,12 @@
     <div class="table-label__size">
       <div class="table-label__size__columns">
         <label>сторки</label>
-        <input maxlength="3" type="text" :value="tr" @input="setValue('tr', $event.target.value)">
+        <input maxlength="3" type="text" :value="tr" id="tr" @input="setValue('tr', $event.target.value)">
       </div>
       <p>x</p>
       <div class="table-label__size__columns">
         <label>столбцы</label>
-        <input readonly type="text" value="4">
+        <input readonly type="text" value="4" id="td">
       </div>
     </div>
   </div>
@@ -27,7 +27,7 @@
 <script>
 export default {
   name: "PieCharts",
-  props: ["setTr", "setTd", "values", 'elementId'],
+  props: ["values"],
   data: () => ({
     tr: 3,
     td: 4,
@@ -50,19 +50,13 @@ export default {
   },
   methods: {
     close(){
-        document.getElementById("input-group__title").remove();
+      this.$emit("close", {});
     },
     setValue(name, value) {
         if(value && value !== '' && value > 0) {
             if(name == 'tr') {
               this[name] = parseInt(value)
               if(this.tables[parseInt(value) - 1]) {
-                // this.tables[parseInt(value) - 1] = [
-                //   this.tables[parseInt(value) - 1][0],
-                //   this.tables[parseInt(value) - 1][1],
-                //   this.tables[parseInt(value) - 1][2],
-                //   this.tables[parseInt(value) - 1][3]
-                // ]
               } else {
                 this.tables[parseInt(value) - 1] = [
                   null,
@@ -202,5 +196,13 @@ function array_values( input ) {
   font-size: 16px;
   line-height: 20px;
   width: 100%;
+}
+.table-label__size {
+  position: relative;
+}
+.table-label .close {
+  top: 12px;
+  right: -25px;
+  position: absolute;
 }
 </style>

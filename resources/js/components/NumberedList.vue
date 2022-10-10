@@ -31,6 +31,9 @@ export default {
       this.ul = this.values
   },
   methods: {
+    close(){
+      this.$emit("close", {});
+    },
     addLi() {
       this.ul.push('Значение ' + (parseInt(this.ul.length) + 1))
     }
@@ -50,11 +53,13 @@ export default {
     font-size: 16px;
     line-height: 20px;
     user-select: none;
+    display: flex;
   }
 
   &__ul {
     margin-left: 15px;
     margin-top: 10px;
+    position: relative;
 
     & li {
       list-style: auto;
@@ -81,5 +86,9 @@ export default {
       margin-right: 15px;
     }
   }
+}
+.numbered-list .close {
+  margin-left: 10px;
+  height: 15px;
 }
 </style>

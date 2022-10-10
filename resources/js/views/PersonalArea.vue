@@ -152,7 +152,6 @@ export default {
     changeUserAvatar() {
       document.querySelector(".input-file__text").textContent =
         document.querySelector(".input-file input").files[0].name;
-        console.log(document.querySelector(".input-file input").files[0]);
       this.userData.image = null
     },
     exit() {
@@ -284,5 +283,203 @@ export default {
 .input-file > img {
   max-width: 200px;
   margin-top: 20px;
+}
+
+
+.personalArea {
+  &-top {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+
+    &__button {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+
+      width: 200px;
+      padding: 13px 5px;
+      background-color: #ffffff;
+      border: 1px solid #030087;
+      border-radius: 5px;
+      cursor: pointer;
+
+      font-weight: 600;
+      font-size: 16px;
+      line-height: 20px;
+      color: #030087;
+      transition: ease-in-out 0.25s;
+
+      & svg {
+        margin-right: 15px;
+
+        & g {
+          & rect {
+            transition: ease-in-out 0.25s;
+          }
+        }
+      }
+
+      &:hover {
+        color: #ffffff;
+        background-color: #030087;
+
+        & svg {
+          margin-right: 15px;
+
+          & g {
+            & rect {
+              fill: #ffffff;
+            }
+          }
+        }
+      }
+    }
+  }
+
+  & .input-file {
+    margin-top: 10px;
+    margin-bottom: 0;
+
+    &__image {
+      width: 82px;
+    }
+  }
+
+  & .input-group {
+    margin-bottom: 20px;
+  }
+
+  &__field {
+
+    &--companyPhone,
+    &--phone {
+      & the-mask {
+        background-color: #ffffff;
+      }
+    }
+  }
+
+  &-buttons {
+    display: flex;
+
+    &__personalAreas {
+      width: 224px;
+      padding: 12px 0;
+      display: flex;
+      align-content: center;
+      justify-content: center;
+      color: #fff;
+      background-color: #030087;
+      border: 1.5px solid #030087;
+      border-radius: 7px;
+      transition: ease-in-out 0.25s;
+
+      margin-right: 30px;
+
+      & svg {
+        margin-right: 10px;
+
+        & path {
+          transition: ease-in-out 0.25s;
+        }
+      }
+
+      &:hover {
+        color: #030087;
+        background-color: #ffffff;
+
+        & svg {
+          & path {
+            fill: #030087;
+          }
+        }
+      }
+    }
+
+    &__cancel {
+      padding: 12px 40px;
+
+      text-align: center;
+      font-weight: 700;
+      font-size: 16px;
+      line-height: 20px;
+
+      color: #030087;
+
+      background-color: #ffffff;
+      border: 1px solid #030087;
+      border-radius: 5px;
+      transition: ease-in-out 0.25s;
+
+      &:hover {
+        background-color: #030087;
+        color: #ffffff;
+      }
+    }
+  }
+}
+
+@media (max-width: 630px) {
+
+  .personalArea-top__button {
+    max-width: 100px;
+  }
+
+  .personalArea-top__button span {
+    display: none;
+  }
+
+  .personalArea-top__button svg {
+    margin-right: 0;
+  }
+
+  .personalArea {
+    padding: 30px;
+  }
+}
+
+@media (max-width: 535px) {
+
+  .personalArea-top__button {
+    max-width: 90px;
+  }
+
+  .personalArea {
+    padding: 20px;
+  }
+
+  .personalArea-buttons {
+    display: flex;
+    flex-direction: column;
+  }
+
+  .personalArea-buttons__personalAreas {
+    margin-right: 0;
+    margin-bottom: 15px;
+    width: 100%;
+  }
+}
+
+@media (max-width: 450px) {
+  .personalArea-top h2 {
+    font-weight: 600;
+    font-size: 24px;
+    line-height: 31px;
+
+    margin-top: 10px;
+  }
+
+  @media (max-width: 350px) {
+    .personalArea-top h2 {
+      font-weight: 600;
+      font-size: 21px;
+      line-height: 31px;
+
+      margin-top: 10px;
+    }
+
+
+  }
 }
 </style>

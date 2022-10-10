@@ -82,7 +82,6 @@ export default {
   methods: {
     showPass() {
       let pass = document.querySelector(".input-group--password input").type;
-      // console.log(pass);
       if (pass === "password") {
         document.querySelector(".input-group--password input").type = "text";
         this.pass = true;
@@ -163,5 +162,63 @@ export default {
 }
 .error.active {
   display: block;
+}
+
+.autorization {
+  height: 100vh;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  overflow-y: auto;
+  padding: 30px 0;
+  &__notation {
+    & .autorization__link {
+      display: inline;
+    }
+  }
+  &__wrap {
+    max-width: 570px;
+    width: 100%;
+  }
+  &__logo {
+    max-width: 265px;
+    width: 100%;
+    height: 95px;
+    margin: 0 auto;
+  }
+  &__form {
+    margin-top: 50px;
+  }
+  &__links {
+    margin-top: 30px;
+    text-align: center;
+    font-size: 16px;
+    line-height: 20px;
+    font-weight: 700;
+  }
+  &__link {
+    display: block;
+    color: #030087;
+    transition: ease-in-out 0.25s;
+    margin-bottom: 10px;
+    &:last-of-type {
+      margin-bottom: 0;
+    }
+    &:hover {
+      color: #0400c5;
+    }
+  }
+}
+
+@media (max-width: 630px) {
+  .autorization__wrap {
+    padding: 30px;
+  }
+}
+
+@media (max-width: 380px) {
+  .autorization__wrap {
+    padding: 20px;
+  }
 }
 </style>

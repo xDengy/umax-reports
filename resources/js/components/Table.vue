@@ -1,5 +1,5 @@
 <template>
-  <div class="input-group" id="input-group__title">
+  <div class="input-group" id="input-group-table">
     <div class="table__settings">
       <span>Таблица</span>
       <div class="table-label__size__columns">
@@ -8,6 +8,7 @@
           maxlength="3"
           type="number"
           :value="tr"
+          id="tr"
           @input="setValue('tr', $event.target.value)"
         />
       </div>
@@ -18,6 +19,7 @@
           maxlength="3"
           type="number"
           :value="td"
+          id="td"
           @input="setValue('td', $event.target.value)"
         />
       </div>
@@ -36,7 +38,7 @@
         </tr>
       </thead>
       <tbody>
-        <tr v-for="index in (tr - 1)" :class="index % 2 !== 0 ? 'odd' : ''">
+        <tr v-for="index in tr - 1" :class="index % 2 !== 0 ? 'odd' : ''">
           <td v-for="i in td">
             <input
               class="table__element"
@@ -63,7 +65,7 @@ export default {
   }),
   methods: {
     close() {
-      document.getElementById("input-group__title").remove();
+      this.$emit("close", {});
     },
     setValue(name, value) {
       if (value && value !== "" && value > 0) {
@@ -74,9 +76,9 @@ export default {
             //     this.tables[parseInt(value) - 1].push(this.tables[parseInt(value) - 1][i])
             // }
           } else {
-            this.tables[parseInt(value) - 1] = []
-            for(let i = 0; i < this.td.length; i++) {
-                this.tables[parseInt(value) - 1].push(null)
+            this.tables[parseInt(value) - 1] = [];
+            for (let i = 0; i < this.td.length; i++) {
+              this.tables[parseInt(value) - 1].push(null);
             }
           }
         }
@@ -224,5 +226,10 @@ function array_values(input) {
       margin: 0;
     }
   }
+}
+
+#input-group-table.input-group .close {
+  top: 10px;
+  right: -10px;
 }
 </style>

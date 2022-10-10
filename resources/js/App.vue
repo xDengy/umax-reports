@@ -1,7 +1,17 @@
 <template>
   <router-view />
 </template>
-
+<script>
+  document.addEventListener("DOMContentLoaded", function () {
+    let a = document.querySelectorAll("a");
+    for (let i = 0; i < a.length; i++) {
+      const element = a[i];
+      element.addEventListener("click", function () {
+        document.body.style.overflow = "auto";
+      });
+    }
+  });
+</script>
 <style lang="scss">
 @font-face {
   font-family: "Mont";
@@ -102,7 +112,8 @@ li[role="list"],
 ol[role="list"] {
   list-style: none;
 }
-ul, ol {
+ul,
+ol {
   margin: 0;
   padding: 0;
 }
@@ -209,6 +220,7 @@ h2 {
     line-height: 20px;
     color: #000;
     font-weight: 700;
+    padding: 0 10px;
   }
   & input,
   the-mask {
@@ -281,7 +293,7 @@ h2 {
 }
 .wrap-glob {
   max-width: 1220px;
-  width: 100%;
+  width: calc(100% - 100px);
   padding: 50px;
   margin: 0 auto;
   box-sizing: content-box;
@@ -326,5 +338,71 @@ h2 {
 
 .input-file {
   width: fit-content;
+}
+
+.close {
+  cursor: pointer;
+}
+
+#report-error {
+  position: fixed;
+  bottom: 50px;
+  left: 325px;
+  padding: 20px;
+  background: #c00000;
+  border-radius: 10px;
+  color: #fff;
+  font-weight: 700;
+  opacity: 0;
+  z-index: -1;
+  transition: ease-in-out 0.25s;
+}
+
+#save {
+  position: fixed;
+  bottom: 50px;
+  left: 325px;
+  padding: 20px;
+  background: #1BC000;
+  border-radius: 10px;
+  color: #fff;
+  font-weight: 700;
+  opacity: 0;
+  z-index: -1;
+  transition: ease-in-out 0.25s;
+}
+
+#save.active, #report-error.active {
+  opacity: 1;
+  z-index: 1000;
+}
+
+@media (max-width: 1170px) {
+  .page-glob {
+    padding-left: 0;
+  }
+
+  #save {
+    left: 25px;
+  }
+
+  .wrap-glob {
+    padding-top: 100px;
+    width: 100%;
+  }
+}
+
+#graph .elements-wrap {
+  align-items: flex-start;
+}
+
+.numbered-list__button:hover {
+  background: #030087;
+  color: #fff;
+}
+
+.numbered-list__button:hover circle, .numbered-list__button:hover line {
+  stroke: #fff;
+  stroke-width: 4;
 }
 </style>

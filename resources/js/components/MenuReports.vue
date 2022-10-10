@@ -1,5 +1,46 @@
 <template>
+  <header>
+    <div class="burger" @click="burger">
+      <svg
+        width="27"
+        height="17"
+        viewBox="0 0 27 17"
+        fill="none"
+        xmlns="http://www.w3.org/2000/svg"
+      >
+        <rect width="27" height="3" rx="1.5" fill="#222222" />
+        <rect y="7" width="27" height="3" rx="1.5" fill="#222222" />
+        <rect y="14" width="27" height="3" rx="1.5" fill="#222222" />
+      </svg>
+    </div>
+    <img src="../assets/images/logotip.svg" alt="logo" />
+  </header>
   <aside class="menureports">
+    <div class="closeMenu" @click="burgerHide">
+      <svg
+        width="15"
+        height="15"
+        viewBox="0 0 15 15"
+        fill="none"
+        xmlns="http://www.w3.org/2000/svg"
+      >
+        <line
+          x1="1.06066"
+          y1="1"
+          x2="13"
+          y2="12.9393"
+          stroke="#222222"
+          stroke-width="1.5"
+          stroke-linecap="round"
+        />
+        <path
+          d="M1 13.293L13.2929 1.00008"
+          stroke="#222222"
+          stroke-width="1.5"
+          stroke-linecap="round"
+        />
+      </svg>
+    </div>
     <div class="menureports__logo">
       <img src="../assets/images/logotip.svg" alt="logo" />
     </div>
@@ -268,7 +309,6 @@ export default {
     },
     drag(res) {
       this.$.parent.data.current = this.currentAr;
-
       this.$.parent.type.methods.changeWrap(res.moved);
     },
     deleteItem(index) {
@@ -281,6 +321,14 @@ export default {
       axios.post("/exit").then((responce) => {
         window.location.href = window.location.origin;
       });
+    },
+    burger() {
+      document.querySelector("aside").classList.add("active");
+      document.body.style.overflow = 'hidden'
+    },
+    burgerHide() {
+      document.querySelector("aside").classList.remove("active");
+      document.body.style.overflow = 'auto'
     },
   },
   components: {
@@ -504,7 +552,6 @@ export default {
   padding: 5px 10px;
 }
 @media (max-width: 1170px) {
-  .menureports,
   .hide-menu {
     display: none;
   }
@@ -518,5 +565,286 @@ export default {
 
 .elements__text a {
   word-break: break-word;
+}
+.menureports {
+  position: fixed;
+  top: 0;
+  left: 0;
+  height: 100%;
+  width: 300px;
+  padding: 30px 30px 110px;
+  background: #ffffff;
+  transition: ease-in-out 0.25s;
+  z-index: 1;
+
+  &__logo {
+    width: 120px;
+  }
+
+  &-cont {
+    height: 100%;
+    margin-top: 30px;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+  }
+
+  &-buttons {
+    &__button {
+      display: flex;
+      align-items: center;
+      justify-content: flex-start;
+      margin-bottom: 10px;
+      padding: 13px 30px;
+      font-weight: 700;
+      font-size: 16px;
+      line-height: 20px;
+      color: #222222;
+      cursor: pointer;
+
+      transition: ease-in-out 0.25s;
+
+      &:hover {
+        opacity: 0.8;
+
+        & svg {
+          margin-right: 10px;
+          transition: ease-in-out 0.25s;
+
+          &:hover {
+            opacity: 0.8;
+          }
+        }
+      }
+
+      & svg {
+        margin-right: 10px;
+      }
+
+      &--newrep {
+        padding: 13px;
+        justify-content: center;
+        color: #030087;
+        border: 1.5px solid #030087;
+        border-radius: 7px;
+        transition: ease-in-out 0.25s;
+
+        & svg {
+          & path {
+            transition: ease-in-out 0.25s;
+          }
+        }
+
+        &:hover {
+          background-color: #030087;
+          color: #ffffff;
+
+          & svg {
+            & path {
+              fill: #fff;
+            }
+          }
+        }
+      }
+    }
+  }
+
+  &-user {
+    display: flex;
+    justify-content: flex-start;
+    align-items: center;
+    width: 100%;
+    margin-bottom: 30px;
+
+    &__ava {
+      height: 50px;
+      width: 50px;
+      border-radius: 50%;
+      margin-right: 10px;
+    }
+
+    &__name {
+      display: flex;
+      font-weight: 700;
+      font-size: 16px;
+      line-height: 20px;
+      // margin-bottom: 10px;
+      color: #222222;
+
+      & p {
+        margin-right: 5px;
+      }
+    }
+
+    &__author {
+      font-weight: 600;
+      font-size: 14px;
+      line-height: 18px;
+      color: #222222;
+    }
+  }
+
+  &-exit {
+    font-weight: 700;
+    font-size: 16px;
+    line-height: 20px;
+
+    color: #030087;
+    display: flex;
+    align-items: center;
+
+    cursor: pointer;
+
+    transition: cubic-bezier(0.075, 0.82, 0.165, 1) 0.25s;
+
+    &:hover {
+      opacity: 0.8;
+
+      & svg {
+        margin-right: 10px;
+        transition: cubic-bezier(0.075, 0.82, 0.165, 1) 0.25s;
+
+        &:hover {
+          opacity: 0.8;
+        }
+      }
+    }
+
+    & svg {
+      margin-right: 13px;
+    }
+  }
+}
+
+.menureports.hidden {
+  left: -100%;
+}
+
+.hide-menu {
+  position: absolute;
+  right: -15px;
+  top: calc(50% - 31.5px);
+  cursor: pointer;
+  padding: 20px 10px;
+  background: #fff;
+  border-radius: 10px;
+  border: 1px solid #000;
+}
+
+.menureports.hidden .hide-menu {
+  transform: rotate(180deg);
+}
+
+.hide-menu.fixed {
+  position: fixed;
+  left: -7.5px;
+  z-index: 0;
+  width: fit-content;
+  transform: rotate(180deg);
+}
+
+.menureports-buttons__button--list {
+  flex-direction: column;
+  max-height: calc(39px * 7);
+  overflow: auto;
+}
+
+.menureports-buttons__button--list .menureports-buttons__elements {
+  width: 100%;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  font-weight: 600;
+  font-size: 14px;
+  line-height: 18px;
+  margin-bottom: 20px;
+}
+
+.menureports-buttons__button--list
+  .menureports-buttons__elements
+  .elements__text {
+  display: flex;
+  align-items: center;
+  width: fit-content;
+}
+
+.menureports-buttons__button--list .menureports-buttons__elements:last-of-type {
+  margin-bottom: 0;
+}
+
+.elements__text a {
+  color: inherit;
+  text-decoration: none;
+  user-select: none;
+}
+
+.elements__text input {
+  display: none;
+}
+
+.elements__text.active input {
+  display: block;
+  width: 75%;
+}
+
+.elements__text.active a {
+  display: none;
+}
+
+.menureports-buttons__elements svg {
+  min-width: 14px;
+  min-height: 16px;
+}
+
+.elements__text input {
+  background: transparent;
+  outline: none;
+  border: 1px solid rgba(3, 0, 135, 0.3);
+  border-radius: 5px;
+  padding: 5px 10px;
+}
+
+header,
+.closeMenu {
+  display: none;
+}
+
+@media (max-width: 1170px) {
+  .hide-menu {
+    display: none;
+  }
+
+  header {
+    position: absolute;
+    display: flex;
+    align-items: center;
+    padding: 20px;
+    width: 100%;
+    z-index: 10000;
+  }
+
+  header .burger {
+    margin-right: 50px;
+  }
+
+  header img {
+    width: 150px;
+  }
+
+  .menureports {
+    top: -100%;
+    width: 100%;
+    z-index: 100000;
+  }
+
+  .closeMenu {
+    position: absolute;
+    right: 30px;
+    display: block;
+  }
+
+  .menureports.active {
+    top: 0;
+  }
 }
 </style>

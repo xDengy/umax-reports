@@ -62,11 +62,11 @@ export default {
       "Доля визитов, когда состоялся лишь один просмотр страницы, продолжавшийся менее 15 секунд",
       "Средняя продолжительность визита в минутах и секундах",
     ],
-    tables: []
+    tables: [],
   }),
   methods: {
     close() {
-      document.getElementById("input-group__title").remove();
+      this.$emit("close", {});
     },
   },
   beforeMount() {
@@ -158,6 +158,7 @@ export default {
 .input-group .trHead {
   border: 1px solid #e9e9e9;
   border-radius: 10px;
+  position: relative;
 }
 .input-group tr {
   padding: 15px;

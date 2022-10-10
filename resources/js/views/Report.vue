@@ -68,8 +68,8 @@
                 type="radio"
                 :id="inputcolor.id"
                 name="color"
-                :value="inputcolor.color"
-                :checked="report.color == inputcolor.color ?? false"
+                :value="inputcolor.value"
+                :checked="report.color == inputcolor.value ?? false"
               />
               <label
                 :for="inputcolor.id"
@@ -202,38 +202,42 @@ export default {
       {
         id: "color1",
         color: "#37BEFF",
+        value: 'lightBlue'
       },
       {
         id: "color2",
         color: "#3757FF",
+        value: 'blue'
       },
       {
         id: "color3",
         color: "#37FFFF",
+        value: 'cyan'
       },
       {
         id: "color4",
         color: "#8F37FF",
+        value: 'purple'
       },
       {
         id: "color5",
         color: "#FF37A3",
+        value: 'pink'
       },
       {
         id: "color6",
         color: "#FFD337",
+        value: 'orange'
       },
       {
         id: "color7",
         color: "#FF3737",
-      },
-      {
-        id: "color8",
-        color: "#CBFF37",
+        value: 'red'
       },
       {
         id: "color9",
         color: "#6BFF37",
+        value: 'green'
       },
     ],
     report: [],
@@ -400,5 +404,166 @@ export default {
 .input-file > img {
   max-width: 200px;
   margin-top: 20px;
+}
+
+
+.newreport {
+  & .input-file {
+    margin-top: 10px;
+    margin-bottom: 0;
+  }
+  & .input-group {
+    margin-bottom: 20px;
+    &-wrap {
+      display: flex;
+      align-items: center;
+      &--dates {
+        & div {
+          height: 2px;
+          width: 15px;
+          margin: 0 10px;
+          background: #000;
+        }
+      }
+      &--color {
+        margin-top: 10px;
+      }
+    }
+  }
+  &__input {
+    &--color {
+      & input {
+        display: none;
+
+        &:checked + label::before {
+          opacity: 1;
+          visibility: visible;
+        }
+      }
+      & label {
+        align-items: center;
+        width: 56px;
+        height: 56px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        border-radius: 50%;
+        border: 1px solid rgba(3, 0, 135, 0.3);
+        margin-right: 10px;
+        position: relative;
+        cursor: pointer;
+
+        &::before {
+          width: 46px;
+          height: 46px;
+          position: absolute;
+          top: 0px;
+          bottom: 0;
+          left: 0;
+          right: 0;
+          margin: auto;
+          border-radius: 3px;
+          z-index: 2;
+          content: url(../assets/images/check-icon.svg);
+          opacity: 0;
+          visibility: hidden;
+          transition: ease-in-out 0.25s;
+        }
+      }
+    }
+  }
+  &__field {
+    &--dates {
+      & input {
+        max-width: 195px;
+      }
+    }
+    &--phone {
+      & the-mask {
+        background-color: #ffffff;
+      }
+    }
+  }
+  &-buttons {
+    display: flex;
+    &__newreports {
+      width: 224px;
+      padding: 12px 0;
+      display: flex;
+      align-content: center;
+      justify-content: center;
+      color: #fff;
+      background-color: #030087;
+      border: 1.5px solid #030087;
+      border-radius: 7px;
+      transition: ease-in-out 0.25s;
+
+      margin-right: 30px;
+      & svg {
+        margin-right: 10px;
+
+        & path {
+          transition: ease-in-out 0.25s;
+        }
+      }
+      &:hover {
+        color: #030087;
+        background-color: #ffffff;
+        & svg {
+          & path {
+            fill: #030087;
+          }
+        }
+      }
+    }
+    &__cancel {
+      width: 157px;
+      padding: 12px 0;
+
+      text-align: center;
+      font-weight: 700;
+      font-size: 16px;
+      line-height: 20px;
+
+      color: #030087;
+
+      background-color: #ffffff;
+      border: 1px solid #030087;
+      border-radius: 5px;
+      transition: ease-in-out 0.25s;
+      &:hover {
+        background-color: #030087;
+        color: #ffffff;
+      }
+    }
+  }
+}
+
+@media(max-width: 700px) {
+ .newreport {
+  padding: 100px 30px 30px 30px;
+ }
+}
+
+@media(max-width: 650px) {
+ .input-group-wrap--color {
+  display: flex;
+  flex-wrap: wrap;
+ }
+
+ .newreport-buttons {
+  display: flex;
+  flex-direction: column;
+ }
+ 
+ .newreport-buttons__newreports {
+  margin-right: 0;
+  width: 100%;
+  margin-bottom: 10px;
+ }
+
+ .newreport-buttons__cancel {
+  width: 100%;
+ }
 }
 </style>

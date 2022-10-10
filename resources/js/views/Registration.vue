@@ -163,7 +163,6 @@ export default {
   methods: {
     showPass() {
       let pass = document.querySelector(".input-group--password input").type;
-      // console.log(pass);
       if (pass === "password") {
         document.querySelector(".input-group--password input").type = "text";
         this.pass = true;
@@ -177,7 +176,6 @@ export default {
       let pass = document.querySelector(
         ".input-group--confirm-pass input"
       ).type;
-      // console.log(pass);
       if (pass === "password") {
         document.querySelector(".input-group--confirm-pass input").type =
           "text";

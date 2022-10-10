@@ -20186,6 +20186,25 @@ module.exports = {
 
 /***/ }),
 
+/***/ "./node_modules/babel-loader/lib/index.js??clonedRuleSet-5.use[0]!./node_modules/vue-loader/dist/index.js??ruleSet[0].use[0]!./resources/js/App.vue?vue&type=script&lang=js":
+/*!**********************************************************************************************************************************************************************************!*\
+  !*** ./node_modules/babel-loader/lib/index.js??clonedRuleSet-5.use[0]!./node_modules/vue-loader/dist/index.js??ruleSet[0].use[0]!./resources/js/App.vue?vue&type=script&lang=js ***!
+  \**********************************************************************************************************************************************************************************/
+/***/ (function() {
+
+document.addEventListener("DOMContentLoaded", function () {
+  var a = document.querySelectorAll("a");
+
+  for (var i = 0; i < a.length; i++) {
+    var element = a[i];
+    element.addEventListener("click", function () {
+      document.body.style.overflow = "auto";
+    });
+  }
+});
+
+/***/ }),
+
 /***/ "./node_modules/babel-loader/lib/index.js??clonedRuleSet-5.use[0]!./node_modules/vue-loader/dist/index.js??ruleSet[0].use[0]!./resources/js/components/BulletList.vue?vue&type=script&lang=js":
 /*!****************************************************************************************************************************************************************************************************!*\
   !*** ./node_modules/babel-loader/lib/index.js??clonedRuleSet-5.use[0]!./node_modules/vue-loader/dist/index.js??ruleSet[0].use[0]!./resources/js/components/BulletList.vue?vue&type=script&lang=js ***!
@@ -20206,6 +20225,9 @@ __webpack_require__.r(__webpack_exports__);
     if (this.values) this.ul = this.values;
   },
   methods: {
+    close: function close() {
+      this.$emit("close", {});
+    },
     addLi: function addLi() {
       this.ul.push('Значение ' + (parseInt(this.ul.length) + 1));
     }
@@ -20223,7 +20245,21 @@ __webpack_require__.r(__webpack_exports__);
 "use strict";
 __webpack_require__.r(__webpack_exports__);
 /* harmony default export */ __webpack_exports__["default"] = ({
-  props: ["values", 'elementId']
+  name: "Button",
+  props: ["values"],
+  methods: {
+    input: function input(value, type) {
+      var btn = this.$el.parentElement.querySelector('.elements-buttons__button');
+
+      if (type == 'title') {
+        this.values[0] = value;
+      } else if (type == 'link') {
+        this.values[1] = value;
+      } else {
+        btn.style[type] = value;
+      }
+    }
+  }
 });
 
 /***/ }),
@@ -20260,7 +20296,7 @@ __webpack_require__.r(__webpack_exports__);
 
 /* harmony default export */ __webpack_exports__["default"] = ({
   name: "Elements",
-  props: ["type", "count", 'element', 'elementId'],
+  props: ["type", "count", "element", "elementId", "screenId", "elementNumber"],
   data: function data() {
     return {
       isOpenTitle: false,
@@ -20285,20 +20321,21 @@ __webpack_require__.r(__webpack_exports__);
       tr: 0,
       td: 0,
       tagname: {
-        isOpenTitle: 'h1',
-        isOpenSubTitle: 'h3',
-        isOpenTextArea: 'text',
-        isOpenImage: 'img',
-        isOpenPieCharts: 'graph',
-        isOpenTable: 'table',
-        isOpenListUl: 'listMarc',
-        isOpenListOl: 'listNumeric',
-        isOpenListImage: 'listIcon',
-        isOpenButton: 'btn',
-        isOpenTableGraph: 'tableGraph'
+        isOpenTitle: "h1",
+        isOpenSubTitle: "h3",
+        isOpenTextArea: "text",
+        isOpenImage: "img",
+        isOpenPieCharts: "graph",
+        isOpenTable: "table",
+        isOpenListUl: "listMarc",
+        isOpenListOl: "listNumeric",
+        isOpenListImage: "listIcon",
+        isOpenButton: "btn",
+        isOpenTableGraph: "tableGraph"
       },
       curElement: null,
-      activeType: ''
+      activeType: "",
+      clickChecker: 0
     };
   },
   beforeMount: function beforeMount() {
@@ -20314,7 +20351,28 @@ __webpack_require__.r(__webpack_exports__);
   },
   methods: {
     elementDel: function elementDel() {
-      this.$emit("elementClose", {});
+      this.clickChecker++;
+      this.curElement.value = [];
+
+      if (this.clickChecker == 1) {
+        this.elementClose();
+      } else if (this.clickChecker == 2) {
+        this.$emit("elementClose", {
+          element: this.$el
+        });
+        this.clickChecker = 0;
+      }
+    },
+    elementClose: function elementClose() {
+      delete this.curElement;
+      var elAr = ["isOpenTitle", "isOpenSubTitle", "isOpenTextArea", "isOpenImage", "isOpenPieCharts", "isOpenTable", "isOpenListUl", "isOpenListOl", "isOpenListImage", "isOpenButton", "isOpenTableGraph", "isActiveList", "isActiveTable", "isActivePersTable", "isActiveButton", "isActive", "isActiveImage", "isActiveGraph"];
+
+      for (var i = 0; i < elAr.length; i++) {
+        this[elAr[i]] = false;
+      }
+
+      this.activeType = false;
+      this.global = true;
     },
     hoverTable: function hoverTable(el) {
       if (!this.isOpenTable) {
@@ -20366,6 +20424,7 @@ __webpack_require__.r(__webpack_exports__);
       }
     },
     hide: function hide(el) {
+      this.clickChecker = 0;
       this[el] = true;
       this.global = false;
       this.activeType = this.tagname[el];
@@ -20398,7 +20457,7 @@ __webpack_require__.r(__webpack_exports__);
 __webpack_require__.r(__webpack_exports__);
 /* harmony default export */ __webpack_exports__["default"] = ({
   name: "Image",
-  props: ["values", 'elementId'],
+  props: ["values", 'elementId', 'screenId', 'elementNumber'],
   methods: {
     setImg: function setImg(el) {
       var elem = el.parentNode;
@@ -20451,6 +20510,9 @@ __webpack_require__.r(__webpack_exports__);
     if (this.values) this.ul = this.values;
   },
   methods: {
+    close: function close() {
+      this.$emit("close", {});
+    },
     addLi: function addLi() {
       this.ul.push('Значение ' + (parseInt(this.ul.length) + 1));
     }
@@ -20517,6 +20579,14 @@ __webpack_require__.r(__webpack_exports__);
       axios.post("/exit").then(function (responce) {
         window.location.href = window.location.origin;
       });
+    },
+    burger: function burger() {
+      document.querySelector("aside").classList.add("active");
+      document.body.style.overflow = 'hidden';
+    },
+    burgerHide: function burgerHide() {
+      document.querySelector("aside").classList.remove("active");
+      document.body.style.overflow = 'auto';
     }
   },
   components: {
@@ -20546,6 +20616,9 @@ __webpack_require__.r(__webpack_exports__);
     if (this.values) this.ul = this.values;
   },
   methods: {
+    close: function close() {
+      this.$emit("close", {});
+    },
     addLi: function addLi() {
       this.ul.push('Значение ' + (parseInt(this.ul.length) + 1));
     }
@@ -20576,7 +20649,7 @@ function _arrayWithHoles(arr) { if (Array.isArray(arr)) return arr; }
 
 /* harmony default export */ __webpack_exports__["default"] = ({
   name: "PieCharts",
-  props: ["setTr", "setTd", "values", 'elementId'],
+  props: ["values"],
   data: function data() {
     return {
       tr: 3,
@@ -20600,20 +20673,14 @@ function _arrayWithHoles(arr) { if (Array.isArray(arr)) return arr; }
   },
   methods: {
     close: function close() {
-      document.getElementById("input-group__title").remove();
+      this.$emit("close", {});
     },
     setValue: function setValue(name, value) {
       if (value && value !== '' && value > 0) {
         if (name == 'tr') {
           this[name] = parseInt(value);
 
-          if (this.tables[parseInt(value) - 1]) {// this.tables[parseInt(value) - 1] = [
-            //   this.tables[parseInt(value) - 1][0],
-            //   this.tables[parseInt(value) - 1][1],
-            //   this.tables[parseInt(value) - 1][2],
-            //   this.tables[parseInt(value) - 1][3]
-            // ]
-          } else {
+          if (this.tables[parseInt(value) - 1]) {} else {
             this.tables[parseInt(value) - 1] = [null, null, null, null];
           }
         }
@@ -20661,6 +20728,8 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _Title_vue__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./Title.vue */ "./resources/js/components/Title.vue");
 /* harmony import */ var _SubTitle_vue__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ./SubTitle.vue */ "./resources/js/components/SubTitle.vue");
 /* harmony import */ var _TextArea_vue__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ./TextArea.vue */ "./resources/js/components/TextArea.vue");
+function _typeof(obj) { "@babel/helpers - typeof"; return _typeof = "function" == typeof Symbol && "symbol" == typeof Symbol.iterator ? function (obj) { return typeof obj; } : function (obj) { return obj && "function" == typeof Symbol && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; }, _typeof(obj); }
+
 
 
 
@@ -20673,7 +20742,7 @@ __webpack_require__.r(__webpack_exports__);
     SubTitle: _SubTitle_vue__WEBPACK_IMPORTED_MODULE_2__["default"],
     TextArea: _TextArea_vue__WEBPACK_IMPORTED_MODULE_3__["default"]
   },
-  props: ["types", "screenNumber", 'screens', 'title', 'screenItem'],
+  props: ["types", "screenNumber", "screens", "title", "screenItem"],
   data: function data() {
     return {
       current: 4,
@@ -20686,6 +20755,11 @@ __webpack_require__.r(__webpack_exports__);
   beforeMount: function beforeMount() {
     this.curScreenItem = this.screenItem;
   },
+  mounted: function mounted() {
+    for (var i in this.curScreenItem[0]) {
+      if (_typeof(this.curScreenItem[0][i]) !== 'object') this.$el.querySelector('#item-' + i).remove();
+    }
+  },
   methods: {
     setTitle: function setTitle(id, title) {
       this.curScreenItem[0].title = title;
@@ -20696,37 +20770,37 @@ __webpack_require__.r(__webpack_exports__);
     },
     setImg: function setImg(el) {
       var elem = el.parentNode;
-      elem.classList.remove('loaded');
+      elem.classList.remove("loaded");
 
       if (el.files && el.files[0]) {
         var reader = new FileReader();
 
         reader.onload = function (e) {
-          var img = elem.querySelector('img');
+          var img = elem.querySelector("img");
           img.src = e.target.result;
-          img.parentNode.classList.add('active');
-          elem.classList.add('loaded');
+          img.parentNode.classList.add("active");
+          elem.classList.add("loaded");
         };
 
         reader.readAsDataURL(el.files[0]);
       }
     },
     delImg: function delImg(el) {
-      var parent = el.closest('.image__wrapper');
-      var image = el.closest('.img__wrapper');
-      var elem = parent.querySelector('input');
+      var parent = el.closest(".image__wrapper");
+      var image = el.closest(".img__wrapper");
+      var elem = parent.querySelector("input");
       elem.value = null;
-      image.querySelector('img').src = null;
-      image.classList.remove('active');
-      parent.classList.remove('loaded');
+      image.querySelector("img").src = null;
+      image.classList.remove("active");
+      parent.classList.remove("loaded");
     },
     screenDown: function screenDown(el) {
       var curIndex = this.getIndex(el);
 
       if (curIndex < this.screens - 1) {
         this.$emit("screenDown", {
-          newIndex: curIndex,
-          oldIndex: curIndex + 1
+          oldIndex: curIndex,
+          newIndex: curIndex + 1
         });
       }
 
@@ -20745,7 +20819,7 @@ __webpack_require__.r(__webpack_exports__);
       this.$emit("screenUp", false);
     },
     getIndex: function getIndex(el) {
-      var screens = document.querySelectorAll('.screen');
+      var screens = document.querySelectorAll(".screen");
       var curIndex;
 
       for (var i = 0; i < screens.length; i++) {
@@ -20754,15 +20828,29 @@ __webpack_require__.r(__webpack_exports__);
 
       return curIndex;
     },
-    elementDelete: function elementDelete(parent, curElement) {
-      this.curScreenItem[0][Object.values(this.curScreenItem[0]).length - 2].elements.splice(curElement, 1);
+    elementDelete: function elementDelete(curElement) {
+      var items = curElement.element.parentNode.querySelectorAll(".elements-item");
+
+      for (var i = 0; i < items.length; i++) {
+        var count;
+        var countClass;
+
+        for (var j = 0; j < items[i].classList.length; j++) {
+          if (items[i].classList[j].includes("count")) count = items[i].classList[j].split("count-")[1];
+          countClass = items[i].classList[j];
+        }
+
+        items[i].classList.remove(countClass);
+        items[i].classList.add("count-" + (count - 1));
+      }
+
+      curElement.element.remove();
     },
     screenDel: function screenDel() {
       this.$emit("screenClose", {});
     },
     editTitle: function editTitle(id) {
-      console.log(id);
-      document.querySelector('#screenElement-' + (id - 1) + ' .screen__top-title').classList.toggle('active');
+      document.querySelector("#screenElement-" + (id - 1) + " .screen__top-title").classList.toggle("active");
     },
     testcur: function testcur(e) {
       if (e.id !== "") {
@@ -20778,13 +20866,13 @@ __webpack_require__.r(__webpack_exports__);
       }
 
       this.elements[this.current - 1] = [];
-      this.curScreenItem[0][Object.values(this.curScreenItem[0]).length - 1] = {
+      this.curScreenItem[0][Object.values(this.curScreenItem[0]).length - 2] = {
         count: this.current,
         elements: []
       };
 
       for (var i = 0; i < arr.length; i++) {
-        this.curScreenItem[0][Object.values(this.curScreenItem[0]).length - 2].elements.push(this.elements[this.current - 1]);
+        this.curScreenItem[0][Object.values(this.curScreenItem[0]).length - 3].elements.push(this.elements[this.current - 1]);
       }
     }
   }
@@ -20802,13 +20890,13 @@ __webpack_require__.r(__webpack_exports__);
 __webpack_require__.r(__webpack_exports__);
 /* harmony default export */ __webpack_exports__["default"] = ({
   name: "SubTitle",
-  props: ["values", 'elementId'],
+  props: ["values", "elementId"],
   data: function data() {
     return {};
   },
   methods: {
     close: function close() {
-      document.getElementById("input-group-subTitle").remove();
+      this.$emit("close", {});
     }
   }
 });
@@ -20847,7 +20935,7 @@ function _arrayWithHoles(arr) { if (Array.isArray(arr)) return arr; }
   },
   methods: {
     close: function close() {
-      document.getElementById("input-group__title").remove();
+      this.$emit("close", {});
     },
     setValue: function setValue(name, value) {
       if (value && value !== "" && value > 0) {
@@ -20933,7 +21021,7 @@ __webpack_require__.r(__webpack_exports__);
   },
   methods: {
     close: function close() {
-      document.getElementById("input-group__title").remove();
+      this.$emit("close", {});
     }
   },
   beforeMount: function beforeMount() {
@@ -20961,7 +21049,7 @@ __webpack_require__.r(__webpack_exports__);
   },
   methods: {
     close: function close() {
-      document.getElementById("input-group__textArea").remove();
+      this.$emit("close", {});
     }
   }
 });
@@ -20984,7 +21072,7 @@ __webpack_require__.r(__webpack_exports__);
   },
   methods: {
     close: function close() {
-      document.getElementById("input-group__title").remove();
+      this.$emit("close", {});
     }
   }
 });
@@ -21046,7 +21134,7 @@ __webpack_require__.r(__webpack_exports__);
   },
   methods: {
     showPass: function showPass() {
-      var pass = document.querySelector(".input-group--password input").type; // console.log(pass);
+      var pass = document.querySelector(".input-group--password input").type;
 
       if (pass === "password") {
         document.querySelector(".input-group--password input").type = "text";
@@ -21252,39 +21340,42 @@ __webpack_require__.r(__webpack_exports__);
       settings: [],
       inputcolors: [{
         id: "color1",
-        color: "#37BEFF"
+        color: "#37BEFF",
+        value: 'lightBlue'
       }, {
         id: "color2",
-        color: "#3757FF"
+        color: "#3757FF",
+        value: 'blue'
       }, {
         id: "color3",
-        color: "#37FFFF"
+        color: "#37FFFF",
+        value: 'cyan'
       }, {
         id: "color4",
-        color: "#8F37FF"
+        color: "#8F37FF",
+        value: 'purple'
       }, {
         id: "color5",
-        color: "#FF37A3"
+        color: "#FF37A3",
+        value: 'pink'
       }, {
         id: "color6",
-        color: "#FFD337"
+        color: "#FFD337",
+        value: 'orange'
       }, {
         id: "color7",
-        color: "#FF3737"
-      }, {
-        id: "color8",
-        color: "#CBFF37"
+        color: "#FF3737",
+        value: 'red'
       }, {
         id: "color9",
-        color: "#6BFF37"
+        color: "#6BFF37",
+        value: 'green'
       }]
     };
   },
   methods: {
     changeUserAvatar: function changeUserAvatar() {
-      document.querySelector(".input-file__text").textContent = document.querySelector(".input-file input").files[0].name; // document.querySelector(".input-file__images").textContent =
-      // document.querySelector(".input-file input").files[0].value.getAsDataURL();
-      // console.log(document.querySelector(".input-file input").value);
+      document.querySelector(".input-file__text").textContent = document.querySelector(".input-file input").files[0].name;
     },
     changeUserAvatar2: function changeUserAvatar2() {
       document.querySelector(".input-file__text2").textContent = document.querySelector(".input-file2 input").files[0].name;
@@ -21392,7 +21483,6 @@ __webpack_require__.r(__webpack_exports__);
   methods: {
     changeUserAvatar: function changeUserAvatar() {
       document.querySelector(".input-file__text").textContent = document.querySelector(".input-file input").files[0].name;
-      console.log(document.querySelector(".input-file input").files[0]);
       this.userData.image = null;
     },
     exit: function exit() {
@@ -21434,7 +21524,7 @@ __webpack_require__.r(__webpack_exports__);
   },
   methods: {
     showPass: function showPass() {
-      var pass = document.querySelector(".input-group--password input").type; // console.log(pass);
+      var pass = document.querySelector(".input-group--password input").type;
 
       if (pass === "password") {
         document.querySelector(".input-group--password input").type = "text";
@@ -21445,7 +21535,7 @@ __webpack_require__.r(__webpack_exports__);
       }
     },
     showConfirmPass: function showConfirmPass() {
-      var pass = document.querySelector(".input-group--confirm-pass input").type; // console.log(pass);
+      var pass = document.querySelector(".input-group--confirm-pass input").type;
 
       if (pass === "password") {
         document.querySelector(".input-group--confirm-pass input").type = "text";
@@ -21516,31 +21606,36 @@ __webpack_require__.r(__webpack_exports__);
       curId: null,
       inputcolors: [{
         id: "color1",
-        color: "#37BEFF"
+        color: "#37BEFF",
+        value: 'lightBlue'
       }, {
         id: "color2",
-        color: "#3757FF"
+        color: "#3757FF",
+        value: 'blue'
       }, {
         id: "color3",
-        color: "#37FFFF"
+        color: "#37FFFF",
+        value: 'cyan'
       }, {
         id: "color4",
-        color: "#8F37FF"
+        color: "#8F37FF",
+        value: 'purple'
       }, {
         id: "color5",
-        color: "#FF37A3"
+        color: "#FF37A3",
+        value: 'pink'
       }, {
         id: "color6",
-        color: "#FFD337"
+        color: "#FFD337",
+        value: 'orange'
       }, {
         id: "color7",
-        color: "#FF3737"
-      }, {
-        id: "color8",
-        color: "#CBFF37"
+        color: "#FF3737",
+        value: 'red'
       }, {
         id: "color9",
-        color: "#6BFF37"
+        color: "#6BFF37",
+        value: 'green'
       }],
       report: []
     };
@@ -21639,7 +21734,6 @@ __webpack_require__.r(__webpack_exports__);
       this.current[el.id].title = el.title;
     },
     addSreen: function addSreen() {
-      console.log(this.current);
       this.current.push([{
         id: this.current.length,
         title: this.current.length + 1 + " экран"
@@ -21650,22 +21744,19 @@ __webpack_require__.r(__webpack_exports__);
       if (res) {
         this.current = this.array_move(this.current, res.newIndex, res.oldIndex);
         this.$refs.menuList.updateAr(this.current);
-        this.changeWrap(res);
+        this.changeWrap(res, 'screenDown');
       }
     },
     screenUp: function screenUp(res) {
       if (res) {
         this.current = this.array_move(this.current, res.newIndex, res.oldIndex);
         this.$refs.menuList.updateAr(this.current);
-        this.changeWrap(res);
+        this.changeWrap(res, 'screenUp');
       }
     },
-    changeWrap: function changeWrap(res) {
-      var screens = document.querySelectorAll(".screen .screen__wrap");
-      var curScreen = screens[res.newIndex].innerHTML;
-      var subScreen = screens[res.oldIndex].innerHTML;
-      screens[res.oldIndex].innerHTML = curScreen;
-      screens[res.newIndex].innerHTML = subScreen;
+    changeWrap: function changeWrap(res, method) {
+      var screens = document.querySelectorAll(".screen");
+      screens[res.newIndex].parentNode.insertBefore(screens[res.newIndex], screens[res.oldIndex]);
     },
     array_move: function array_move(arr, old_index, new_index) {
       while (old_index < 0) {
@@ -21706,10 +21797,24 @@ __webpack_require__.r(__webpack_exports__);
         headers: {
           "Content-Type": "multipart/form-data"
         }
+      }).then(function (res) {
+        var save = document.querySelector('#save');
+        save.classList.add('active');
+        setTimeout(function () {
+          save.classList.remove('active');
+        }, 1000);
+      })["catch"](function (res) {
+        var error = document.querySelector('#report-error');
+        error.classList.add('active');
+        setTimeout(function () {
+          error.classList.remove('active');
+        }, 1000);
       });
     },
     generateReport: function generateReport() {
-      var arr = this.generateArray(); // html2Pdf(res)
+      var arr = this.generateArray();
+      var id = this.id[this.id.length - 1];
+      axios.get("/api/getPdf/" + id); // html2Pdf(res)
     },
     generateArray: function generateArray() {
       var screens = document.querySelectorAll(".screen");
@@ -21727,9 +21832,19 @@ __webpack_require__.r(__webpack_exports__);
             continue;
           }
 
+          var screenImg = elementRow[j].parentNode.querySelector(".image__wrapper");
+          var imgInput = screenImg.querySelector('.input__file');
+          var screenImgFile = void 0;
+
+          if (typeof imgInput.files[0] == 'undefined') {
+            var img = imgInput.parentNode.querySelector('img');
+            screenImgFile = img.getAttribute('src');
+          } else screenImgFile = imgInput.files[0];
+
           var elementItem = elementRow[j].querySelectorAll(".elements-item");
           arr[i][j] = {
             count: elementItem.length,
+            img: screenImgFile,
             elements: []
           };
 
@@ -21751,8 +21866,9 @@ __webpack_require__.r(__webpack_exports__);
             for (var v = 0; v < inputValue.length; v++) {
               if (inputValue[v].getAttribute("type") == "file") {
                 if (typeof inputValue[v].files[0] == 'undefined') {
-                  var img = inputValue[v].parentNode.querySelector('img');
-                  arr[i][j].elements[z].value.push(img.getAttribute('src'));
+                  var _img = inputValue[v].parentNode.querySelector('img');
+
+                  arr[i][j].elements[z].value.push(_img.getAttribute('src'));
                 } else arr[i][j].elements[z].value.push(inputValue[v].files[0]);
               } else {
                 arr[i][j].elements[z].value.push(inputValue[v].value);
@@ -21859,7 +21975,7 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */ });
 /* harmony import */ var vue__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! vue */ "./node_modules/vue/dist/vue.esm-bundler.js");
 
-function render(_ctx, _cache) {
+function render(_ctx, _cache, $props, $setup, $data, $options) {
   var _component_router_view = (0,vue__WEBPACK_IMPORTED_MODULE_0__.resolveComponent)("router-view");
 
   return (0,vue__WEBPACK_IMPORTED_MODULE_0__.openBlock)(), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createBlock)(_component_router_view);
@@ -21977,103 +22093,126 @@ var _hoisted_1 = /*#__PURE__*/(0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementV
 /* HOISTED */
 );
 
-var _hoisted_2 = {
+var _hoisted_2 = ["href"];
+var _hoisted_3 = {
   "class": "input-group",
   id: "input-group__title"
 };
 
-var _hoisted_3 = /*#__PURE__*/(0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("label", null, "Заголовок", -1
+var _hoisted_4 = /*#__PURE__*/(0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("label", null, "Заголовок", -1
 /* HOISTED */
 );
 
-var _hoisted_4 = {
+var _hoisted_5 = {
   "class": "input-group__wrap"
 };
-var _hoisted_5 = ["value"];
-var _hoisted_6 = {
+var _hoisted_6 = ["value"];
+var _hoisted_7 = {
   "class": "input-group",
   id: "input-group__title"
 };
 
-var _hoisted_7 = /*#__PURE__*/(0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("label", null, "Ссылка", -1
+var _hoisted_8 = /*#__PURE__*/(0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("label", null, "Ссылка", -1
 /* HOISTED */
 );
 
-var _hoisted_8 = {
+var _hoisted_9 = {
   "class": "input-group__wrap"
 };
-var _hoisted_9 = ["value"];
-var _hoisted_10 = {
+var _hoisted_10 = ["value"];
+var _hoisted_11 = {
   "class": "input-group",
   id: "input-group__title"
 };
 
-var _hoisted_11 = /*#__PURE__*/(0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("label", null, "Цвет заливки", -1
+var _hoisted_12 = /*#__PURE__*/(0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("label", null, "Цвет заливки", -1
 /* HOISTED */
 );
 
-var _hoisted_12 = {
+var _hoisted_13 = {
   "class": "input-group__wrap"
 };
-var _hoisted_13 = ["value"];
-var _hoisted_14 = {
+var _hoisted_14 = ["value"];
+var _hoisted_15 = {
   "class": "input-group",
   id: "input-group__title"
 };
 
-var _hoisted_15 = /*#__PURE__*/(0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("label", null, "Цвет текста", -1
+var _hoisted_16 = /*#__PURE__*/(0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("label", null, "Цвет текста", -1
 /* HOISTED */
 );
 
-var _hoisted_16 = {
+var _hoisted_17 = {
   "class": "input-group__wrap"
 };
-var _hoisted_17 = ["value"];
-var _hoisted_18 = {
+var _hoisted_18 = ["value"];
+var _hoisted_19 = {
   "class": "input-group",
   id: "input-group__title"
 };
 
-var _hoisted_19 = /*#__PURE__*/(0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("label", null, "Цвет обводки", -1
+var _hoisted_20 = /*#__PURE__*/(0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("label", null, "Цвет обводки", -1
 /* HOISTED */
 );
 
-var _hoisted_20 = {
+var _hoisted_21 = {
   "class": "input-group__wrap"
 };
-var _hoisted_21 = ["value"];
+var _hoisted_22 = ["value"];
 function render(_ctx, _cache, $props, $setup, $data, $options) {
-  return (0,vue__WEBPACK_IMPORTED_MODULE_0__.openBlock)(), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementBlock)(vue__WEBPACK_IMPORTED_MODULE_0__.Fragment, null, [_hoisted_1, (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("div", null, [(0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("div", null, [(0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("div", _hoisted_2, [_hoisted_3, (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("div", _hoisted_4, [(0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("input", {
+  return (0,vue__WEBPACK_IMPORTED_MODULE_0__.openBlock)(), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementBlock)(vue__WEBPACK_IMPORTED_MODULE_0__.Fragment, null, [_hoisted_1, (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("div", null, [(0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("a", {
+    target: "_blank",
+    href: $props.values ? $props.values[1] : '',
+    "class": "elements-buttons__button",
+    style: (0,vue__WEBPACK_IMPORTED_MODULE_0__.normalizeStyle)($props.values ? 'background: ' + $props.values[2] + '; color: ' + $props.values[3] + '; border-color: ' + $props.values[4] + ';' : '')
+  }, (0,vue__WEBPACK_IMPORTED_MODULE_0__.toDisplayString)($props.values ? $props.values[0] : 'Кнопка'), 13
+  /* TEXT, STYLE, PROPS */
+  , _hoisted_2), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("div", null, [(0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("div", _hoisted_3, [_hoisted_4, (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("div", _hoisted_5, [(0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("input", {
+    onInput: _cache[0] || (_cache[0] = function ($event) {
+      return $options.input($event.target.value, 'title');
+    }),
     value: $props.values ? $props.values[0] : null,
     type: "text",
     placeholder: "Новая кнопка"
-  }, null, 8
-  /* PROPS */
-  , _hoisted_5)])])]), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("div", null, [(0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("div", _hoisted_6, [_hoisted_7, (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("div", _hoisted_8, [(0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("input", {
+  }, null, 40
+  /* PROPS, HYDRATE_EVENTS */
+  , _hoisted_6)])])]), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("div", null, [(0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("div", _hoisted_7, [_hoisted_8, (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("div", _hoisted_9, [(0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("input", {
+    onInput: _cache[1] || (_cache[1] = function ($event) {
+      return $options.input($event.target.value, 'link');
+    }),
     type: "text",
     value: $props.values ? $props.values[1] : null,
-    placeholder: "#"
-  }, null, 8
-  /* PROPS */
-  , _hoisted_9)])])])]), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("div", null, [(0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("div", null, [(0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("div", _hoisted_10, [_hoisted_11, (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("div", _hoisted_12, [(0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("input", {
+    placeholder: "https://"
+  }, null, 40
+  /* PROPS, HYDRATE_EVENTS */
+  , _hoisted_10)])])])]), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("div", null, [(0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("div", null, [(0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("div", _hoisted_11, [_hoisted_12, (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("div", _hoisted_13, [(0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("input", {
+    onInput: _cache[2] || (_cache[2] = function ($event) {
+      return $options.input($event.target.value, 'background');
+    }),
     type: "text",
     value: $props.values ? $props.values[2] : null,
     placeholder: "#030087"
-  }, null, 8
-  /* PROPS */
-  , _hoisted_13)])])]), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("div", null, [(0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("div", _hoisted_14, [_hoisted_15, (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("div", _hoisted_16, [(0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("input", {
+  }, null, 40
+  /* PROPS, HYDRATE_EVENTS */
+  , _hoisted_14)])])]), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("div", null, [(0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("div", _hoisted_15, [_hoisted_16, (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("div", _hoisted_17, [(0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("input", {
+    onInput: _cache[3] || (_cache[3] = function ($event) {
+      return $options.input($event.target.value, 'color');
+    }),
     type: "text",
     value: $props.values ? $props.values[3] : null,
     placeholder: "#FFFFFF"
-  }, null, 8
-  /* PROPS */
-  , _hoisted_17)])])]), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("div", null, [(0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("div", _hoisted_18, [_hoisted_19, (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("div", _hoisted_20, [(0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("input", {
+  }, null, 40
+  /* PROPS, HYDRATE_EVENTS */
+  , _hoisted_18)])])]), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("div", null, [(0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("div", _hoisted_19, [_hoisted_20, (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("div", _hoisted_21, [(0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("input", {
+    onInput: _cache[4] || (_cache[4] = function ($event) {
+      return $options.input($event.target.value, 'borderColor');
+    }),
     type: "text",
     value: $props.values ? $props.values[4] : null,
     placeholder: "#030087"
-  }, null, 8
-  /* PROPS */
-  , _hoisted_21)])])])])], 64
+  }, null, 40
+  /* PROPS, HYDRATE_EVENTS */
+  , _hoisted_22)])])])])], 64
   /* STABLE_FRAGMENT */
   );
 }
@@ -22510,7 +22649,7 @@ function render(_ctx, _cache, $props, $setup, $data, $options) {
       id: 'table-' + i,
       key: i,
       onClick: function onClick($event) {
-        return $options.hide('isActiveTable'), $options.createTable($event.target, i);
+        return $options.hide('isOpenTable'), $options.createTable($event.target, i);
       },
       onMouseover: _cache[16] || (_cache[16] = function ($event) {
         return $options.hoverTable($event.target);
@@ -22526,7 +22665,7 @@ function render(_ctx, _cache, $props, $setup, $data, $options) {
       id: 'table-' + i,
       key: i,
       onClick: function onClick($event) {
-        return $options.hide('isActiveTable'), $options.createTable($event.target, i + 9);
+        return $options.hide('isOpenTable'), $options.createTable($event.target, i + 9);
       },
       onMouseover: _cache[17] || (_cache[17] = function ($event) {
         return $options.hoverTable($event.target);
@@ -22542,7 +22681,7 @@ function render(_ctx, _cache, $props, $setup, $data, $options) {
       id: 'table-' + i,
       key: i,
       onClick: function onClick($event) {
-        return $options.hide('isActiveTable'), $options.createTable($event.target, i + 18);
+        return $options.hide('isOpenTable'), $options.createTable($event.target, i + 18);
       },
       onMouseover: _cache[18] || (_cache[18] = function ($event) {
         return $options.hoverTable($event.target);
@@ -22558,7 +22697,7 @@ function render(_ctx, _cache, $props, $setup, $data, $options) {
       id: 'table-' + i,
       key: i,
       onClick: function onClick($event) {
-        return $options.hide('isActiveTable'), $options.createTable($event.target, i + 27);
+        return $options.hide('isOpenTable'), $options.createTable($event.target, i + 27);
       },
       onMouseover: _cache[19] || (_cache[19] = function ($event) {
         return $options.hoverTable($event.target);
@@ -22574,7 +22713,7 @@ function render(_ctx, _cache, $props, $setup, $data, $options) {
       id: 'table-' + i,
       key: i,
       onClick: function onClick($event) {
-        return $options.hide('isActiveTable'), $options.createTable($event.target, i + 36);
+        return $options.hide('isOpenTable'), $options.createTable($event.target, i + 36);
       },
       onMouseover: _cache[20] || (_cache[20] = function ($event) {
         return $options.hoverTable($event.target);
@@ -22610,72 +22749,88 @@ function render(_ctx, _cache, $props, $setup, $data, $options) {
   )) : (0,vue__WEBPACK_IMPORTED_MODULE_0__.createCommentVNode)("v-if", true), _ctx.isOpenTitle ? ((0,vue__WEBPACK_IMPORTED_MODULE_0__.openBlock)(), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createBlock)(_component_Title, {
     key: 8,
     values: _ctx.curElement.value,
-    elementId: this.elementId
+    elementId: this.elementId,
+    screenId: this.screenId,
+    elementNumber: this.elementNumber
   }, null, 8
   /* PROPS */
-  , ["values", "elementId"])) : (0,vue__WEBPACK_IMPORTED_MODULE_0__.createCommentVNode)("v-if", true), _ctx.isOpenSubTitle ? ((0,vue__WEBPACK_IMPORTED_MODULE_0__.openBlock)(), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createBlock)(_component_SubTitle, {
+  , ["values", "elementId", "screenId", "elementNumber"])) : (0,vue__WEBPACK_IMPORTED_MODULE_0__.createCommentVNode)("v-if", true), _ctx.isOpenSubTitle ? ((0,vue__WEBPACK_IMPORTED_MODULE_0__.openBlock)(), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createBlock)(_component_SubTitle, {
     key: 9,
     values: _ctx.curElement.value,
-    elementId: this.elementId
+    elementId: this.elementId,
+    screenId: this.screenId,
+    elementNumber: this.elementNumber
   }, null, 8
   /* PROPS */
-  , ["values", "elementId"])) : (0,vue__WEBPACK_IMPORTED_MODULE_0__.createCommentVNode)("v-if", true), _ctx.isOpenTextArea ? ((0,vue__WEBPACK_IMPORTED_MODULE_0__.openBlock)(), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createBlock)(_component_TextArea, {
+  , ["values", "elementId", "screenId", "elementNumber"])) : (0,vue__WEBPACK_IMPORTED_MODULE_0__.createCommentVNode)("v-if", true), _ctx.isOpenTextArea ? ((0,vue__WEBPACK_IMPORTED_MODULE_0__.openBlock)(), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createBlock)(_component_TextArea, {
     key: 10,
     values: _ctx.curElement.value,
-    elementId: this.elementId
+    elementId: this.elementId,
+    screenId: this.screenId,
+    elementNumber: this.elementNumber
   }, null, 8
   /* PROPS */
-  , ["values", "elementId"])) : (0,vue__WEBPACK_IMPORTED_MODULE_0__.createCommentVNode)("v-if", true), _ctx.isOpenImage ? ((0,vue__WEBPACK_IMPORTED_MODULE_0__.openBlock)(), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createBlock)(_component_Image, {
+  , ["values", "elementId", "screenId", "elementNumber"])) : (0,vue__WEBPACK_IMPORTED_MODULE_0__.createCommentVNode)("v-if", true), _ctx.isOpenImage ? ((0,vue__WEBPACK_IMPORTED_MODULE_0__.openBlock)(), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createBlock)(_component_Image, {
     key: 11,
     values: _ctx.curElement.value,
-    elementId: this.elementId
+    elementId: this.elementId,
+    screenId: this.screenId,
+    elementNumber: this.elementNumber
   }, null, 8
   /* PROPS */
-  , ["values", "elementId"])) : (0,vue__WEBPACK_IMPORTED_MODULE_0__.createCommentVNode)("v-if", true), _ctx.isOpenPieCharts ? ((0,vue__WEBPACK_IMPORTED_MODULE_0__.openBlock)(), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createBlock)(_component_PieCharts, {
+  , ["values", "elementId", "screenId", "elementNumber"])) : (0,vue__WEBPACK_IMPORTED_MODULE_0__.createCommentVNode)("v-if", true), _ctx.isOpenPieCharts ? ((0,vue__WEBPACK_IMPORTED_MODULE_0__.openBlock)(), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createBlock)(_component_PieCharts, {
     key: 12,
-    values: _ctx.curElement.value,
-    elementId: this.elementId
+    values: _ctx.curElement.value
   }, null, 8
   /* PROPS */
-  , ["values", "elementId"])) : (0,vue__WEBPACK_IMPORTED_MODULE_0__.createCommentVNode)("v-if", true), _ctx.isOpenButton ? ((0,vue__WEBPACK_IMPORTED_MODULE_0__.openBlock)(), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createBlock)(_component_Button, {
+  , ["values"])) : (0,vue__WEBPACK_IMPORTED_MODULE_0__.createCommentVNode)("v-if", true), _ctx.isOpenButton ? ((0,vue__WEBPACK_IMPORTED_MODULE_0__.openBlock)(), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createBlock)(_component_Button, {
     key: 13,
-    values: _ctx.curElement.value,
-    elementId: this.elementId
+    values: _ctx.curElement.value
   }, null, 8
   /* PROPS */
-  , ["values", "elementId"])) : (0,vue__WEBPACK_IMPORTED_MODULE_0__.createCommentVNode)("v-if", true), _ctx.isOpenListUl ? ((0,vue__WEBPACK_IMPORTED_MODULE_0__.openBlock)(), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createBlock)(_component_BulletList, {
+  , ["values"])) : (0,vue__WEBPACK_IMPORTED_MODULE_0__.createCommentVNode)("v-if", true), _ctx.isOpenListUl ? ((0,vue__WEBPACK_IMPORTED_MODULE_0__.openBlock)(), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createBlock)(_component_BulletList, {
     key: 14,
     values: _ctx.curElement.value,
-    elementId: this.elementId
+    elementId: this.elementId,
+    screenId: this.screenId,
+    elementNumber: this.elementNumber
   }, null, 8
   /* PROPS */
-  , ["values", "elementId"])) : (0,vue__WEBPACK_IMPORTED_MODULE_0__.createCommentVNode)("v-if", true), _ctx.isOpenListOl ? ((0,vue__WEBPACK_IMPORTED_MODULE_0__.openBlock)(), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createBlock)(_component_NumberedList, {
+  , ["values", "elementId", "screenId", "elementNumber"])) : (0,vue__WEBPACK_IMPORTED_MODULE_0__.createCommentVNode)("v-if", true), _ctx.isOpenListOl ? ((0,vue__WEBPACK_IMPORTED_MODULE_0__.openBlock)(), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createBlock)(_component_NumberedList, {
     key: 15,
     values: _ctx.curElement.value,
-    elementId: this.elementId
+    elementId: this.elementId,
+    screenId: this.screenId,
+    elementNumber: this.elementNumber
   }, null, 8
   /* PROPS */
-  , ["values", "elementId"])) : (0,vue__WEBPACK_IMPORTED_MODULE_0__.createCommentVNode)("v-if", true), _ctx.isOpenListImage ? ((0,vue__WEBPACK_IMPORTED_MODULE_0__.openBlock)(), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createBlock)(_component_ImageList, {
+  , ["values", "elementId", "screenId", "elementNumber"])) : (0,vue__WEBPACK_IMPORTED_MODULE_0__.createCommentVNode)("v-if", true), _ctx.isOpenListImage ? ((0,vue__WEBPACK_IMPORTED_MODULE_0__.openBlock)(), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createBlock)(_component_ImageList, {
     key: 16,
     values: _ctx.curElement.value,
-    elementId: this.elementId
+    elementId: this.elementId,
+    screenId: this.screenId,
+    elementNumber: this.elementNumber
   }, null, 8
   /* PROPS */
-  , ["values", "elementId"])) : (0,vue__WEBPACK_IMPORTED_MODULE_0__.createCommentVNode)("v-if", true), _ctx.isOpenTable ? ((0,vue__WEBPACK_IMPORTED_MODULE_0__.openBlock)(), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createBlock)(_component_Table, {
+  , ["values", "elementId", "screenId", "elementNumber"])) : (0,vue__WEBPACK_IMPORTED_MODULE_0__.createCommentVNode)("v-if", true), _ctx.isOpenTable ? ((0,vue__WEBPACK_IMPORTED_MODULE_0__.openBlock)(), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createBlock)(_component_Table, {
     key: 17,
     setTr: _ctx.tr,
     setTd: _ctx.td,
     values: _ctx.curElement.value,
-    elementId: this.elementId
+    elementId: this.elementId,
+    screenId: this.screenId,
+    elementNumber: this.elementNumber
   }, null, 8
   /* PROPS */
-  , ["setTr", "setTd", "values", "elementId"])) : (0,vue__WEBPACK_IMPORTED_MODULE_0__.createCommentVNode)("v-if", true), _ctx.isOpenTableGraph ? ((0,vue__WEBPACK_IMPORTED_MODULE_0__.openBlock)(), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createBlock)(_component_TableGraph, {
+  , ["setTr", "setTd", "values", "elementId", "screenId", "elementNumber"])) : (0,vue__WEBPACK_IMPORTED_MODULE_0__.createCommentVNode)("v-if", true), _ctx.isOpenTableGraph ? ((0,vue__WEBPACK_IMPORTED_MODULE_0__.openBlock)(), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createBlock)(_component_TableGraph, {
     key: 18,
     values: _ctx.curElement.value,
-    elementId: this.elementId
+    elementId: this.elementId,
+    screenId: this.screenId,
+    elementNumber: this.elementNumber
   }, null, 8
   /* PROPS */
-  , ["values", "elementId"])) : (0,vue__WEBPACK_IMPORTED_MODULE_0__.createCommentVNode)("v-if", true)])], 10
+  , ["values", "elementId", "screenId", "elementNumber"])) : (0,vue__WEBPACK_IMPORTED_MODULE_0__.createCommentVNode)("v-if", true)])], 10
   /* CLASS, PROPS */
   , _hoisted_1);
 }
@@ -22696,7 +22851,7 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var vue__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! vue */ "./node_modules/vue/dist/vue.esm-bundler.js");
 
 var _hoisted_1 = {
-  "class": "input-group"
+  "class": "input-group image"
 };
 
 var _hoisted_2 = /*#__PURE__*/(0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("label", null, "Изображение", -1
@@ -22775,7 +22930,7 @@ function render(_ctx, _cache, $props, $setup, $data, $options) {
   }, [(0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("input", {
     name: "file",
     type: "file",
-    id: 'input__file-' + this.elementId,
+    id: 'input__file-' + $props.screenId + '-' + $props.elementNumber + '-' + $props.elementId,
     "class": "input input__file",
     onChange: _cache[0] || (_cache[0] = function ($event) {
       return $options.setImg($event.target);
@@ -22783,7 +22938,7 @@ function render(_ctx, _cache, $props, $setup, $data, $options) {
   }, null, 40
   /* PROPS, HYDRATE_EVENTS */
   , _hoisted_3), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("label", {
-    "for": 'input__file-' + this.elementId,
+    "for": 'input__file-' + $props.screenId + '-' + $props.elementNumber + '-' + $props.elementId,
     "class": "input__file-button"
   }, _hoisted_7, 8
   /* PROPS */
@@ -22931,11 +23086,78 @@ var _withScopeId = function _withScopeId(n) {
   return (0,vue__WEBPACK_IMPORTED_MODULE_0__.pushScopeId)("data-v-c06fb376"), n = n(), (0,vue__WEBPACK_IMPORTED_MODULE_0__.popScopeId)(), n;
 };
 
-var _hoisted_1 = {
+var _hoisted_1 = /*#__PURE__*/_withScopeId(function () {
+  return /*#__PURE__*/(0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("svg", {
+    width: "27",
+    height: "17",
+    viewBox: "0 0 27 17",
+    fill: "none",
+    xmlns: "http://www.w3.org/2000/svg"
+  }, [/*#__PURE__*/(0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("rect", {
+    width: "27",
+    height: "3",
+    rx: "1.5",
+    fill: "#222222"
+  }), /*#__PURE__*/(0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("rect", {
+    y: "7",
+    width: "27",
+    height: "3",
+    rx: "1.5",
+    fill: "#222222"
+  }), /*#__PURE__*/(0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("rect", {
+    y: "14",
+    width: "27",
+    height: "3",
+    rx: "1.5",
+    fill: "#222222"
+  })], -1
+  /* HOISTED */
+  );
+});
+
+var _hoisted_2 = [_hoisted_1];
+
+var _hoisted_3 = /*#__PURE__*/_withScopeId(function () {
+  return /*#__PURE__*/(0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("img", {
+    src: _assets_images_logotip_svg__WEBPACK_IMPORTED_MODULE_1__["default"],
+    alt: "logo"
+  }, null, -1
+  /* HOISTED */
+  );
+});
+
+var _hoisted_4 = {
   "class": "menureports"
 };
 
-var _hoisted_2 = /*#__PURE__*/_withScopeId(function () {
+var _hoisted_5 = /*#__PURE__*/_withScopeId(function () {
+  return /*#__PURE__*/(0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("svg", {
+    width: "15",
+    height: "15",
+    viewBox: "0 0 15 15",
+    fill: "none",
+    xmlns: "http://www.w3.org/2000/svg"
+  }, [/*#__PURE__*/(0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("line", {
+    x1: "1.06066",
+    y1: "1",
+    x2: "13",
+    y2: "12.9393",
+    stroke: "#222222",
+    "stroke-width": "1.5",
+    "stroke-linecap": "round"
+  }), /*#__PURE__*/(0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("path", {
+    d: "M1 13.293L13.2929 1.00008",
+    stroke: "#222222",
+    "stroke-width": "1.5",
+    "stroke-linecap": "round"
+  })], -1
+  /* HOISTED */
+  );
+});
+
+var _hoisted_6 = [_hoisted_5];
+
+var _hoisted_7 = /*#__PURE__*/_withScopeId(function () {
   return /*#__PURE__*/(0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("div", {
     "class": "menureports__logo"
   }, [/*#__PURE__*/(0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("img", {
@@ -22946,14 +23168,14 @@ var _hoisted_2 = /*#__PURE__*/_withScopeId(function () {
   );
 });
 
-var _hoisted_3 = {
+var _hoisted_8 = {
   "class": "menureports-cont"
 };
-var _hoisted_4 = {
+var _hoisted_9 = {
   "class": "menureports-buttons"
 };
 
-var _hoisted_5 = /*#__PURE__*/_withScopeId(function () {
+var _hoisted_10 = /*#__PURE__*/_withScopeId(function () {
   return /*#__PURE__*/(0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("svg", {
     width: "20",
     height: "20",
@@ -22970,7 +23192,7 @@ var _hoisted_5 = /*#__PURE__*/_withScopeId(function () {
   );
 });
 
-var _hoisted_6 = /*#__PURE__*/_withScopeId(function () {
+var _hoisted_11 = /*#__PURE__*/_withScopeId(function () {
   return /*#__PURE__*/(0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("svg", {
     width: "20",
     height: "17",
@@ -22987,7 +23209,7 @@ var _hoisted_6 = /*#__PURE__*/_withScopeId(function () {
   );
 });
 
-var _hoisted_7 = /*#__PURE__*/_withScopeId(function () {
+var _hoisted_12 = /*#__PURE__*/_withScopeId(function () {
   return /*#__PURE__*/(0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("svg", {
     width: "19",
     height: "19",
@@ -23004,12 +23226,12 @@ var _hoisted_7 = /*#__PURE__*/_withScopeId(function () {
   );
 });
 
-var _hoisted_8 = {
+var _hoisted_13 = {
   key: 0,
   "class": "menureports-cont-list"
 };
 
-var _hoisted_9 = /*#__PURE__*/_withScopeId(function () {
+var _hoisted_14 = /*#__PURE__*/_withScopeId(function () {
   return /*#__PURE__*/(0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("div", {
     "class": "menureports-buttons__button"
   }, "Список слайдов", -1
@@ -23017,12 +23239,12 @@ var _hoisted_9 = /*#__PURE__*/_withScopeId(function () {
   );
 });
 
-var _hoisted_10 = ["id"];
-var _hoisted_11 = {
+var _hoisted_15 = ["id"];
+var _hoisted_16 = {
   "class": "elements__text"
 };
 
-var _hoisted_12 = /*#__PURE__*/_withScopeId(function () {
+var _hoisted_17 = /*#__PURE__*/_withScopeId(function () {
   return /*#__PURE__*/(0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("svg", {
     width: "15",
     height: "12",
@@ -23054,14 +23276,14 @@ var _hoisted_12 = /*#__PURE__*/_withScopeId(function () {
   );
 });
 
-var _hoisted_13 = ["value", "onInput"];
-var _hoisted_14 = ["onClick"];
-var _hoisted_15 = {
+var _hoisted_18 = ["value", "onInput"];
+var _hoisted_19 = ["onClick"];
+var _hoisted_20 = {
   "class": "icons"
 };
-var _hoisted_16 = ["onClick"];
+var _hoisted_21 = ["onClick"];
 
-var _hoisted_17 = /*#__PURE__*/_withScopeId(function () {
+var _hoisted_22 = /*#__PURE__*/_withScopeId(function () {
   return /*#__PURE__*/(0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("path", {
     "fill-rule": "evenodd",
     "clip-rule": "evenodd",
@@ -23072,10 +23294,10 @@ var _hoisted_17 = /*#__PURE__*/_withScopeId(function () {
   );
 });
 
-var _hoisted_18 = [_hoisted_17];
-var _hoisted_19 = ["onClick"];
+var _hoisted_23 = [_hoisted_22];
+var _hoisted_24 = ["onClick"];
 
-var _hoisted_20 = /*#__PURE__*/_withScopeId(function () {
+var _hoisted_25 = /*#__PURE__*/_withScopeId(function () {
   return /*#__PURE__*/(0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("line", {
     x1: "1.06066",
     y1: "1",
@@ -23090,7 +23312,7 @@ var _hoisted_20 = /*#__PURE__*/_withScopeId(function () {
   );
 });
 
-var _hoisted_21 = /*#__PURE__*/_withScopeId(function () {
+var _hoisted_26 = /*#__PURE__*/_withScopeId(function () {
   return /*#__PURE__*/(0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("path", {
     d: "M1 13.293L13.2929 1.00008",
     stroke: "#222222",
@@ -23102,22 +23324,22 @@ var _hoisted_21 = /*#__PURE__*/_withScopeId(function () {
   );
 });
 
-var _hoisted_22 = [_hoisted_20, _hoisted_21];
-var _hoisted_23 = {
+var _hoisted_27 = [_hoisted_25, _hoisted_26];
+var _hoisted_28 = {
   "class": "menureports-cont-bottom"
 };
-var _hoisted_24 = {
+var _hoisted_29 = {
   "class": "menureports-user__ava"
 };
-var _hoisted_25 = ["src"];
-var _hoisted_26 = {
+var _hoisted_30 = ["src"];
+var _hoisted_31 = {
   "class": "menureports-user__wrap"
 };
-var _hoisted_27 = {
+var _hoisted_32 = {
   "class": "menureports-user__name"
 };
 
-var _hoisted_28 = /*#__PURE__*/_withScopeId(function () {
+var _hoisted_33 = /*#__PURE__*/_withScopeId(function () {
   return /*#__PURE__*/(0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("div", {
     "class": "menureports-user__author"
   }, [/*#__PURE__*/(0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("p", null, "Автор отчета")], -1
@@ -23125,7 +23347,7 @@ var _hoisted_28 = /*#__PURE__*/_withScopeId(function () {
   );
 });
 
-var _hoisted_29 = /*#__PURE__*/_withScopeId(function () {
+var _hoisted_34 = /*#__PURE__*/_withScopeId(function () {
   return /*#__PURE__*/(0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("svg", {
     width: "14",
     height: "16",
@@ -23142,7 +23364,7 @@ var _hoisted_29 = /*#__PURE__*/_withScopeId(function () {
   );
 });
 
-var _hoisted_30 = /*#__PURE__*/_withScopeId(function () {
+var _hoisted_35 = /*#__PURE__*/_withScopeId(function () {
   return /*#__PURE__*/(0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("svg", {
     width: "7",
     height: "8",
@@ -23157,9 +23379,9 @@ var _hoisted_30 = /*#__PURE__*/_withScopeId(function () {
   );
 });
 
-var _hoisted_31 = [_hoisted_30];
+var _hoisted_36 = [_hoisted_35];
 
-var _hoisted_32 = /*#__PURE__*/_withScopeId(function () {
+var _hoisted_37 = /*#__PURE__*/_withScopeId(function () {
   return /*#__PURE__*/(0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("svg", {
     width: "7",
     height: "8",
@@ -23174,7 +23396,7 @@ var _hoisted_32 = /*#__PURE__*/_withScopeId(function () {
   );
 });
 
-var _hoisted_33 = [_hoisted_32];
+var _hoisted_38 = [_hoisted_37];
 function render(_ctx, _cache, $props, $setup, $data, $options) {
   var _this = this;
 
@@ -23182,12 +23404,22 @@ function render(_ctx, _cache, $props, $setup, $data, $options) {
 
   var _component_draggable = (0,vue__WEBPACK_IMPORTED_MODULE_0__.resolveComponent)("draggable");
 
-  return (0,vue__WEBPACK_IMPORTED_MODULE_0__.openBlock)(), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementBlock)(vue__WEBPACK_IMPORTED_MODULE_0__.Fragment, null, [(0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("aside", _hoisted_1, [_hoisted_2, (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("div", _hoisted_3, [(0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("div", _hoisted_4, [(0,vue__WEBPACK_IMPORTED_MODULE_0__.createVNode)(_component_router_link, {
+  return (0,vue__WEBPACK_IMPORTED_MODULE_0__.openBlock)(), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementBlock)(vue__WEBPACK_IMPORTED_MODULE_0__.Fragment, null, [(0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("header", null, [(0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("div", {
+    "class": "burger",
+    onClick: _cache[0] || (_cache[0] = function () {
+      return $options.burger && $options.burger.apply($options, arguments);
+    })
+  }, _hoisted_2), _hoisted_3]), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("aside", _hoisted_4, [(0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("div", {
+    "class": "closeMenu",
+    onClick: _cache[1] || (_cache[1] = function () {
+      return $options.burgerHide && $options.burgerHide.apply($options, arguments);
+    })
+  }, _hoisted_6), _hoisted_7, (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("div", _hoisted_8, [(0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("div", _hoisted_9, [(0,vue__WEBPACK_IMPORTED_MODULE_0__.createVNode)(_component_router_link, {
     to: "/newreport",
     "class": "menureports-buttons__button menureports-buttons__button--newrep"
   }, {
     "default": (0,vue__WEBPACK_IMPORTED_MODULE_0__.withCtx)(function () {
-      return [_hoisted_5, (0,vue__WEBPACK_IMPORTED_MODULE_0__.createTextVNode)(" Новый отчёт ")];
+      return [_hoisted_10, (0,vue__WEBPACK_IMPORTED_MODULE_0__.createTextVNode)(" Новый отчёт ")];
     }),
     _: 1
     /* STABLE */
@@ -23197,7 +23429,7 @@ function render(_ctx, _cache, $props, $setup, $data, $options) {
     "class": "menureports-buttons__button menureports-buttons__button--listrep"
   }, {
     "default": (0,vue__WEBPACK_IMPORTED_MODULE_0__.withCtx)(function () {
-      return [_hoisted_6, (0,vue__WEBPACK_IMPORTED_MODULE_0__.createTextVNode)(" Список отчётов ")];
+      return [_hoisted_11, (0,vue__WEBPACK_IMPORTED_MODULE_0__.createTextVNode)(" Список отчётов ")];
     }),
     _: 1
     /* STABLE */
@@ -23207,15 +23439,15 @@ function render(_ctx, _cache, $props, $setup, $data, $options) {
     "class": "menureports-buttons__button menureports-buttons__button--settings"
   }, {
     "default": (0,vue__WEBPACK_IMPORTED_MODULE_0__.withCtx)(function () {
-      return [_hoisted_7, (0,vue__WEBPACK_IMPORTED_MODULE_0__.createTextVNode)(" Настройки ")];
+      return [_hoisted_12, (0,vue__WEBPACK_IMPORTED_MODULE_0__.createTextVNode)(" Настройки ")];
     }),
     _: 1
     /* STABLE */
 
-  })]), _ctx.window.includes('/reports/') ? ((0,vue__WEBPACK_IMPORTED_MODULE_0__.openBlock)(), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementBlock)("div", _hoisted_8, [_hoisted_9, (0,vue__WEBPACK_IMPORTED_MODULE_0__.createVNode)(_component_draggable, {
+  })]), _ctx.window.includes('/reports/') ? ((0,vue__WEBPACK_IMPORTED_MODULE_0__.openBlock)(), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementBlock)("div", _hoisted_13, [_hoisted_14, (0,vue__WEBPACK_IMPORTED_MODULE_0__.createVNode)(_component_draggable, {
     "class": "menureports-buttons__button menureports-buttons__button--list",
     modelValue: _ctx.currentAr,
-    "onUpdate:modelValue": _cache[0] || (_cache[0] = function ($event) {
+    "onUpdate:modelValue": _cache[2] || (_cache[2] = function ($event) {
       return _ctx.currentAr = $event;
     }),
     handle: "svg",
@@ -23227,7 +23459,7 @@ function render(_ctx, _cache, $props, $setup, $data, $options) {
           "class": "menureports-buttons__elements",
           id: 'element-' + index,
           key: index
-        }, [(0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("div", _hoisted_11, [_hoisted_12, (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("input", {
+        }, [(0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("div", _hoisted_16, [_hoisted_17, (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("input", {
           type: "text",
           value: item[0].title,
           onInput: function onInput($event) {
@@ -23235,13 +23467,13 @@ function render(_ctx, _cache, $props, $setup, $data, $options) {
           }
         }, null, 40
         /* PROPS, HYDRATE_EVENTS */
-        , _hoisted_13), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("a", {
+        , _hoisted_18), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("a", {
           onClick: function onClick($event) {
             return $options.scroll('#screen-' + (index + 1));
           }
         }, (0,vue__WEBPACK_IMPORTED_MODULE_0__.toDisplayString)(item[0].title), 9
         /* TEXT, PROPS */
-        , _hoisted_14)]), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("div", _hoisted_15, [((0,vue__WEBPACK_IMPORTED_MODULE_0__.openBlock)(), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementBlock)("svg", {
+        , _hoisted_19)]), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("div", _hoisted_20, [((0,vue__WEBPACK_IMPORTED_MODULE_0__.openBlock)(), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementBlock)("svg", {
           width: "14",
           height: "16",
           viewBox: "0 0 14 16",
@@ -23250,9 +23482,9 @@ function render(_ctx, _cache, $props, $setup, $data, $options) {
           onClick: function onClick($event) {
             return $options.editTitle(index);
           }
-        }, _hoisted_18, 8
+        }, _hoisted_23, 8
         /* PROPS */
-        , _hoisted_16)), ((0,vue__WEBPACK_IMPORTED_MODULE_0__.openBlock)(), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementBlock)("svg", {
+        , _hoisted_21)), ((0,vue__WEBPACK_IMPORTED_MODULE_0__.openBlock)(), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementBlock)("svg", {
           width: "15",
           height: "15",
           viewBox: "0 0 15 15",
@@ -23262,11 +23494,11 @@ function render(_ctx, _cache, $props, $setup, $data, $options) {
           onClick: function onClick($event) {
             return $options.deleteItem(index);
           }
-        }, _hoisted_22, 8
+        }, _hoisted_27, 8
         /* PROPS */
-        , _hoisted_19))])], 8
+        , _hoisted_24))])], 8
         /* PROPS */
-        , _hoisted_10);
+        , _hoisted_15);
       }), 128
       /* KEYED_FRAGMENT */
       ))];
@@ -23276,41 +23508,41 @@ function render(_ctx, _cache, $props, $setup, $data, $options) {
 
   }, 8
   /* PROPS */
-  , ["modelValue", "onChange"])])) : (0,vue__WEBPACK_IMPORTED_MODULE_0__.createCommentVNode)("v-if", true), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("div", _hoisted_23, [(0,vue__WEBPACK_IMPORTED_MODULE_0__.createVNode)(_component_router_link, {
+  , ["modelValue", "onChange"])])) : (0,vue__WEBPACK_IMPORTED_MODULE_0__.createCommentVNode)("v-if", true), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("div", _hoisted_28, [(0,vue__WEBPACK_IMPORTED_MODULE_0__.createVNode)(_component_router_link, {
     to: "/personalrea",
     "class": "menureports-user"
   }, {
     "default": (0,vue__WEBPACK_IMPORTED_MODULE_0__.withCtx)(function () {
       var _this$user, _this$user2;
 
-      return [(0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("div", _hoisted_24, [(0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("img", {
+      return [(0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("div", _hoisted_29, [(0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("img", {
         src: (_this$user = _this.user) === null || _this$user === void 0 ? void 0 : _this$user.image,
         alt: "avatar"
       }, null, 8
       /* PROPS */
-      , _hoisted_25)]), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("div", _hoisted_26, [(0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("div", _hoisted_27, [(0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("p", null, (0,vue__WEBPACK_IMPORTED_MODULE_0__.toDisplayString)((_this$user2 = _this.user) === null || _this$user2 === void 0 ? void 0 : _this$user2.name), 1
+      , _hoisted_30)]), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("div", _hoisted_31, [(0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("div", _hoisted_32, [(0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("p", null, (0,vue__WEBPACK_IMPORTED_MODULE_0__.toDisplayString)((_this$user2 = _this.user) === null || _this$user2 === void 0 ? void 0 : _this$user2.name), 1
       /* TEXT */
-      )]), _hoisted_28])];
+      )]), _hoisted_33])];
     }),
     _: 1
     /* STABLE */
 
   }), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("div", {
     "class": "menureports-exit",
-    onClick: _cache[1] || (_cache[1] = function () {
+    onClick: _cache[3] || (_cache[3] = function () {
       return $options.exit && $options.exit.apply($options, arguments);
     })
-  }, [_hoisted_29, (0,vue__WEBPACK_IMPORTED_MODULE_0__.createTextVNode)(" Выйти ")]), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("div", {
+  }, [_hoisted_34, (0,vue__WEBPACK_IMPORTED_MODULE_0__.createTextVNode)(" Выйти ")]), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("div", {
     "class": "hide-menu",
-    onClick: _cache[2] || (_cache[2] = function ($event) {
+    onClick: _cache[4] || (_cache[4] = function ($event) {
       return $options.hideMenu();
     })
-  }, _hoisted_31)])])]), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("div", {
+  }, _hoisted_36)])])]), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("div", {
     "class": "hide-menu fixed",
-    onClick: _cache[3] || (_cache[3] = function ($event) {
+    onClick: _cache[5] || (_cache[5] = function ($event) {
       return $options.hideMenu();
     })
-  }, _hoisted_33)], 64
+  }, _hoisted_38)], 64
   /* STABLE_FRAGMENT */
   );
 }
@@ -23466,7 +23698,8 @@ var _hoisted_8 = /*#__PURE__*/_withScopeId(function () {
   }, [/*#__PURE__*/(0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("label", null, "столбцы"), /*#__PURE__*/(0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("input", {
     readonly: "",
     type: "text",
-    value: "4"
+    value: "4",
+    id: "td"
   })], -1
   /* HOISTED */
   );
@@ -23481,6 +23714,7 @@ function render(_ctx, _cache, $props, $setup, $data, $options) {
     maxlength: "3",
     type: "text",
     value: _ctx.tr,
+    id: "tr",
     onInput: _cache[0] || (_cache[0] = function ($event) {
       return $options.setValue('tr', $event.target.value);
     })
@@ -23612,111 +23846,46 @@ var _hoisted_10 = /*#__PURE__*/_withScopeId(function () {
 });
 
 var _hoisted_11 = [_hoisted_10];
-var _hoisted_12 = {
-  "class": "screen__columns"
+var _hoisted_12 = ["id"];
+var _hoisted_13 = {
+  "class": "screen__elements"
 };
-
-var _hoisted_13 = /*#__PURE__*/_withScopeId(function () {
-  return /*#__PURE__*/(0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("div", {
-    "class": "screen__column-item"
-  }, null, -1
-  /* HOISTED */
-  );
-});
-
-var _hoisted_14 = [_hoisted_13];
-
-var _hoisted_15 = /*#__PURE__*/_withScopeId(function () {
-  return /*#__PURE__*/(0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("div", {
-    "class": "screen__column-item"
-  }, null, -1
-  /* HOISTED */
-  );
-});
+var _hoisted_14 = ["id"];
+var _hoisted_15 = ["for"];
 
 var _hoisted_16 = /*#__PURE__*/_withScopeId(function () {
-  return /*#__PURE__*/(0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("div", {
-    "class": "screen__column-item"
-  }, null, -1
+  return /*#__PURE__*/(0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("span", {
+    "class": "input__file-icon-wrapper"
+  }, [/*#__PURE__*/(0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("svg", {
+    width: "20",
+    height: "20",
+    viewBox: "0 0 23 23",
+    fill: "none",
+    xmlns: "http://www.w3.org/2000/svg"
+  }, [/*#__PURE__*/(0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("path", {
+    "fill-rule": "evenodd",
+    "clip-rule": "evenodd",
+    d: "M2.94753 0.40624C1.81586 0.702947 0.914068 1.6102 0.624177 2.74371C0.543194 3.06041 0.541016 3.28283 0.541016 11.2568C0.541016 19.2202 0.543279 19.4535 0.623878 19.7686C0.915007 20.907 1.82602 21.8181 2.96432 22.1092C3.27941 22.1898 3.51262 22.1921 11.4754 22.1921C19.4383 22.1921 19.6715 22.1898 19.9866 22.1092C21.1273 21.8175 22.0353 20.9094 22.327 19.7686C22.4076 19.4535 22.4099 19.2202 22.4099 11.2568C22.4099 3.29326 22.4076 3.06003 22.327 2.74491C22.0348 1.60229 21.1296 0.696625 19.9878 0.404574C19.6709 0.323542 19.4526 0.321449 11.4579 0.323755C3.57472 0.326019 3.24131 0.329266 2.94753 0.40624ZM19.3986 1.73305C20.2742 1.8591 20.8946 2.50433 21.0021 3.40047C21.0292 3.62687 21.0408 5.3846 21.0335 8.14556L21.0217 12.5311L19.6122 11.2469C18.837 10.5406 18.1066 9.90162 17.9891 9.82687C17.3681 9.43179 16.6486 9.37831 16.0161 9.68018C15.6802 9.84054 15.7909 9.72738 12.5752 13.1974C11.1834 14.6995 9.99229 15.9667 9.92835 16.0135C9.81332 16.0976 9.81059 16.0976 9.65781 16.0163C9.57294 15.9711 8.72185 15.3139 7.76654 14.5558C6.44552 13.5074 5.97333 13.1563 5.79471 13.0894C5.32658 12.914 4.74287 12.9393 4.28973 13.1545C4.16603 13.2133 3.58429 13.6333 2.99699 14.0879L1.92918 14.9144L1.91747 9.33721C1.90995 5.7775 1.92132 3.62999 1.94882 3.40047C2.00542 2.92812 2.17234 2.57157 2.48166 2.26222C2.75673 1.98708 3.14384 1.78948 3.51296 1.73561C3.88106 1.68192 19.0266 1.67948 19.3986 1.73305ZM7.40596 3.76288C6.77317 3.91619 6.10839 4.3967 5.7552 4.95598C5.25969 5.74064 5.1905 6.78599 5.57999 7.60221C5.84037 8.14778 6.31192 8.62855 6.84112 8.88805C7.30383 9.11492 7.60658 9.17511 8.18298 9.15486C8.77972 9.13393 9.16179 9.01492 9.60544 8.71172C11.56 7.37616 11.0428 4.36449 8.75854 3.78022C8.36955 3.68074 7.77636 3.67313 7.40596 3.76288ZM8.53019 5.18785C9.24439 5.45927 9.59784 6.27574 9.29056 6.94438C9.13936 7.27338 8.95155 7.47163 8.64693 7.62387C8.16774 7.86333 7.60423 7.78525 7.20205 7.42366C6.63316 6.91209 6.5828 6.1247 7.08266 5.55674C7.24843 5.36841 7.48117 5.21749 7.71673 5.14556C7.91953 5.08366 8.30928 5.10391 8.53019 5.18785ZM17.0921 10.9529C17.1908 10.9983 18.0619 11.7594 19.153 12.7535L21.0431 14.4754L21.0417 16.6571C21.041 17.8571 21.0218 18.982 20.9992 19.1569C20.8865 20.0249 20.2429 20.6686 19.3749 20.7813C18.9462 20.8369 4.00471 20.8369 3.57596 20.7813C2.708 20.6686 2.06436 20.0249 1.95173 19.1569C1.92905 18.982 1.90987 18.3647 1.90914 17.7851L1.90782 16.7313L3.32357 15.6342C4.88147 14.4269 4.95472 14.3754 5.11554 14.3752C5.25354 14.375 5.23372 14.3603 7.0974 15.8411C7.94311 16.513 8.75038 17.1314 8.89133 17.2153C9.62048 17.6492 10.3251 17.5787 10.949 17.0096C11.0823 16.888 12.1431 15.7601 13.3063 14.5032C16.2419 11.3312 16.5619 10.9952 16.7077 10.9316C16.8741 10.8589 16.8902 10.8598 17.0921 10.9529Z",
+    fill: "#030087"
+  })])], -1
   /* HOISTED */
   );
 });
 
-var _hoisted_17 = [_hoisted_15, _hoisted_16];
-
-var _hoisted_18 = /*#__PURE__*/_withScopeId(function () {
-  return /*#__PURE__*/(0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("div", {
-    "class": "screen__column-item"
-  }, null, -1
+var _hoisted_17 = /*#__PURE__*/_withScopeId(function () {
+  return /*#__PURE__*/(0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("span", {
+    "class": "input__file-button-text"
+  }, "Добавить изображение", -1
   /* HOISTED */
   );
 });
 
-var _hoisted_19 = /*#__PURE__*/_withScopeId(function () {
-  return /*#__PURE__*/(0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("div", {
-    "class": "screen__column-item"
-  }, null, -1
-  /* HOISTED */
-  );
-});
-
-var _hoisted_20 = /*#__PURE__*/_withScopeId(function () {
-  return /*#__PURE__*/(0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("div", {
-    "class": "screen__column-item"
-  }, null, -1
-  /* HOISTED */
-  );
-});
-
-var _hoisted_21 = [_hoisted_18, _hoisted_19, _hoisted_20];
-
-var _hoisted_22 = /*#__PURE__*/_withScopeId(function () {
-  return /*#__PURE__*/(0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("div", {
-    "class": "screen__column-item"
-  }, null, -1
-  /* HOISTED */
-  );
-});
-
-var _hoisted_23 = /*#__PURE__*/_withScopeId(function () {
-  return /*#__PURE__*/(0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("div", {
-    "class": "screen__column-item"
-  }, null, -1
-  /* HOISTED */
-  );
-});
-
-var _hoisted_24 = /*#__PURE__*/_withScopeId(function () {
-  return /*#__PURE__*/(0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("div", {
-    "class": "screen__column-item"
-  }, null, -1
-  /* HOISTED */
-  );
-});
-
-var _hoisted_25 = /*#__PURE__*/_withScopeId(function () {
-  return /*#__PURE__*/(0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("div", {
-    "class": "screen__column-item"
-  }, null, -1
-  /* HOISTED */
-  );
-});
-
-var _hoisted_26 = [_hoisted_22, _hoisted_23, _hoisted_24, _hoisted_25];
-var _hoisted_27 = {
-  "class": "image__wrapper"
-};
-
-var _hoisted_28 = /*#__PURE__*/(0,vue__WEBPACK_IMPORTED_MODULE_0__.createStaticVNode)("<label for=\"input__file_screen\" class=\"input__file-button\" data-v-619f5897><span class=\"input__file-icon-wrapper\" data-v-619f5897><svg width=\"20\" height=\"20\" viewBox=\"0 0 23 23\" fill=\"none\" xmlns=\"http://www.w3.org/2000/svg\" data-v-619f5897><path fill-rule=\"evenodd\" clip-rule=\"evenodd\" d=\"M2.94753 0.40624C1.81586 0.702947 0.914068 1.6102 0.624177 2.74371C0.543194 3.06041 0.541016 3.28283 0.541016 11.2568C0.541016 19.2202 0.543279 19.4535 0.623878 19.7686C0.915007 20.907 1.82602 21.8181 2.96432 22.1092C3.27941 22.1898 3.51262 22.1921 11.4754 22.1921C19.4383 22.1921 19.6715 22.1898 19.9866 22.1092C21.1273 21.8175 22.0353 20.9094 22.327 19.7686C22.4076 19.4535 22.4099 19.2202 22.4099 11.2568C22.4099 3.29326 22.4076 3.06003 22.327 2.74491C22.0348 1.60229 21.1296 0.696625 19.9878 0.404574C19.6709 0.323542 19.4526 0.321449 11.4579 0.323755C3.57472 0.326019 3.24131 0.329266 2.94753 0.40624ZM19.3986 1.73305C20.2742 1.8591 20.8946 2.50433 21.0021 3.40047C21.0292 3.62687 21.0408 5.3846 21.0335 8.14556L21.0217 12.5311L19.6122 11.2469C18.837 10.5406 18.1066 9.90162 17.9891 9.82687C17.3681 9.43179 16.6486 9.37831 16.0161 9.68018C15.6802 9.84054 15.7909 9.72738 12.5752 13.1974C11.1834 14.6995 9.99229 15.9667 9.92835 16.0135C9.81332 16.0976 9.81059 16.0976 9.65781 16.0163C9.57294 15.9711 8.72185 15.3139 7.76654 14.5558C6.44552 13.5074 5.97333 13.1563 5.79471 13.0894C5.32658 12.914 4.74287 12.9393 4.28973 13.1545C4.16603 13.2133 3.58429 13.6333 2.99699 14.0879L1.92918 14.9144L1.91747 9.33721C1.90995 5.7775 1.92132 3.62999 1.94882 3.40047C2.00542 2.92812 2.17234 2.57157 2.48166 2.26222C2.75673 1.98708 3.14384 1.78948 3.51296 1.73561C3.88106 1.68192 19.0266 1.67948 19.3986 1.73305ZM7.40596 3.76288C6.77317 3.91619 6.10839 4.3967 5.7552 4.95598C5.25969 5.74064 5.1905 6.78599 5.57999 7.60221C5.84037 8.14778 6.31192 8.62855 6.84112 8.88805C7.30383 9.11492 7.60658 9.17511 8.18298 9.15486C8.77972 9.13393 9.16179 9.01492 9.60544 8.71172C11.56 7.37616 11.0428 4.36449 8.75854 3.78022C8.36955 3.68074 7.77636 3.67313 7.40596 3.76288ZM8.53019 5.18785C9.24439 5.45927 9.59784 6.27574 9.29056 6.94438C9.13936 7.27338 8.95155 7.47163 8.64693 7.62387C8.16774 7.86333 7.60423 7.78525 7.20205 7.42366C6.63316 6.91209 6.5828 6.1247 7.08266 5.55674C7.24843 5.36841 7.48117 5.21749 7.71673 5.14556C7.91953 5.08366 8.30928 5.10391 8.53019 5.18785ZM17.0921 10.9529C17.1908 10.9983 18.0619 11.7594 19.153 12.7535L21.0431 14.4754L21.0417 16.6571C21.041 17.8571 21.0218 18.982 20.9992 19.1569C20.8865 20.0249 20.2429 20.6686 19.3749 20.7813C18.9462 20.8369 4.00471 20.8369 3.57596 20.7813C2.708 20.6686 2.06436 20.0249 1.95173 19.1569C1.92905 18.982 1.90987 18.3647 1.90914 17.7851L1.90782 16.7313L3.32357 15.6342C4.88147 14.4269 4.95472 14.3754 5.11554 14.3752C5.25354 14.375 5.23372 14.3603 7.0974 15.8411C7.94311 16.513 8.75038 17.1314 8.89133 17.2153C9.62048 17.6492 10.3251 17.5787 10.949 17.0096C11.0823 16.888 12.1431 15.7601 13.3063 14.5032C16.2419 11.3312 16.5619 10.9952 16.7077 10.9316C16.8741 10.8589 16.8902 10.8598 17.0921 10.9529Z\" fill=\"#030087\" data-v-619f5897></path></svg></span><span class=\"input__file-button-text\" data-v-619f5897>Добавить изображение</span></label>", 1);
-
-var _hoisted_29 = {
-  "class": "img__wrapper"
-};
-var _hoisted_30 = {
+var _hoisted_18 = [_hoisted_16, _hoisted_17];
+var _hoisted_19 = {
   "class": "elements__del"
 };
 
-var _hoisted_31 = /*#__PURE__*/_withScopeId(function () {
+var _hoisted_20 = /*#__PURE__*/_withScopeId(function () {
   return /*#__PURE__*/(0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("line", {
     x1: "1.06066",
     y1: "1",
@@ -23730,7 +23899,7 @@ var _hoisted_31 = /*#__PURE__*/_withScopeId(function () {
   );
 });
 
-var _hoisted_32 = /*#__PURE__*/_withScopeId(function () {
+var _hoisted_21 = /*#__PURE__*/_withScopeId(function () {
   return /*#__PURE__*/(0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("path", {
     d: "M1 13.293L13.2929 1.00008",
     stroke: "#222222",
@@ -23741,16 +23910,99 @@ var _hoisted_32 = /*#__PURE__*/_withScopeId(function () {
   );
 });
 
-var _hoisted_33 = [_hoisted_31, _hoisted_32];
+var _hoisted_22 = [_hoisted_20, _hoisted_21];
+var _hoisted_23 = ["src"];
+var _hoisted_24 = {
+  "class": "screen__columns"
+};
 
-var _hoisted_34 = /*#__PURE__*/_withScopeId(function () {
-  return /*#__PURE__*/(0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("img", {
-    src: ""
+var _hoisted_25 = /*#__PURE__*/_withScopeId(function () {
+  return /*#__PURE__*/(0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("div", {
+    "class": "screen__column-item"
   }, null, -1
   /* HOISTED */
   );
 });
 
+var _hoisted_26 = [_hoisted_25];
+
+var _hoisted_27 = /*#__PURE__*/_withScopeId(function () {
+  return /*#__PURE__*/(0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("div", {
+    "class": "screen__column-item"
+  }, null, -1
+  /* HOISTED */
+  );
+});
+
+var _hoisted_28 = /*#__PURE__*/_withScopeId(function () {
+  return /*#__PURE__*/(0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("div", {
+    "class": "screen__column-item"
+  }, null, -1
+  /* HOISTED */
+  );
+});
+
+var _hoisted_29 = [_hoisted_27, _hoisted_28];
+
+var _hoisted_30 = /*#__PURE__*/_withScopeId(function () {
+  return /*#__PURE__*/(0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("div", {
+    "class": "screen__column-item"
+  }, null, -1
+  /* HOISTED */
+  );
+});
+
+var _hoisted_31 = /*#__PURE__*/_withScopeId(function () {
+  return /*#__PURE__*/(0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("div", {
+    "class": "screen__column-item"
+  }, null, -1
+  /* HOISTED */
+  );
+});
+
+var _hoisted_32 = /*#__PURE__*/_withScopeId(function () {
+  return /*#__PURE__*/(0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("div", {
+    "class": "screen__column-item"
+  }, null, -1
+  /* HOISTED */
+  );
+});
+
+var _hoisted_33 = [_hoisted_30, _hoisted_31, _hoisted_32];
+
+var _hoisted_34 = /*#__PURE__*/_withScopeId(function () {
+  return /*#__PURE__*/(0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("div", {
+    "class": "screen__column-item"
+  }, null, -1
+  /* HOISTED */
+  );
+});
+
+var _hoisted_35 = /*#__PURE__*/_withScopeId(function () {
+  return /*#__PURE__*/(0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("div", {
+    "class": "screen__column-item"
+  }, null, -1
+  /* HOISTED */
+  );
+});
+
+var _hoisted_36 = /*#__PURE__*/_withScopeId(function () {
+  return /*#__PURE__*/(0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("div", {
+    "class": "screen__column-item"
+  }, null, -1
+  /* HOISTED */
+  );
+});
+
+var _hoisted_37 = /*#__PURE__*/_withScopeId(function () {
+  return /*#__PURE__*/(0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("div", {
+    "class": "screen__column-item"
+  }, null, -1
+  /* HOISTED */
+  );
+});
+
+var _hoisted_38 = [_hoisted_34, _hoisted_35, _hoisted_36, _hoisted_37];
 function render(_ctx, _cache, $props, $setup, $data, $options) {
   var _component_Elements = (0,vue__WEBPACK_IMPORTED_MODULE_0__.resolveComponent)("Elements");
 
@@ -23781,82 +24033,104 @@ function render(_ctx, _cache, $props, $setup, $data, $options) {
       return $options.screenDown($event.target.parentNode.parentNode.parentNode);
     }),
     "class": "screen__top-button"
-  }, "вниз"), _hoisted_8, (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("div", {
+  }, " вниз "), _hoisted_8, (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("div", {
     onClick: _cache[3] || (_cache[3] = function ($event) {
       return $options.screenUp($event.target.parentNode.parentNode.parentNode);
     }),
     "class": "screen__top-button"
-  }, "вверх")])]), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("div", _hoisted_9, [(0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("div", {
+  }, " вверх ")])]), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("div", _hoisted_9, [(0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("div", {
     "class": "screen__del",
     onClick: _cache[4] || (_cache[4] = function ($event) {
       return $options.screenDel();
     })
   }, _hoisted_11), ((0,vue__WEBPACK_IMPORTED_MODULE_0__.openBlock)(true), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementBlock)(vue__WEBPACK_IMPORTED_MODULE_0__.Fragment, null, (0,vue__WEBPACK_IMPORTED_MODULE_0__.renderList)(_ctx.curScreenItem[0], function (items, i) {
     return (0,vue__WEBPACK_IMPORTED_MODULE_0__.openBlock)(), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementBlock)("div", {
-      "class": "screen__elements",
-      key: i
-    }, [((0,vue__WEBPACK_IMPORTED_MODULE_0__.openBlock)(true), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementBlock)(vue__WEBPACK_IMPORTED_MODULE_0__.Fragment, null, (0,vue__WEBPACK_IMPORTED_MODULE_0__.renderList)(items.elements, function (item, key) {
+      "class": "screen__wrap__elements",
+      key: i,
+      id: 'item-' + i
+    }, [(0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("div", _hoisted_13, [((0,vue__WEBPACK_IMPORTED_MODULE_0__.openBlock)(true), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementBlock)(vue__WEBPACK_IMPORTED_MODULE_0__.Fragment, null, (0,vue__WEBPACK_IMPORTED_MODULE_0__.renderList)(items.elements, function (item, key) {
       return (0,vue__WEBPACK_IMPORTED_MODULE_0__.openBlock)(), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createBlock)(_component_Elements, {
-        onElementClose: function onElementClose($event) {
-          return $options.elementDelete(i, key);
-        },
+        ref_for: true,
+        ref: "elements",
+        onElementClose: $options.elementDelete,
         key: key,
         elementId: i,
+        screenId: $props.screenNumber,
+        elementNumber: key,
         count: items.elements.length,
         type: _typeof(item),
         element: item
       }, null, 8
       /* PROPS */
-      , ["onElementClose", "elementId", "count", "type", "element"]);
+      , ["onElementClose", "elementId", "screenId", "elementNumber", "count", "type", "element"]);
     }), 128
     /* KEYED_FRAGMENT */
-    ))]);
+    ))]), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("div", {
+      "class": (0,vue__WEBPACK_IMPORTED_MODULE_0__.normalizeClass)(["image__wrapper", items.img ? 'loaded' : ''])
+    }, [(0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("input", {
+      name: "file_screen",
+      type: "file",
+      id: 'input__file_screen-' + $props.screenNumber + '-' + i,
+      "class": "input input__file",
+      onChange: _cache[5] || (_cache[5] = function ($event) {
+        return $options.setImg($event.target);
+      })
+    }, null, 40
+    /* PROPS, HYDRATE_EVENTS */
+    , _hoisted_14), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("label", {
+      "for": 'input__file_screen-' + $props.screenNumber + '-' + i,
+      "class": "input__file-button"
+    }, _hoisted_18, 8
+    /* PROPS */
+    , _hoisted_15), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("div", {
+      "class": (0,vue__WEBPACK_IMPORTED_MODULE_0__.normalizeClass)(["img__wrapper", items.img ? 'active' : ''])
+    }, [(0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("div", _hoisted_19, [((0,vue__WEBPACK_IMPORTED_MODULE_0__.openBlock)(), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementBlock)("svg", {
+      width: "15",
+      height: "15",
+      viewBox: "0 0 15 15",
+      fill: "none",
+      xmlns: "http://www.w3.org/2000/svg",
+      onClick: _cache[6] || (_cache[6] = function ($event) {
+        return $options.delImg($event.target);
+      })
+    }, _hoisted_22))]), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("img", {
+      src: items.img
+    }, null, 8
+    /* PROPS */
+    , _hoisted_23)], 2
+    /* CLASS */
+    )], 2
+    /* CLASS */
+    )], 8
+    /* PROPS */
+    , _hoisted_12);
   }), 128
   /* KEYED_FRAGMENT */
-  )), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("div", _hoisted_12, [(0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("div", {
+  )), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("div", _hoisted_24, [(0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("div", {
     "class": "screen__column",
     id: "1",
-    onClick: _cache[5] || (_cache[5] = function ($event) {
-      return $options.testcur($event.target);
-    })
-  }, _hoisted_14), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("div", {
-    "class": "screen__column",
-    id: "2",
-    onClick: _cache[6] || (_cache[6] = function ($event) {
-      return $options.testcur($event.target);
-    })
-  }, _hoisted_17), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("div", {
-    "class": "screen__column",
-    id: "3",
     onClick: _cache[7] || (_cache[7] = function ($event) {
       return $options.testcur($event.target);
     })
-  }, _hoisted_21), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("div", {
+  }, _hoisted_26), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("div", {
     "class": "screen__column",
-    id: "4",
+    id: "2",
     onClick: _cache[8] || (_cache[8] = function ($event) {
       return $options.testcur($event.target);
     })
-  }, _hoisted_26)]), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("div", _hoisted_27, [(0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("input", {
-    name: "file_screen",
-    type: "file",
-    id: "input__file_screen",
-    "class": "input input__file",
-    onChange: _cache[9] || (_cache[9] = function ($event) {
-      return $options.setImg($event.target);
+  }, _hoisted_29), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("div", {
+    "class": "screen__column",
+    id: "3",
+    onClick: _cache[9] || (_cache[9] = function ($event) {
+      return $options.testcur($event.target);
     })
-  }, null, 32
-  /* HYDRATE_EVENTS */
-  ), _hoisted_28, (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("div", _hoisted_29, [(0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("div", _hoisted_30, [((0,vue__WEBPACK_IMPORTED_MODULE_0__.openBlock)(), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementBlock)("svg", {
-    width: "15",
-    height: "15",
-    viewBox: "0 0 15 15",
-    fill: "none",
-    xmlns: "http://www.w3.org/2000/svg",
+  }, _hoisted_33), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("div", {
+    "class": "screen__column",
+    id: "4",
     onClick: _cache[10] || (_cache[10] = function ($event) {
-      return $options.delImg($event.target);
+      return $options.testcur($event.target);
     })
-  }, _hoisted_33))]), _hoisted_34])])])], 8
+  }, _hoisted_38)])])], 8
   /* PROPS */
   , _hoisted_1);
 }
@@ -23895,50 +24169,15 @@ var _hoisted_2 = /*#__PURE__*/_withScopeId(function () {
 var _hoisted_3 = {
   "class": "input-group__wrap"
 };
-
-var _hoisted_4 = /*#__PURE__*/_withScopeId(function () {
-  return /*#__PURE__*/(0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("svg", {
-    width: "13",
-    height: "13",
-    viewBox: "0 0 15 15",
-    fill: "none",
-    xmlns: "http://www.w3.org/2000/svg",
-    "data-v-59c35ec8": ""
-  }, [/*#__PURE__*/(0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("line", {
-    x1: "1.06066",
-    y1: "1",
-    x2: "13",
-    y2: "12.9393",
-    stroke: "#222222",
-    "stroke-width": "1.5",
-    "stroke-linecap": "round",
-    "data-v-59c35ec8": ""
-  }), /*#__PURE__*/(0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("path", {
-    d: "M1 13.293L13.2929 1.00008",
-    stroke: "#222222",
-    "stroke-width": "1.5",
-    "stroke-linecap": "round",
-    "data-v-59c35ec8": ""
-  })], -1
-  /* HOISTED */
-  );
-});
-
-var _hoisted_5 = [_hoisted_4];
-var _hoisted_6 = ["value"];
+var _hoisted_4 = ["value"];
 function render(_ctx, _cache, $props, $setup, $data, $options) {
-  return (0,vue__WEBPACK_IMPORTED_MODULE_0__.openBlock)(), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementBlock)("div", _hoisted_1, [_hoisted_2, (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("div", _hoisted_3, [(0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("div", {
-    "class": "close",
-    onClick: _cache[0] || (_cache[0] = function ($event) {
-      return $options.close();
-    })
-  }, _hoisted_5), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("input", {
+  return (0,vue__WEBPACK_IMPORTED_MODULE_0__.openBlock)(), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementBlock)("div", _hoisted_1, [_hoisted_2, (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("div", _hoisted_3, [(0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("input", {
     type: "text",
     placeholder: "Подзаголовок",
     value: $props.values ? $props.values[0] : null
   }, null, 8
   /* PROPS */
-  , _hoisted_6)])]);
+  , _hoisted_4)])]);
 }
 
 /***/ }),
@@ -23963,7 +24202,7 @@ var _withScopeId = function _withScopeId(n) {
 
 var _hoisted_1 = {
   "class": "input-group",
-  id: "input-group__title"
+  id: "input-group-table"
 };
 var _hoisted_2 = {
   "class": "table__settings"
@@ -24004,6 +24243,7 @@ function render(_ctx, _cache, $props, $setup, $data, $options) {
     maxlength: "3",
     type: "number",
     value: _ctx.tr,
+    id: "tr",
     onInput: _cache[0] || (_cache[0] = function ($event) {
       return $options.setValue('tr', $event.target.value);
     })
@@ -24013,6 +24253,7 @@ function render(_ctx, _cache, $props, $setup, $data, $options) {
     maxlength: "3",
     type: "number",
     value: _ctx.td,
+    id: "td",
     onInput: _cache[1] || (_cache[1] = function ($event) {
       return $options.setValue('td', $event.target.value);
     })
@@ -24184,44 +24425,9 @@ var _hoisted_2 = /*#__PURE__*/_withScopeId(function () {
 var _hoisted_3 = {
   "class": "input-group__wrap"
 };
-
-var _hoisted_4 = /*#__PURE__*/_withScopeId(function () {
-  return /*#__PURE__*/(0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("svg", {
-    width: "13",
-    height: "13",
-    viewBox: "0 0 15 15",
-    fill: "none",
-    xmlns: "http://www.w3.org/2000/svg",
-    "data-v-59c35ec8": ""
-  }, [/*#__PURE__*/(0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("line", {
-    x1: "1.06066",
-    y1: "1",
-    x2: "13",
-    y2: "12.9393",
-    stroke: "#222222",
-    "stroke-width": "1.5",
-    "stroke-linecap": "round",
-    "data-v-59c35ec8": ""
-  }), /*#__PURE__*/(0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("path", {
-    d: "M1 13.293L13.2929 1.00008",
-    stroke: "#222222",
-    "stroke-width": "1.5",
-    "stroke-linecap": "round",
-    "data-v-59c35ec8": ""
-  })], -1
-  /* HOISTED */
-  );
-});
-
-var _hoisted_5 = [_hoisted_4];
-var _hoisted_6 = ["value"];
+var _hoisted_4 = ["value"];
 function render(_ctx, _cache, $props, $setup, $data, $options) {
-  return (0,vue__WEBPACK_IMPORTED_MODULE_0__.openBlock)(), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementBlock)("div", _hoisted_1, [_hoisted_2, (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("div", _hoisted_3, [(0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("div", {
-    "class": "close",
-    onClick: _cache[0] || (_cache[0] = function ($event) {
-      return $options.close();
-    })
-  }, _hoisted_5), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("textarea", {
+  return (0,vue__WEBPACK_IMPORTED_MODULE_0__.openBlock)(), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementBlock)("div", _hoisted_1, [_hoisted_2, (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("div", _hoisted_3, [(0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("textarea", {
     name: "",
     id: "",
     cols: "30",
@@ -24229,7 +24435,7 @@ function render(_ctx, _cache, $props, $setup, $data, $options) {
     value: $props.values ? $props.values[0] : null
   }, null, 8
   /* PROPS */
-  , _hoisted_6)])]);
+  , _hoisted_4)])]);
 }
 
 /***/ }),
@@ -24266,50 +24472,15 @@ var _hoisted_2 = /*#__PURE__*/_withScopeId(function () {
 var _hoisted_3 = {
   "class": "input-group__wrap"
 };
-
-var _hoisted_4 = /*#__PURE__*/_withScopeId(function () {
-  return /*#__PURE__*/(0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("svg", {
-    width: "13",
-    height: "13",
-    viewBox: "0 0 15 15",
-    fill: "none",
-    xmlns: "http://www.w3.org/2000/svg",
-    "data-v-59c35ec8": ""
-  }, [/*#__PURE__*/(0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("line", {
-    x1: "1.06066",
-    y1: "1",
-    x2: "13",
-    y2: "12.9393",
-    stroke: "#222222",
-    "stroke-width": "1.5",
-    "stroke-linecap": "round",
-    "data-v-59c35ec8": ""
-  }), /*#__PURE__*/(0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("path", {
-    d: "M1 13.293L13.2929 1.00008",
-    stroke: "#222222",
-    "stroke-width": "1.5",
-    "stroke-linecap": "round",
-    "data-v-59c35ec8": ""
-  })], -1
-  /* HOISTED */
-  );
-});
-
-var _hoisted_5 = [_hoisted_4];
-var _hoisted_6 = ["value"];
+var _hoisted_4 = ["value"];
 function render(_ctx, _cache, $props, $setup, $data, $options) {
-  return (0,vue__WEBPACK_IMPORTED_MODULE_0__.openBlock)(), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementBlock)("div", _hoisted_1, [_hoisted_2, (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("div", _hoisted_3, [(0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("div", {
-    "class": "close",
-    onClick: _cache[0] || (_cache[0] = function ($event) {
-      return $options.close();
-    })
-  }, _hoisted_5), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("input", {
+  return (0,vue__WEBPACK_IMPORTED_MODULE_0__.openBlock)(), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementBlock)("div", _hoisted_1, [_hoisted_2, (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("div", _hoisted_3, [(0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("input", {
     type: "text",
     placeholder: "Заголовок",
     value: $props.values ? $props.values[0] : null
   }, null, 8
   /* PROPS */
-  , _hoisted_6)])]);
+  , _hoisted_4)])]);
 }
 
 /***/ }),
@@ -25287,7 +25458,7 @@ function render(_ctx, _cache, $props, $setup, $data, $options) {
       type: "radio",
       id: inputcolor.id,
       name: "color",
-      value: inputcolor.color,
+      value: inputcolor.value,
       checked: ""
     }, null, 8
     /* PROPS */
@@ -26434,8 +26605,8 @@ function render(_ctx, _cache, $props, $setup, $data, $options) {
       type: "radio",
       id: inputcolor.id,
       name: "color",
-      value: inputcolor.color,
-      checked: (_ref = _ctx.report.color == inputcolor.color) !== null && _ref !== void 0 ? _ref : false
+      value: inputcolor.value,
+      checked: (_ref = _ctx.report.color == inputcolor.value) !== null && _ref !== void 0 ? _ref : false
     }, null, 8
     /* PROPS */
     , _hoisted_21), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("label", {
@@ -26700,6 +26871,23 @@ var _hoisted_13 = /*#__PURE__*/_withScopeId(function () {
 });
 
 var _hoisted_14 = [_hoisted_13];
+
+var _hoisted_15 = /*#__PURE__*/_withScopeId(function () {
+  return /*#__PURE__*/(0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("div", {
+    id: "save"
+  }, " Сохранено ", -1
+  /* HOISTED */
+  );
+});
+
+var _hoisted_16 = /*#__PURE__*/_withScopeId(function () {
+  return /*#__PURE__*/(0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("div", {
+    id: "report-error"
+  }, " Ошибка ", -1
+  /* HOISTED */
+  );
+});
+
 function render(_ctx, _cache, $props, $setup, $data, $options) {
   var _component_MenuReports = (0,vue__WEBPACK_IMPORTED_MODULE_0__.resolveComponent)("MenuReports");
 
@@ -26723,6 +26911,8 @@ function render(_ctx, _cache, $props, $setup, $data, $options) {
     })
   }, _hoisted_9), _hoisted_10])]), ((0,vue__WEBPACK_IMPORTED_MODULE_0__.openBlock)(true), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementBlock)(vue__WEBPACK_IMPORTED_MODULE_0__.Fragment, null, (0,vue__WEBPACK_IMPORTED_MODULE_0__.renderList)(this.current, function (item, i) {
     return (0,vue__WEBPACK_IMPORTED_MODULE_0__.openBlock)(), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createBlock)(_component_Screen, {
+      ref_for: true,
+      ref: "screen",
       key: i,
       onScreenClose: function onScreenClose($event) {
         return $options.screenDelete(i);
@@ -26746,7 +26936,7 @@ function render(_ctx, _cache, $props, $setup, $data, $options) {
     onClick: _cache[2] || (_cache[2] = function ($event) {
       return $options.addSreen();
     })
-  }, _hoisted_14)])])]);
+  }, _hoisted_14)]), _hoisted_15, _hoisted_16])]);
 }
 
 /***/ }),
@@ -39873,7 +40063,7 @@ var ___CSS_LOADER_URL_REPLACEMENT_21___ = _node_modules_laravel_mix_node_modules
 var ___CSS_LOADER_URL_REPLACEMENT_22___ = _node_modules_laravel_mix_node_modules_css_loader_dist_runtime_getUrl_js__WEBPACK_IMPORTED_MODULE_1___default()(_assets_fonts_Mont_ThinItalic_Mont_Light_woff__WEBPACK_IMPORTED_MODULE_24__["default"]);
 var ___CSS_LOADER_URL_REPLACEMENT_23___ = _node_modules_laravel_mix_node_modules_css_loader_dist_runtime_getUrl_js__WEBPACK_IMPORTED_MODULE_1___default()(_assets_fonts_Mont_ThinItalic_Mont_Light_ttf__WEBPACK_IMPORTED_MODULE_25__["default"]);
 // Module
-___CSS_LOADER_EXPORT___.push([module.id, "@font-face {\n  font-family: \"Mont\";\n  src: url(" + ___CSS_LOADER_URL_REPLACEMENT_0___ + ") format(\"woff2\"), url(" + ___CSS_LOADER_URL_REPLACEMENT_1___ + ") format(\"woff\"), url(" + ___CSS_LOADER_URL_REPLACEMENT_2___ + ") format(\"truetype\");\n  font-weight: 900;\n  font-style: normal;\n}\n@font-face {\n  font-family: \"Mont\";\n  src: url(" + ___CSS_LOADER_URL_REPLACEMENT_3___ + ") format(\"woff2\"), url(" + ___CSS_LOADER_URL_REPLACEMENT_4___ + ") format(\"woff\"), url(" + ___CSS_LOADER_URL_REPLACEMENT_5___ + ") format(\"truetype\");\n  font-weight: 200;\n  font-style: normal;\n}\n@font-face {\n  font-family: \"Mont\";\n  src: url(" + ___CSS_LOADER_URL_REPLACEMENT_6___ + ") format(\"woff2\"), url(" + ___CSS_LOADER_URL_REPLACEMENT_7___ + ") format(\"woff\"), url(" + ___CSS_LOADER_URL_REPLACEMENT_8___ + ") format(\"truetype\");\n  font-weight: bold;\n  font-style: normal;\n}\n@font-face {\n  font-family: \"Mont\";\n  src: url(" + ___CSS_LOADER_URL_REPLACEMENT_9___ + ") format(\"woff2\"), url(" + ___CSS_LOADER_URL_REPLACEMENT_10___ + ") format(\"woff\"), url(" + ___CSS_LOADER_URL_REPLACEMENT_11___ + ") format(\"truetype\");\n  font-weight: 800;\n  font-style: normal;\n}\n@font-face {\n  font-family: \"Mont\";\n  src: url(" + ___CSS_LOADER_URL_REPLACEMENT_12___ + ") format(\"woff2\"), url(" + ___CSS_LOADER_URL_REPLACEMENT_13___ + ") format(\"woff\"), url(" + ___CSS_LOADER_URL_REPLACEMENT_14___ + ") format(\"truetype\");\n  font-weight: 600;\n  font-style: normal;\n}\n@font-face {\n  font-family: \"Mont\";\n  src: url(" + ___CSS_LOADER_URL_REPLACEMENT_15___ + ") format(\"woff2\"), url(" + ___CSS_LOADER_URL_REPLACEMENT_16___ + ") format(\"woff\"), url(" + ___CSS_LOADER_URL_REPLACEMENT_17___ + ") format(\"truetype\");\n  font-weight: 100;\n  font-style: normal;\n}\n@font-face {\n  font-family: \"Mont\";\n  src: url(" + ___CSS_LOADER_URL_REPLACEMENT_18___ + ") format(\"woff2\"), url(" + ___CSS_LOADER_URL_REPLACEMENT_19___ + ") format(\"woff\"), url(" + ___CSS_LOADER_URL_REPLACEMENT_20___ + ") format(\"truetype\");\n  font-weight: normal;\n  font-style: normal;\n}\n@font-face {\n  font-family: \"Mont\";\n  src: url(" + ___CSS_LOADER_URL_REPLACEMENT_21___ + ") format(\"woff2\"), url(" + ___CSS_LOADER_URL_REPLACEMENT_22___ + ") format(\"woff\"), url(" + ___CSS_LOADER_URL_REPLACEMENT_23___ + ") format(\"truetype\");\n  font-weight: 300;\n  font-style: normal;\n}\n*,\n*::before,\n*::after {\n  box-sizing: border-box;\n}\n\n/* Remove default margin */\nbody,\nh1,\nh2,\nh3,\nh4,\np,\nfigure,\nblockquote,\ndl,\ndd {\n  margin: 0;\n}\n\n/* Remove list styles on ul, ol elements with a list role, which suggests default styling will be removed */\nul[role=\"list\"],\nli[role=\"list\"],\nol[role=\"list\"] {\n  list-style: none;\n}\nul, ol {\n  margin: 0;\n  padding: 0;\n}\nli {\n  list-style: none;\n}\n\n/* Set core root defaults */\nhtml:focus-within {\n  scroll-behavior: smooth;\n}\n\n/* Set core body defaults */\nbody {\n  min-height: 100vh;\n  text-rendering: optimizeSpeed;\n  /* line-height: 1.5; */\n}\n\n/* A elements that don't have a class get default styles */\na:not([class]) {\n  -webkit-text-decoration-skip: ink;\n          text-decoration-skip-ink: auto;\n}\na {\n  text-decoration: none;\n  outline: none;\n}\n\n/* Make images easier to work with */\nimg,\npicture {\n  max-width: 100%;\n  display: block;\n}\n\n/* Inherit fonts for inputs and buttons */\ninput,\nbutton,\ntextarea,\nselect {\n  font: inherit;\n  outline: none;\n}\nbody {\n  font-family: \"Mont\";\n  font-weight: normal;\n  background: #f3f6fd;\n}\n\n/* Remove all animations and transitions for people that prefer not to see them */\n@media (prefers-reduced-motion: reduce) {\nhtml:focus-within {\n    scroll-behavior: auto;\n}\n*,\n  *::before,\n  *::after {\n    animation-duration: 0.01ms !important;\n    animation-iteration-count: 1 !important;\n    transition-duration: 0.01ms !important;\n    scroll-behavior: auto !important;\n}\n}\nhtml::-webkit-scrollbar {\n  width: 5px;\n}\nhtml::-webkit-scrollbar-track {\n  -webkit-box-shadow: 5px 5px 5px -5px rgba(34, 60, 80, 0.2) inset;\n  background-color: rgba(3, 0, 135, 0.3);\n}\nhtml::-webkit-scrollbar-thumb {\n  border-radius: 10px;\n  background: linear-gradient(180deg, rgba(3, 0, 135, 0.3), #030087);\n}\nh2 {\n  font-weight: 700;\n  font-size: 36px;\n  line-height: 46px;\n  color: #222222;\n  margin-bottom: 30px;\n}\n.input-group {\n  width: 100%;\n  display: flex;\n  flex-direction: column;\n  margin-bottom: 30px;\n  position: relative;\n}\n.input-group:last-of-type {\n  margin-bottom: 30px;\n}\n.input-group-wrap {\n  display: flex;\n}\n.input-group label {\n  font-size: 16px;\n  line-height: 20px;\n  color: #000;\n  font-weight: 700;\n}\n.input-group input,\n.input-group the-mask {\n  margin-top: 5px;\n  width: 100%;\n  height: 55px;\n  border: 1px solid rgba(3, 0, 135, 0.3);\n  border-radius: 5px;\n  padding: 0 30px;\n  font-size: 16px;\n  line-height: 20px;\n  font-weight: 600;\n  color: #000;\n}\n.input-group__pass-icon {\n  position: absolute;\n  width: 50px;\n  right: 0;\n  bottom: 0;\n  height: 55px;\n  display: flex;\n  align-items: center;\n  justify-content: center;\n  cursor: pointer;\n}\n.input-group__pass-icon svg {\n  fill: #000;\n  fill-opacity: 0.5;\n  transition: ease-in-out 0.25s;\n}\n.input-group--password input {\n  padding: 0 60px 0 30px;\n}\n.input-group.active .input-group__pass-icon svg {\n  fill: #030087;\n  fill-opacity: 1;\n}\n.blue-btn {\n  width: 100%;\n  height: 55px;\n  display: flex;\n  align-items: center;\n  justify-content: center;\n  background: #030087;\n  border-radius: 5px;\n  outline: none;\n  border: none;\n  font-size: 16px;\n  line-height: 20px;\n  color: #fff;\n  font-weight: 700;\n  cursor: pointer;\n  transition: ease-in-out 0.25s;\n}\n.blue-btn svg {\n  margin-right: 10px;\n}\n.blue-btn:hover {\n  background: #0400c5;\n}\n.page-glob {\n  display: flex;\n  height: 100%;\n  padding-left: 300px;\n}\n.wrap-glob {\n  max-width: 1220px;\n  width: 100%;\n  padding: 50px;\n  margin: 0 auto;\n  box-sizing: content-box;\n}\n.input-file {\n  margin-bottom: 30px;\n}\n.input-file input {\n  display: none;\n}\n.input-file label {\n  display: flex;\n  align-items: center;\n  cursor: pointer;\n}\n.input-file__image {\n  width: 55px;\n  height: 55px;\n  margin-right: 15px;\n}\n.input-file__image--newreport, .input-file__image--settings {\n  width: 80px;\n  height: 55px;\n}\n.input-file__text {\n  font-size: 16px;\n  line-height: 20px;\n  color: #000;\n  font-weight: 600;\n}\n.menureports .menureports-cont .router-link-active {\n  opacity: 0.5;\n}\n.page-glob {\n  transition: ease-in-out 0.25s;\n}\n.page-glob.hidden {\n  padding-left: 0;\n}\n.input-file {\n  width: -moz-fit-content;\n  width: fit-content;\n}\n", ""]);
+___CSS_LOADER_EXPORT___.push([module.id, "@font-face {\n  font-family: \"Mont\";\n  src: url(" + ___CSS_LOADER_URL_REPLACEMENT_0___ + ") format(\"woff2\"), url(" + ___CSS_LOADER_URL_REPLACEMENT_1___ + ") format(\"woff\"), url(" + ___CSS_LOADER_URL_REPLACEMENT_2___ + ") format(\"truetype\");\n  font-weight: 900;\n  font-style: normal;\n}\n@font-face {\n  font-family: \"Mont\";\n  src: url(" + ___CSS_LOADER_URL_REPLACEMENT_3___ + ") format(\"woff2\"), url(" + ___CSS_LOADER_URL_REPLACEMENT_4___ + ") format(\"woff\"), url(" + ___CSS_LOADER_URL_REPLACEMENT_5___ + ") format(\"truetype\");\n  font-weight: 200;\n  font-style: normal;\n}\n@font-face {\n  font-family: \"Mont\";\n  src: url(" + ___CSS_LOADER_URL_REPLACEMENT_6___ + ") format(\"woff2\"), url(" + ___CSS_LOADER_URL_REPLACEMENT_7___ + ") format(\"woff\"), url(" + ___CSS_LOADER_URL_REPLACEMENT_8___ + ") format(\"truetype\");\n  font-weight: bold;\n  font-style: normal;\n}\n@font-face {\n  font-family: \"Mont\";\n  src: url(" + ___CSS_LOADER_URL_REPLACEMENT_9___ + ") format(\"woff2\"), url(" + ___CSS_LOADER_URL_REPLACEMENT_10___ + ") format(\"woff\"), url(" + ___CSS_LOADER_URL_REPLACEMENT_11___ + ") format(\"truetype\");\n  font-weight: 800;\n  font-style: normal;\n}\n@font-face {\n  font-family: \"Mont\";\n  src: url(" + ___CSS_LOADER_URL_REPLACEMENT_12___ + ") format(\"woff2\"), url(" + ___CSS_LOADER_URL_REPLACEMENT_13___ + ") format(\"woff\"), url(" + ___CSS_LOADER_URL_REPLACEMENT_14___ + ") format(\"truetype\");\n  font-weight: 600;\n  font-style: normal;\n}\n@font-face {\n  font-family: \"Mont\";\n  src: url(" + ___CSS_LOADER_URL_REPLACEMENT_15___ + ") format(\"woff2\"), url(" + ___CSS_LOADER_URL_REPLACEMENT_16___ + ") format(\"woff\"), url(" + ___CSS_LOADER_URL_REPLACEMENT_17___ + ") format(\"truetype\");\n  font-weight: 100;\n  font-style: normal;\n}\n@font-face {\n  font-family: \"Mont\";\n  src: url(" + ___CSS_LOADER_URL_REPLACEMENT_18___ + ") format(\"woff2\"), url(" + ___CSS_LOADER_URL_REPLACEMENT_19___ + ") format(\"woff\"), url(" + ___CSS_LOADER_URL_REPLACEMENT_20___ + ") format(\"truetype\");\n  font-weight: normal;\n  font-style: normal;\n}\n@font-face {\n  font-family: \"Mont\";\n  src: url(" + ___CSS_LOADER_URL_REPLACEMENT_21___ + ") format(\"woff2\"), url(" + ___CSS_LOADER_URL_REPLACEMENT_22___ + ") format(\"woff\"), url(" + ___CSS_LOADER_URL_REPLACEMENT_23___ + ") format(\"truetype\");\n  font-weight: 300;\n  font-style: normal;\n}\n*,\n*::before,\n*::after {\n  box-sizing: border-box;\n}\n\n/* Remove default margin */\nbody,\nh1,\nh2,\nh3,\nh4,\np,\nfigure,\nblockquote,\ndl,\ndd {\n  margin: 0;\n}\n\n/* Remove list styles on ul, ol elements with a list role, which suggests default styling will be removed */\nul[role=\"list\"],\nli[role=\"list\"],\nol[role=\"list\"] {\n  list-style: none;\n}\nul,\nol {\n  margin: 0;\n  padding: 0;\n}\nli {\n  list-style: none;\n}\n\n/* Set core root defaults */\nhtml:focus-within {\n  scroll-behavior: smooth;\n}\n\n/* Set core body defaults */\nbody {\n  min-height: 100vh;\n  text-rendering: optimizeSpeed;\n  /* line-height: 1.5; */\n}\n\n/* A elements that don't have a class get default styles */\na:not([class]) {\n  -webkit-text-decoration-skip: ink;\n          text-decoration-skip-ink: auto;\n}\na {\n  text-decoration: none;\n  outline: none;\n}\n\n/* Make images easier to work with */\nimg,\npicture {\n  max-width: 100%;\n  display: block;\n}\n\n/* Inherit fonts for inputs and buttons */\ninput,\nbutton,\ntextarea,\nselect {\n  font: inherit;\n  outline: none;\n}\nbody {\n  font-family: \"Mont\";\n  font-weight: normal;\n  background: #f3f6fd;\n}\n\n/* Remove all animations and transitions for people that prefer not to see them */\n@media (prefers-reduced-motion: reduce) {\nhtml:focus-within {\n    scroll-behavior: auto;\n}\n*,\n  *::before,\n  *::after {\n    animation-duration: 0.01ms !important;\n    animation-iteration-count: 1 !important;\n    transition-duration: 0.01ms !important;\n    scroll-behavior: auto !important;\n}\n}\nhtml::-webkit-scrollbar {\n  width: 5px;\n}\nhtml::-webkit-scrollbar-track {\n  -webkit-box-shadow: 5px 5px 5px -5px rgba(34, 60, 80, 0.2) inset;\n  background-color: rgba(3, 0, 135, 0.3);\n}\nhtml::-webkit-scrollbar-thumb {\n  border-radius: 10px;\n  background: linear-gradient(180deg, rgba(3, 0, 135, 0.3), #030087);\n}\nh2 {\n  font-weight: 700;\n  font-size: 36px;\n  line-height: 46px;\n  color: #222222;\n  margin-bottom: 30px;\n}\n.input-group {\n  width: 100%;\n  display: flex;\n  flex-direction: column;\n  margin-bottom: 30px;\n  position: relative;\n}\n.input-group:last-of-type {\n  margin-bottom: 30px;\n}\n.input-group-wrap {\n  display: flex;\n}\n.input-group label {\n  font-size: 16px;\n  line-height: 20px;\n  color: #000;\n  font-weight: 700;\n  padding: 0 10px;\n}\n.input-group input,\n.input-group the-mask {\n  margin-top: 5px;\n  width: 100%;\n  height: 55px;\n  border: 1px solid rgba(3, 0, 135, 0.3);\n  border-radius: 5px;\n  padding: 0 30px;\n  font-size: 16px;\n  line-height: 20px;\n  font-weight: 600;\n  color: #000;\n}\n.input-group__pass-icon {\n  position: absolute;\n  width: 50px;\n  right: 0;\n  bottom: 0;\n  height: 55px;\n  display: flex;\n  align-items: center;\n  justify-content: center;\n  cursor: pointer;\n}\n.input-group__pass-icon svg {\n  fill: #000;\n  fill-opacity: 0.5;\n  transition: ease-in-out 0.25s;\n}\n.input-group--password input {\n  padding: 0 60px 0 30px;\n}\n.input-group.active .input-group__pass-icon svg {\n  fill: #030087;\n  fill-opacity: 1;\n}\n.blue-btn {\n  width: 100%;\n  height: 55px;\n  display: flex;\n  align-items: center;\n  justify-content: center;\n  background: #030087;\n  border-radius: 5px;\n  outline: none;\n  border: none;\n  font-size: 16px;\n  line-height: 20px;\n  color: #fff;\n  font-weight: 700;\n  cursor: pointer;\n  transition: ease-in-out 0.25s;\n}\n.blue-btn svg {\n  margin-right: 10px;\n}\n.blue-btn:hover {\n  background: #0400c5;\n}\n.page-glob {\n  display: flex;\n  height: 100%;\n  padding-left: 300px;\n}\n.wrap-glob {\n  max-width: 1220px;\n  width: calc(100% - 100px);\n  padding: 50px;\n  margin: 0 auto;\n  box-sizing: content-box;\n}\n.input-file {\n  margin-bottom: 30px;\n}\n.input-file input {\n  display: none;\n}\n.input-file label {\n  display: flex;\n  align-items: center;\n  cursor: pointer;\n}\n.input-file__image {\n  width: 55px;\n  height: 55px;\n  margin-right: 15px;\n}\n.input-file__image--newreport, .input-file__image--settings {\n  width: 80px;\n  height: 55px;\n}\n.input-file__text {\n  font-size: 16px;\n  line-height: 20px;\n  color: #000;\n  font-weight: 600;\n}\n.menureports .menureports-cont .router-link-active {\n  opacity: 0.5;\n}\n.page-glob {\n  transition: ease-in-out 0.25s;\n}\n.page-glob.hidden {\n  padding-left: 0;\n}\n.input-file {\n  width: -moz-fit-content;\n  width: fit-content;\n}\n.close {\n  cursor: pointer;\n}\n#report-error {\n  position: fixed;\n  bottom: 50px;\n  left: 325px;\n  padding: 20px;\n  background: #c00000;\n  border-radius: 10px;\n  color: #fff;\n  font-weight: 700;\n  opacity: 0;\n  z-index: -1;\n  transition: ease-in-out 0.25s;\n}\n#save {\n  position: fixed;\n  bottom: 50px;\n  left: 325px;\n  padding: 20px;\n  background: #1BC000;\n  border-radius: 10px;\n  color: #fff;\n  font-weight: 700;\n  opacity: 0;\n  z-index: -1;\n  transition: ease-in-out 0.25s;\n}\n#save.active, #report-error.active {\n  opacity: 1;\n  z-index: 1000;\n}\n@media (max-width: 1170px) {\n.page-glob {\n    padding-left: 0;\n}\n#save {\n    left: 25px;\n}\n.wrap-glob {\n    padding-top: 100px;\n    width: 100%;\n}\n}\n#graph .elements-wrap {\n  align-items: flex-start;\n}\n.numbered-list__button:hover {\n  background: #030087;\n  color: #fff;\n}\n.numbered-list__button:hover circle, .numbered-list__button:hover line {\n  stroke: #fff;\n  stroke-width: 4;\n}\n", ""]);
 // Exports
 /* harmony default export */ __webpack_exports__["default"] = (___CSS_LOADER_EXPORT___);
 
@@ -39894,7 +40084,7 @@ __webpack_require__.r(__webpack_exports__);
 
 var ___CSS_LOADER_EXPORT___ = _node_modules_laravel_mix_node_modules_css_loader_dist_runtime_api_js__WEBPACK_IMPORTED_MODULE_0___default()(function(i){return i[1]});
 // Module
-___CSS_LOADER_EXPORT___.push([module.id, ".numbered-list[data-v-1038f52a] {\n  border: 1px solid rgba(3, 0, 135, 0.3);\n  border-radius: 5px;\n  padding: 30px;\n  width: 100%;\n}\n.numbered-list__title[data-v-1038f52a] {\n  font-weight: 700;\n  font-size: 16px;\n  line-height: 20px;\n  -webkit-user-select: none;\n     -moz-user-select: none;\n          user-select: none;\n}\n.numbered-list__ul[data-v-1038f52a] {\n  margin-left: 15px;\n  margin-top: 10px;\n}\n.numbered-list__ul li[data-v-1038f52a] {\n  list-style: initial;\n}\n.numbered-list__ul input[data-v-1038f52a] {\n  border: 0;\n  width: 100%;\n}\n.numbered-list__button[data-v-1038f52a] {\n  border: 1px solid rgba(3, 0, 135, 0.3);\n  border-radius: 5px;\n  margin-top: 30px;\n  padding: 15px;\n  display: flex;\n  justify-content: center;\n  align-items: center;\n  cursor: pointer;\n  -webkit-user-select: none;\n     -moz-user-select: none;\n          user-select: none;\n}\n.numbered-list__button svg[data-v-1038f52a] {\n  margin-right: 15px;\n}\n", ""]);
+___CSS_LOADER_EXPORT___.push([module.id, ".numbered-list[data-v-1038f52a] {\n  border: 1px solid rgba(3, 0, 135, 0.3);\n  border-radius: 5px;\n  padding: 30px;\n  width: 100%;\n}\n.numbered-list__title[data-v-1038f52a] {\n  font-weight: 700;\n  font-size: 16px;\n  line-height: 20px;\n  -webkit-user-select: none;\n     -moz-user-select: none;\n          user-select: none;\n  display: flex;\n}\n.numbered-list__ul[data-v-1038f52a] {\n  margin-left: 15px;\n  margin-top: 10px;\n  position: relative;\n}\n.numbered-list__ul li[data-v-1038f52a] {\n  list-style: initial;\n}\n.numbered-list__ul input[data-v-1038f52a] {\n  border: 0;\n  width: 100%;\n}\n.numbered-list__button[data-v-1038f52a] {\n  border: 1px solid rgba(3, 0, 135, 0.3);\n  border-radius: 5px;\n  margin-top: 30px;\n  padding: 15px;\n  display: flex;\n  justify-content: center;\n  align-items: center;\n  cursor: pointer;\n  -webkit-user-select: none;\n     -moz-user-select: none;\n          user-select: none;\n}\n.numbered-list__button svg[data-v-1038f52a] {\n  margin-right: 15px;\n}\n.numbered-list .close[data-v-1038f52a] {\n  margin-left: 10px;\n  height: 15px;\n}\n", ""]);
 // Exports
 /* harmony default export */ __webpack_exports__["default"] = (___CSS_LOADER_EXPORT___);
 
@@ -39921,7 +40111,7 @@ __webpack_require__.r(__webpack_exports__);
 var ___CSS_LOADER_EXPORT___ = _node_modules_laravel_mix_node_modules_css_loader_dist_runtime_api_js__WEBPACK_IMPORTED_MODULE_0___default()(function(i){return i[1]});
 var ___CSS_LOADER_URL_REPLACEMENT_0___ = _node_modules_laravel_mix_node_modules_css_loader_dist_runtime_getUrl_js__WEBPACK_IMPORTED_MODULE_1___default()(_assets_images_image_svg__WEBPACK_IMPORTED_MODULE_2__["default"]);
 // Module
-___CSS_LOADER_EXPORT___.push([module.id, ".elements[data-v-0ddefa3c] {\n  display: flex;\n  align-items: center;\n  justify-content: space-between;\n}\n.elementsactive[data-v-0ddefa3c] {\n  display: block;\n}\n.elements-wrap[data-v-0ddefa3c] {\n  width: 100%;\n  display: flex;\n  flex-direction: column;\n  align-items: center;\n}\n.elements-item[data-v-0ddefa3c] {\n  width: 100%;\n  position: relative;\n  background: #ffffff;\n  border: 0.5px solid rgba(3, 0, 135, 0.3);\n  border-radius: 4.7541px;\n  padding: 20px 17px;\n  min-height: 75px;\n  display: flex;\n  align-items: center;\n  justify-content: center;\n  margin-bottom: 20px;\n  margin-right: 30px;\n}\n.elements-item[data-v-0ddefa3c]:last-child {\n  margin-right: 0;\n}\n.elements-buttons[data-v-0ddefa3c] {\n  display: flex;\n  width: 100%;\n  max-width: 214px;\n  height: 38px;\n  background: #f3f6fd;\n  border: 1px solid #030087;\n  border-radius: 5px;\n  overflow: hidden;\n}\n.elements-buttons-btn[data-v-0ddefa3c] {\n  height: 100%;\n  width: 40px;\n  border-right: 1px solid #030087;\n  display: flex;\n  align-items: center;\n  justify-content: center;\n}\n.elements-buttons-btn[data-v-0ddefa3c]:last-child {\n  border-right: 0;\n}\n.elements-buttons__options[data-v-0ddefa3c] {\n  border: 1px solid #030087;\n  border-radius: 0 0 5px 5px;\n  background-color: #ffffff;\n  padding: 15px;\n  min-height: 130px;\n  display: none;\n  width: 215px;\n  -webkit-user-select: none;\n     -moz-user-select: none;\n          user-select: none;\n}\n.elements-buttons__options.active[data-v-0ddefa3c] {\n  display: block;\n  margin-top: -3px;\n}\n.elements-buttons__options div[data-v-0ddefa3c] {\n  margin: 10px 0;\n  cursor: pointer;\n}\n.elements-buttons__image[data-v-0ddefa3c] {\n  border: 1px solid #030087;\n  border-radius: 0 0 5px 5px;\n  background-color: #ffffff;\n  padding: 15px;\n  min-height: 130px;\n  display: none;\n  width: 215px;\n}\n.elements-buttons__image.activeImage[data-v-0ddefa3c] {\n  display: flex;\n  align-items: center;\n  justify-content: space-evenly;\n  margin-top: -3px;\n}\n.elements-buttons__item--fullstop[data-v-0ddefa3c] {\n  padding-left: 10px;\n}\n.elements-buttons__item--fullstop li[data-v-0ddefa3c] {\n  list-style: initial;\n}\n.elements-buttons__item--number[data-v-0ddefa3c] {\n  padding-left: 50px;\n}\n.elements-buttons__item--number li[data-v-0ddefa3c] {\n  list-style: auto;\n}\n.elements-buttons__item--image[data-v-0ddefa3c] {\n  padding-left: 15px;\n  margin-top: 10px;\n}\n.elements-buttons__item--image li[data-v-0ddefa3c] {\n  list-style-image: url(" + ___CSS_LOADER_URL_REPLACEMENT_0___ + ");\n}\n.elements-buttons__list[data-v-0ddefa3c] {\n  border: 1px solid #030087;\n  border-radius: 0 0 5px 5px;\n  background-color: #ffffff;\n  padding: 15px;\n  min-height: 130px;\n  display: none;\n  width: 215px;\n  -webkit-user-select: none;\n     -moz-user-select: none;\n          user-select: none;\n}\n.elements-buttons__list.activeList[data-v-0ddefa3c] {\n  display: flex;\n  flex-wrap: wrap;\n  margin-top: -3px;\n}\n.elements-buttons__table[data-v-0ddefa3c] {\n  border: 1px solid #030087;\n  border-radius: 0 0 5px 5px;\n  background-color: #ffffff;\n  padding: 15px;\n  min-height: 130px;\n  display: none;\n  width: 215px;\n}\n.elements-buttons__table.activeTable[data-v-0ddefa3c] {\n  display: flex;\n  justify-content: center;\n  margin-top: -3px;\n}\n.elements-buttons__personalTable[data-v-0ddefa3c] {\n  border: 1px solid #030087;\n  border-radius: 0 0 5px 5px;\n  background-color: #ffffff;\n  padding: 15px;\n  min-height: 130px;\n  display: none;\n  width: 215px;\n  -webkit-user-select: none;\n     -moz-user-select: none;\n          user-select: none;\n}\n.elements-buttons__personalTable__image[data-v-0ddefa3c] {\n  display: flex;\n  justify-content: space-evenly;\n  border: 1px solid #c8c8c8;\n}\n.elements-buttons__personalTable__numbers[data-v-0ddefa3c] {\n  display: flex;\n  justify-content: space-evenly;\n  border-left: 1px solid #c8c8c8;\n  border-right: 1px solid #c8c8c8;\n}\n.elements-buttons__personalTable__text[data-v-0ddefa3c] {\n  display: flex;\n  justify-content: space-evenly;\n  border: 1px solid #c8c8c8;\n  font-size: 11px;\n}\n.elements-buttons__personalTable.activePersTable[data-v-0ddefa3c] {\n  display: flex;\n  flex-direction: column;\n  justify-content: center;\n  margin-top: -3px;\n}\n.elements-buttons__button[data-v-0ddefa3c] {\n  border: 1px solid #030087;\n  border-radius: 0 0 5px 5px;\n  background-color: #ffffff;\n  padding: 15px;\n  min-height: 130px;\n  display: none;\n  width: 215px;\n  -webkit-user-select: none;\n     -moz-user-select: none;\n          user-select: none;\n}\n.elements-buttons__button div[data-v-0ddefa3c] {\n  width: 185px;\n  height: 45px;\n  background: #030087;\n  border: 1px solid #030087;\n  color: #ffffff;\n  border-radius: 5px;\n  display: flex;\n  justify-content: center;\n  align-items: center;\n  font-weight: 700;\n  font-size: 16px;\n  line-height: 20px;\n}\n.elements-buttons__button.activeButton[data-v-0ddefa3c] {\n  display: flex;\n  align-items: center;\n  margin-top: -3px;\n}\n.elements__del[data-v-0ddefa3c] {\n  position: absolute;\n  top: 6px;\n  right: 6px;\n  width: 13px;\n  height: 13px;\n  cursor: pointer;\n}\n", ""]);
+___CSS_LOADER_EXPORT___.push([module.id, ".elements[data-v-0ddefa3c] {\n  display: flex;\n  align-items: center;\n  justify-content: space-between;\n}\n.elementsactive[data-v-0ddefa3c] {\n  display: block;\n}\n.elements-wrap[data-v-0ddefa3c] {\n  width: 100%;\n  display: flex;\n  flex-direction: column;\n  align-items: center;\n}\n.elements-item[data-v-0ddefa3c] {\n  width: 100%;\n  position: relative;\n  background: #ffffff;\n  border: 0.5px solid rgba(3, 0, 135, 0.3);\n  border-radius: 4.7541px;\n  padding: 20px 17px;\n  min-height: 75px;\n  display: flex;\n  align-items: center;\n  justify-content: center;\n  margin-bottom: 20px;\n  margin-right: 30px;\n}\n.elements-item[data-v-0ddefa3c]:last-child {\n  margin-right: 0;\n}\n.elements-buttons[data-v-0ddefa3c] {\n  display: flex;\n  width: 100%;\n  max-width: 214px;\n  height: 38px;\n  background: #f3f6fd;\n  border: 1px solid #030087;\n  border-radius: 5px;\n  overflow: hidden;\n}\n.elements-buttons-btn[data-v-0ddefa3c] {\n  height: 100%;\n  width: 40px;\n  border-right: 1px solid #030087;\n  display: flex;\n  align-items: center;\n  justify-content: center;\n}\n.elements-buttons-btn[data-v-0ddefa3c]:last-child {\n  border-right: 0;\n}\n.elements-buttons__options[data-v-0ddefa3c] {\n  border: 1px solid #030087;\n  border-radius: 0 0 5px 5px;\n  background-color: #ffffff;\n  padding: 15px;\n  min-height: 130px;\n  display: none;\n  width: 215px;\n  -webkit-user-select: none;\n     -moz-user-select: none;\n          user-select: none;\n}\n.elements-buttons__options.active[data-v-0ddefa3c] {\n  display: block;\n  margin-top: -3px;\n}\n.elements-buttons__options div[data-v-0ddefa3c] {\n  margin: 10px 0;\n  cursor: pointer;\n}\n.elements-buttons__image[data-v-0ddefa3c] {\n  border: 1px solid #030087;\n  border-radius: 0 0 5px 5px;\n  background-color: #ffffff;\n  padding: 15px;\n  min-height: 130px;\n  display: none;\n  width: 215px;\n}\n.elements-buttons__image.activeImage[data-v-0ddefa3c] {\n  display: flex;\n  align-items: center;\n  justify-content: space-evenly;\n  margin-top: -3px;\n}\n.elements-buttons__item--fullstop[data-v-0ddefa3c] {\n  padding-left: 10px;\n}\n.elements-buttons__item--fullstop li[data-v-0ddefa3c] {\n  list-style: initial;\n}\n.elements-buttons__item--number[data-v-0ddefa3c] {\n  padding-left: 50px;\n}\n.elements-buttons__item--number li[data-v-0ddefa3c] {\n  list-style: auto;\n}\n.elements-buttons__item--image[data-v-0ddefa3c] {\n  padding-left: 15px;\n  margin-top: 10px;\n}\n.elements-buttons__item--image li[data-v-0ddefa3c] {\n  list-style-image: url(" + ___CSS_LOADER_URL_REPLACEMENT_0___ + ");\n}\n.elements-buttons__list[data-v-0ddefa3c] {\n  border: 1px solid #030087;\n  border-radius: 0 0 5px 5px;\n  background-color: #ffffff;\n  padding: 15px;\n  min-height: 130px;\n  display: none;\n  width: 215px;\n  -webkit-user-select: none;\n     -moz-user-select: none;\n          user-select: none;\n}\n.elements-buttons__list.activeList[data-v-0ddefa3c] {\n  display: flex;\n  flex-wrap: wrap;\n  margin-top: -3px;\n}\n.elements-buttons__table[data-v-0ddefa3c] {\n  border: 1px solid #030087;\n  border-radius: 0 0 5px 5px;\n  background-color: #ffffff;\n  padding: 15px;\n  min-height: 130px;\n  display: none;\n  width: 215px;\n}\n.elements-buttons__table.activeTable[data-v-0ddefa3c] {\n  display: flex;\n  justify-content: center;\n  margin-top: -3px;\n}\n.elements-buttons__personalTable[data-v-0ddefa3c] {\n  border: 1px solid #030087;\n  border-radius: 0 0 5px 5px;\n  background-color: #ffffff;\n  padding: 15px;\n  min-height: 130px;\n  display: none;\n  width: 215px;\n  -webkit-user-select: none;\n     -moz-user-select: none;\n          user-select: none;\n}\n.elements-buttons__personalTable__image[data-v-0ddefa3c] {\n  display: flex;\n  justify-content: space-evenly;\n  border: 1px solid #c8c8c8;\n}\n.elements-buttons__personalTable__numbers[data-v-0ddefa3c] {\n  display: flex;\n  justify-content: space-evenly;\n  border-left: 1px solid #c8c8c8;\n  border-right: 1px solid #c8c8c8;\n}\n.elements-buttons__personalTable__text[data-v-0ddefa3c] {\n  display: flex;\n  justify-content: space-evenly;\n  border: 1px solid #c8c8c8;\n  font-size: 11px;\n}\n.elements-buttons__personalTable.activePersTable[data-v-0ddefa3c] {\n  display: flex;\n  flex-direction: column;\n  justify-content: center;\n  margin-top: -3px;\n}\n.elements-buttons__button[data-v-0ddefa3c] {\n  border: 1px solid #030087;\n  border-radius: 0 0 5px 5px;\n  background-color: #ffffff;\n  padding: 15px;\n  min-height: 130px;\n  display: none;\n  width: 215px;\n  -webkit-user-select: none;\n     -moz-user-select: none;\n          user-select: none;\n}\n.elements-buttons__button div[data-v-0ddefa3c] {\n  width: 185px;\n  height: 45px;\n  background: #030087;\n  border: 1px solid #030087;\n  color: #ffffff;\n  border-radius: 5px;\n  display: flex;\n  justify-content: center;\n  align-items: center;\n  font-weight: 700;\n  font-size: 16px;\n  line-height: 20px;\n}\n.elements-buttons__button.activeButton[data-v-0ddefa3c] {\n  display: flex;\n  align-items: center;\n  margin-top: -3px;\n}\n.elements__del[data-v-0ddefa3c] {\n  position: absolute;\n  top: 6px;\n  right: 6px;\n  width: 13px;\n  height: 13px;\n  cursor: pointer;\n}\n.elements[data-v-0ddefa3c] {\n  display: flex;\n  align-items: center;\n  justify-content: space-between;\n}\n.elementsactive[data-v-0ddefa3c] {\n  display: block;\n}\n.elements-wrap[data-v-0ddefa3c] {\n  width: 100%;\n  display: flex;\n  flex-direction: column;\n  align-items: center;\n}\n.elements-item[data-v-0ddefa3c] {\n  width: 100%;\n  position: relative;\n  background: #ffffff;\n  border: 0.5px solid rgba(3, 0, 135, 0.3);\n  border-radius: 4.7541px;\n  padding: 20px 17px;\n  min-height: 75px;\n  display: flex;\n  align-items: center;\n  justify-content: center;\n  margin-bottom: 20px;\n  margin-right: 30px;\n}\n.elements-item[data-v-0ddefa3c]:last-child {\n  margin-right: 0;\n}\n.elements-buttons[data-v-0ddefa3c] {\n  display: flex;\n  width: 100%;\n  max-width: 214px;\n  height: 38px;\n  background: #f3f6fd;\n  border: 1px solid #030087;\n  border-radius: 5px;\n  overflow: hidden;\n}\n.elements-buttons-btn[data-v-0ddefa3c] {\n  height: 100%;\n  width: 40px;\n  border-right: 1px solid #030087;\n  display: flex;\n  align-items: center;\n  justify-content: center;\n}\n.elements-buttons-btn[data-v-0ddefa3c]:last-child {\n  border-right: 0;\n}\n.elements-buttons__options[data-v-0ddefa3c] {\n  border: 1px solid #030087;\n  border-radius: 0 0 5px 5px;\n  background-color: #ffffff;\n  padding: 15px;\n  min-height: 130px;\n  display: none;\n  width: 215px;\n  -webkit-user-select: none;\n     -moz-user-select: none;\n          user-select: none;\n}\n.elements-buttons__options.active[data-v-0ddefa3c] {\n  display: block;\n  margin-top: -3px;\n}\n.elements-buttons__options div[data-v-0ddefa3c] {\n  margin: 10px 0;\n  cursor: pointer;\n}\n.elements-buttons__image[data-v-0ddefa3c] {\n  border: 1px solid #030087;\n  border-radius: 0 0 5px 5px;\n  background-color: #ffffff;\n  padding: 15px;\n  min-height: 130px;\n  display: none;\n  width: 215px;\n}\n.elements-buttons__image.activeImage[data-v-0ddefa3c] {\n  display: flex;\n  align-items: center;\n  justify-content: space-evenly;\n  margin-top: -3px;\n}\n.elements-buttons__item--fullstop[data-v-0ddefa3c] {\n  padding-left: 10px;\n}\n.elements-buttons__item--fullstop li[data-v-0ddefa3c] {\n  list-style: initial;\n}\n.elements-buttons__item--number[data-v-0ddefa3c] {\n  padding-left: 50px;\n}\n.elements-buttons__item--number li[data-v-0ddefa3c] {\n  list-style: auto;\n}\n.elements-buttons__item--image[data-v-0ddefa3c] {\n  padding-left: 15px;\n  margin-top: 10px;\n}\n.elements-buttons__item--image li[data-v-0ddefa3c] {\n  list-style-image: url(" + ___CSS_LOADER_URL_REPLACEMENT_0___ + ");\n}\n.elements-buttons__list[data-v-0ddefa3c] {\n  border: 1px solid #030087;\n  border-radius: 0 0 5px 5px;\n  background-color: #ffffff;\n  padding: 15px;\n  min-height: 130px;\n  display: none;\n  width: 215px;\n  -webkit-user-select: none;\n     -moz-user-select: none;\n          user-select: none;\n}\n.elements-buttons__list.activeList[data-v-0ddefa3c] {\n  display: flex;\n  flex-wrap: wrap;\n  margin-top: -3px;\n}\n.elements-buttons__table[data-v-0ddefa3c] {\n  border: 1px solid #030087;\n  border-radius: 0 0 5px 5px;\n  background-color: #ffffff;\n  padding: 15px;\n  min-height: 130px;\n  display: none;\n  width: 215px;\n}\n.elements-buttons__table.activeTable[data-v-0ddefa3c] {\n  display: flex;\n  justify-content: center;\n  margin-top: -3px;\n}\n.elements-buttons__personalTable[data-v-0ddefa3c] {\n  border: 1px solid #030087;\n  border-radius: 0 0 5px 5px;\n  background-color: #ffffff;\n  padding: 15px;\n  min-height: 130px;\n  display: none;\n  width: 215px;\n  -webkit-user-select: none;\n     -moz-user-select: none;\n          user-select: none;\n}\n.elements-buttons__personalTable__image[data-v-0ddefa3c] {\n  display: flex;\n  justify-content: space-evenly;\n  border: 1px solid #c8c8c8;\n}\n.elements-buttons__personalTable__numbers[data-v-0ddefa3c] {\n  display: flex;\n  justify-content: space-evenly;\n  border-left: 1px solid #c8c8c8;\n  border-right: 1px solid #c8c8c8;\n}\n.elements-buttons__personalTable__text[data-v-0ddefa3c] {\n  display: flex;\n  justify-content: space-evenly;\n  border: 1px solid #c8c8c8;\n  font-size: 11px;\n}\n.elements-buttons__personalTable.activePersTable[data-v-0ddefa3c] {\n  display: flex;\n  flex-direction: column;\n  justify-content: center;\n  margin-top: -3px;\n}\n.elements-buttons__button[data-v-0ddefa3c] {\n  border: 1px solid #030087;\n  border-radius: 0 0 5px 5px;\n  background-color: #ffffff;\n  padding: 15px;\n  min-height: 130px;\n  display: none;\n  width: 215px;\n  -webkit-user-select: none;\n     -moz-user-select: none;\n          user-select: none;\n}\n.elements-buttons__button div[data-v-0ddefa3c] {\n  width: 185px;\n  height: 45px;\n  background: #030087;\n  border: 1px solid #030087;\n  color: #ffffff;\n  border-radius: 5px;\n  display: flex;\n  justify-content: center;\n  align-items: center;\n  font-weight: 700;\n  font-size: 16px;\n  line-height: 20px;\n}\n.elements-buttons__button.activeButton[data-v-0ddefa3c] {\n  display: flex;\n  align-items: center;\n  margin-top: -3px;\n}\n.elements__del[data-v-0ddefa3c] {\n  position: absolute;\n  top: 6px;\n  right: 6px;\n  width: 13px;\n  height: 13px;\n  cursor: pointer;\n}\n", ""]);
 // Exports
 /* harmony default export */ __webpack_exports__["default"] = (___CSS_LOADER_EXPORT___);
 
@@ -39948,7 +40138,7 @@ __webpack_require__.r(__webpack_exports__);
 var ___CSS_LOADER_EXPORT___ = _node_modules_laravel_mix_node_modules_css_loader_dist_runtime_api_js__WEBPACK_IMPORTED_MODULE_0___default()(function(i){return i[1]});
 var ___CSS_LOADER_URL_REPLACEMENT_0___ = _node_modules_laravel_mix_node_modules_css_loader_dist_runtime_getUrl_js__WEBPACK_IMPORTED_MODULE_1___default()(_assets_images_image_svg__WEBPACK_IMPORTED_MODULE_2__["default"]);
 // Module
-___CSS_LOADER_EXPORT___.push([module.id, ".elements-item.count-1[data-v-0ddefa3c] {\n  width: 100%;\n}\n.elements-item.count-2[data-v-0ddefa3c] {\n  width: calc(50% - 30px);\n}\n.elements-item.count-3[data-v-0ddefa3c] {\n  width: calc(33.33333% - 30px);\n}\n.elements-item.count-4[data-v-0ddefa3c] {\n  width: calc(25% - 30px);\n}\n.elements[data-v-0ddefa3c] {\n  display: flex;\n  align-items: center;\n  justify-content: space-between;\n}\n.elementsactive[data-v-0ddefa3c] {\n  display: block;\n}\n.elements-wrap[data-v-0ddefa3c] {\n  width: 100%;\n  display: flex;\n  flex-direction: column;\n  align-items: center;\n}\n.elements-item[data-v-0ddefa3c] {\n  position: relative;\n  background: #ffffff;\n  border: 0.5px solid rgba(3, 0, 135, 0.3);\n  border-radius: 4.7541px;\n  padding: 20px 17px;\n  min-height: 75px;\n  display: flex;\n  align-items: center;\n  justify-content: center;\n  margin-bottom: 20px;\n  margin-right: 30px;\n}\n.elements-item[data-v-0ddefa3c]:last-child {\n  margin-right: 0;\n}\n.elements-buttons[data-v-0ddefa3c] {\n  display: flex;\n  width: 100%;\n  max-width: 214px;\n  height: 38px;\n  background: #f3f6fd;\n  border: 1px solid #030087;\n  border-radius: 5px;\n  overflow: hidden;\n}\n.elements-buttons-btn[data-v-0ddefa3c] {\n  height: 100%;\n  width: 40px;\n  border-right: 1px solid #030087;\n  display: flex;\n  align-items: center;\n  justify-content: center;\n}\n.elements-buttons-btn[data-v-0ddefa3c]:last-child {\n  border-right: 0;\n}\n.elements-buttons__options[data-v-0ddefa3c] {\n  border: 1px solid #030087;\n  border-radius: 0 0 5px 5px;\n  background-color: #ffffff;\n  padding: 15px;\n  min-height: 130px;\n  display: none;\n  width: 215px;\n  -webkit-user-select: none;\n     -moz-user-select: none;\n          user-select: none;\n}\n.elements-buttons__options.active[data-v-0ddefa3c] {\n  display: block;\n  margin-top: -3px;\n}\n.elements-buttons__options div[data-v-0ddefa3c] {\n  margin: 10px 0;\n  cursor: pointer;\n}\n.elements-buttons__image[data-v-0ddefa3c] {\n  border: 1px solid #030087;\n  border-radius: 0 0 5px 5px;\n  background-color: #ffffff;\n  padding: 15px;\n  min-height: 130px;\n  display: none;\n  width: 215px;\n}\n.elements-buttons__image.activeImage[data-v-0ddefa3c] {\n  display: flex;\n  align-items: center;\n  justify-content: space-evenly;\n  margin-top: -3px;\n}\n.elements-buttons__item--fullstop[data-v-0ddefa3c] {\n  padding-left: 10px;\n}\n.elements-buttons__item--fullstop li[data-v-0ddefa3c] {\n  list-style: initial;\n}\n.elements-buttons__item--number[data-v-0ddefa3c] {\n  padding-left: 50px;\n}\n.elements-buttons__item--number li[data-v-0ddefa3c] {\n  list-style: auto;\n}\n.elements-buttons__item--image[data-v-0ddefa3c] {\n  padding-left: 15px;\n  margin-top: 10px;\n}\n.elements-buttons__item--image li[data-v-0ddefa3c] {\n  list-style-image: url(" + ___CSS_LOADER_URL_REPLACEMENT_0___ + ");\n}\n.elements-buttons__list[data-v-0ddefa3c] {\n  border: 1px solid #030087;\n  border-radius: 0 0 5px 5px;\n  background-color: #ffffff;\n  padding: 15px;\n  min-height: 130px;\n  display: none;\n  width: 215px;\n  -webkit-user-select: none;\n     -moz-user-select: none;\n          user-select: none;\n}\n.elements-buttons__list.activeList[data-v-0ddefa3c] {\n  display: flex;\n  flex-wrap: wrap;\n  margin-top: -3px;\n}\n.elements-buttons__table[data-v-0ddefa3c] {\n  border: 1px solid #030087;\n  border-radius: 0 0 5px 5px;\n  background-color: #ffffff;\n  padding: 15px;\n  min-height: 130px;\n  display: none;\n  width: 215px;\n}\n.elements-buttons__table.activeTable[data-v-0ddefa3c] {\n  display: flex;\n  flex-direction: column;\n  justify-content: center;\n  margin-top: -3px;\n}\n.elements-buttons__personalTable[data-v-0ddefa3c] {\n  border: 1px solid #030087;\n  border-radius: 0 0 5px 5px;\n  background-color: #ffffff;\n  padding: 15px;\n  min-height: 130px;\n  display: none;\n  width: 215px;\n  -webkit-user-select: none;\n     -moz-user-select: none;\n          user-select: none;\n}\n.elements-buttons__personalTable__image[data-v-0ddefa3c] {\n  display: flex;\n  justify-content: space-evenly;\n  border: 1px solid #c8c8c8;\n}\n.elements-buttons__personalTable__numbers[data-v-0ddefa3c] {\n  display: flex;\n  justify-content: space-evenly;\n  border-left: 1px solid #c8c8c8;\n  border-right: 1px solid #c8c8c8;\n}\n.elements-buttons__personalTable__text[data-v-0ddefa3c] {\n  display: flex;\n  justify-content: space-evenly;\n  border: 1px solid #c8c8c8;\n  font-size: 11px;\n}\n.elements-buttons__personalTable.activePersTable[data-v-0ddefa3c] {\n  display: flex;\n  flex-direction: column;\n  justify-content: center;\n  margin-top: -3px;\n}\n.elements-buttons__button[data-v-0ddefa3c] {\n  border: 1px solid #030087;\n  border-radius: 0 0 5px 5px;\n  background-color: #ffffff;\n  padding: 15px;\n  min-height: 130px;\n  display: none;\n  width: 215px;\n  -webkit-user-select: none;\n     -moz-user-select: none;\n          user-select: none;\n}\n.elements-buttons__button div[data-v-0ddefa3c] {\n  width: 185px;\n  height: 45px;\n  background: #030087;\n  border: 1px solid #030087;\n  color: #ffffff;\n  border-radius: 5px;\n  display: flex;\n  justify-content: center;\n  align-items: center;\n  font-weight: 700;\n  font-size: 16px;\n  line-height: 20px;\n}\n.elements-buttons__button.activeButton[data-v-0ddefa3c] {\n  display: flex;\n  align-items: center;\n  margin-top: -3px;\n}\n.elements__del[data-v-0ddefa3c] {\n  position: absolute;\n  top: 6px;\n  right: 6px;\n  width: 13px;\n  height: 13px;\n  cursor: pointer;\n}\n.table__element[data-v-0ddefa3c] {\n  width: 11.11111%;\n  min-width: 11.11111%;\n  height: 19px;\n  min-height: 19px;\n  background: transparent;\n  margin: 0;\n  border: 1px solid #000;\n  border-bottom: none;\n  border-right: none;\n}\n.table__element.active[data-v-0ddefa3c] {\n  background: #888;\n}\n.elements-buttons__table .table__element[data-v-0ddefa3c]:last-of-type {\n  border-right: 1px solid #000;\n}\n.elements-buttons__table > div:last-of-type .table__element[data-v-0ddefa3c] {\n  border-bottom: 1px solid #000;\n}\n.table__block[data-v-0ddefa3c] {\n  display: flex;\n  width: 100%;\n}\n.input-group[data-v-0ddefa3c] {\n  overflow: auto;\n}\n.elements-wrap[data-v-0ddefa3c] {\n  overflow: auto;\n}\n@media (max-width: 1170px) {\n.screen__elements .elements-item[data-v-0ddefa3c] {\n    width: 100%;\n}\n}\n.elements-buttons-btn[data-v-0ddefa3c]:hover {\n  background: #030087;\n}\n.elements-buttons-btn:hover path[fill=\"#222222\"][data-v-0ddefa3c], .elements-buttons-btn:hover circle[fill=\"#222222\"][data-v-0ddefa3c], .elements-buttons-btn:hover rect[stroke=\"#222222\"][data-v-0ddefa3c], .elements-buttons-btn:hover rect[fill=\"#222222\"][data-v-0ddefa3c] {\n  fill: #fff;\n}\n.elements-buttons-btn:hover path[fill=\"#6F6F6F\"][data-v-0ddefa3c] {\n  fill: #dddddd;\n}\n.elements-buttons .elements-buttons-btn:last-child:hover path[fill=\"#222222\"][data-v-0ddefa3c] {\n  fill: #222222;\n}\n", ""]);
+___CSS_LOADER_EXPORT___.push([module.id, ".elements-item.count-1[data-v-0ddefa3c] {\n  width: 100%;\n}\n.elements-item.count-2[data-v-0ddefa3c] {\n  width: calc(50% - 30px);\n}\n.elements-item.count-3[data-v-0ddefa3c] {\n  width: calc(33.33333% - 30px);\n}\n.elements-item.count-4[data-v-0ddefa3c] {\n  width: calc(25% - 30px);\n}\n.elements[data-v-0ddefa3c] {\n  display: flex;\n  align-items: center;\n  justify-content: space-between;\n}\n.elementsactive[data-v-0ddefa3c] {\n  display: block;\n}\n.elements-wrap[data-v-0ddefa3c] {\n  width: 100%;\n  display: flex;\n  flex-direction: column;\n  align-items: center;\n}\n.elements-item[data-v-0ddefa3c] {\n  position: relative;\n  background: #ffffff;\n  border: 0.5px solid rgba(3, 0, 135, 0.3);\n  border-radius: 4.7541px;\n  padding: 20px 17px;\n  min-height: 75px;\n  display: flex;\n  align-items: center;\n  justify-content: center;\n  margin-bottom: 20px;\n  margin-right: 30px;\n}\n.elements-item[data-v-0ddefa3c]:last-child {\n  margin-right: 0;\n}\n.elements-buttons[data-v-0ddefa3c] {\n  display: flex;\n  width: 100%;\n  max-width: 214px;\n  height: 38px;\n  background: #f3f6fd;\n  border: 1px solid #030087;\n  border-radius: 5px;\n  overflow: hidden;\n}\n.elements-buttons-btn[data-v-0ddefa3c] {\n  height: 100%;\n  width: 40px;\n  border-right: 1px solid #030087;\n  display: flex;\n  align-items: center;\n  justify-content: center;\n}\n.elements-buttons-btn[data-v-0ddefa3c]:last-child {\n  border-right: 0;\n}\n.elements-buttons__options[data-v-0ddefa3c] {\n  border: 1px solid #030087;\n  border-radius: 0 0 5px 5px;\n  background-color: #ffffff;\n  padding: 15px;\n  min-height: 130px;\n  display: none;\n  width: 215px;\n  -webkit-user-select: none;\n     -moz-user-select: none;\n          user-select: none;\n}\n.elements-buttons__options.active[data-v-0ddefa3c] {\n  display: block;\n  margin-top: -3px;\n}\n.elements-buttons__options div[data-v-0ddefa3c] {\n  margin: 10px 0;\n  cursor: pointer;\n}\n.elements-buttons__image[data-v-0ddefa3c] {\n  border: 1px solid #030087;\n  border-radius: 0 0 5px 5px;\n  background-color: #ffffff;\n  padding: 15px;\n  min-height: 130px;\n  display: none;\n  width: 215px;\n}\n.elements-buttons__image.activeImage[data-v-0ddefa3c] {\n  display: flex;\n  align-items: center;\n  justify-content: space-evenly;\n  margin-top: -3px;\n}\n.elements-buttons__item--fullstop[data-v-0ddefa3c] {\n  padding-left: 10px;\n}\n.elements-buttons__item--fullstop li[data-v-0ddefa3c] {\n  list-style: initial;\n}\n.elements-buttons__item--number[data-v-0ddefa3c] {\n  padding-left: 50px;\n}\n.elements-buttons__item--number li[data-v-0ddefa3c] {\n  list-style: auto;\n}\n.elements-buttons__item--image[data-v-0ddefa3c] {\n  padding-left: 15px;\n  margin-top: 10px;\n}\n.elements-buttons__item--image li[data-v-0ddefa3c] {\n  list-style-image: url(" + ___CSS_LOADER_URL_REPLACEMENT_0___ + ");\n}\n.elements-buttons__list[data-v-0ddefa3c] {\n  border: 1px solid #030087;\n  border-radius: 0 0 5px 5px;\n  background-color: #ffffff;\n  padding: 15px;\n  min-height: 130px;\n  display: none;\n  width: 215px;\n  -webkit-user-select: none;\n     -moz-user-select: none;\n          user-select: none;\n}\n.elements-buttons__list.activeList[data-v-0ddefa3c] {\n  display: flex;\n  flex-wrap: wrap;\n  margin-top: -3px;\n}\n.elements-buttons__table[data-v-0ddefa3c] {\n  border: 1px solid #030087;\n  border-radius: 0 0 5px 5px;\n  background-color: #ffffff;\n  padding: 15px;\n  min-height: 130px;\n  display: none;\n  width: 215px;\n}\n.elements-buttons__table.activeTable[data-v-0ddefa3c] {\n  display: flex;\n  flex-direction: column;\n  justify-content: center;\n  margin-top: -3px;\n}\n.elements-buttons__personalTable[data-v-0ddefa3c] {\n  border: 1px solid #030087;\n  border-radius: 0 0 5px 5px;\n  background-color: #ffffff;\n  padding: 15px;\n  min-height: 130px;\n  display: none;\n  width: 215px;\n  -webkit-user-select: none;\n     -moz-user-select: none;\n          user-select: none;\n}\n.elements-buttons__personalTable__image[data-v-0ddefa3c] {\n  display: flex;\n  justify-content: space-evenly;\n  border: 1px solid #c8c8c8;\n}\n.elements-buttons__personalTable__numbers[data-v-0ddefa3c] {\n  display: flex;\n  justify-content: space-evenly;\n  border-left: 1px solid #c8c8c8;\n  border-right: 1px solid #c8c8c8;\n}\n.elements-buttons__personalTable__text[data-v-0ddefa3c] {\n  display: flex;\n  justify-content: space-evenly;\n  border: 1px solid #c8c8c8;\n  font-size: 11px;\n}\n.elements-buttons__personalTable.activePersTable[data-v-0ddefa3c] {\n  display: flex;\n  flex-direction: column;\n  justify-content: center;\n  margin-top: -3px;\n}\n.elements-buttons__button[data-v-0ddefa3c] {\n  border: 1px solid #030087;\n  border-radius: 0 0 5px 5px;\n  background-color: #ffffff;\n  padding: 15px;\n  min-height: 130px;\n  display: none;\n  width: 215px;\n  -webkit-user-select: none;\n     -moz-user-select: none;\n          user-select: none;\n}\n.elements-buttons__button div[data-v-0ddefa3c] {\n  width: 185px;\n  height: 45px;\n  background: #030087;\n  border: 1px solid #030087;\n  color: #ffffff;\n  border-radius: 5px;\n  display: flex;\n  justify-content: center;\n  align-items: center;\n  font-weight: 700;\n  font-size: 16px;\n  line-height: 20px;\n}\n.elements-buttons__button.activeButton[data-v-0ddefa3c] {\n  display: flex;\n  align-items: center;\n  margin-top: -3px;\n}\n.elements__del[data-v-0ddefa3c] {\n  position: absolute;\n  top: 6px;\n  right: 6px;\n  width: 13px;\n  height: 13px;\n  cursor: pointer;\n}\n.table__element[data-v-0ddefa3c] {\n  width: 11.11111%;\n  min-width: 11.11111%;\n  height: 19px;\n  min-height: 19px;\n  background: transparent;\n  margin: 0;\n  border: 1px solid #000;\n  border-bottom: none;\n  border-right: none;\n}\n.table__element.active[data-v-0ddefa3c] {\n  background: #888;\n}\n.elements-buttons__table .table__element[data-v-0ddefa3c]:last-of-type {\n  border-right: 1px solid #000;\n}\n.elements-buttons__table > div:last-of-type .table__element[data-v-0ddefa3c] {\n  border-bottom: 1px solid #000;\n}\n.table__block[data-v-0ddefa3c] {\n  display: flex;\n  width: 100%;\n}\n.input-group[data-v-0ddefa3c] {\n  overflow: auto;\n}\n.elements-wrap[data-v-0ddefa3c] {\n  overflow: auto;\n}\n@media (max-width: 1170px) {\n.screen__elements .elements-item[data-v-0ddefa3c] {\n    width: 100%;\n}\n}\n.elements-buttons-btn[data-v-0ddefa3c]:hover {\n  background: #030087;\n}\n.elements-buttons-btn:hover path[fill=\"#222222\"][data-v-0ddefa3c],\n.elements-buttons-btn:hover circle[fill=\"#222222\"][data-v-0ddefa3c],\n.elements-buttons-btn:hover rect[stroke=\"#222222\"][data-v-0ddefa3c],\n.elements-buttons-btn:hover rect[fill=\"#222222\"][data-v-0ddefa3c] {\n  fill: #fff;\n}\n.elements-buttons-btn:hover path[fill=\"#6F6F6F\"][data-v-0ddefa3c] {\n  fill: #dddddd;\n}\n.elements-buttons .elements-buttons-btn:last-child:hover path[fill=\"#222222\"][data-v-0ddefa3c] {\n  fill: #222222;\n}\n.elements-item.count-1[data-v-0ddefa3c] {\n  width: 100%;\n}\n.elements-item.count-2[data-v-0ddefa3c] {\n  width: calc(50% - 30px);\n}\n.elements-item.count-3[data-v-0ddefa3c] {\n  width: calc(33.33333% - 30px);\n}\n.elements-item.count-4[data-v-0ddefa3c] {\n  width: calc(25% - 30px);\n}\n.elements[data-v-0ddefa3c] {\n  display: flex;\n  align-items: center;\n  justify-content: space-between;\n}\n.elementsactive[data-v-0ddefa3c] {\n  display: block;\n}\n.elements-wrap[data-v-0ddefa3c] {\n  width: 100%;\n  display: flex;\n  flex-direction: column;\n  align-items: center;\n}\n.elements-item[data-v-0ddefa3c] {\n  position: relative;\n  background: #ffffff;\n  border: 0.5px solid rgba(3, 0, 135, 0.3);\n  border-radius: 4.7541px;\n  padding: 20px 17px;\n  min-height: 75px;\n  display: flex;\n  align-items: center;\n  justify-content: center;\n  margin-bottom: 20px;\n  margin-right: 30px;\n}\n.elements-item[data-v-0ddefa3c]:last-child {\n  margin-right: 0;\n}\n.elements-buttons[data-v-0ddefa3c] {\n  display: flex;\n  width: 100%;\n  max-width: 214px;\n  height: 38px;\n  background: #f3f6fd;\n  border: 1px solid #030087;\n  border-radius: 5px;\n  overflow: hidden;\n}\n.elements-buttons-btn[data-v-0ddefa3c] {\n  height: 100%;\n  width: 40px;\n  border-right: 1px solid #030087;\n  display: flex;\n  align-items: center;\n  justify-content: center;\n  cursor: pointer;\n}\n.elements-buttons-btn[data-v-0ddefa3c]:last-child {\n  border-right: 0;\n}\n.elements-buttons__options[data-v-0ddefa3c] {\n  border: 1px solid #030087;\n  border-radius: 0 0 5px 5px;\n  background-color: #ffffff;\n  padding: 15px;\n  min-height: 130px;\n  display: none;\n  width: 215px;\n  -webkit-user-select: none;\n     -moz-user-select: none;\n          user-select: none;\n}\n.elements-buttons__options.active[data-v-0ddefa3c] {\n  display: block;\n  margin-top: -3px;\n}\n.elements-buttons__options div[data-v-0ddefa3c] {\n  margin: 10px 0;\n  cursor: pointer;\n}\n.elements-buttons__image[data-v-0ddefa3c] {\n  border: 1px solid #030087;\n  border-radius: 0 0 5px 5px;\n  background-color: #ffffff;\n  padding: 15px;\n  min-height: 130px;\n  display: none;\n  width: 215px;\n}\n.elements-buttons__image.activeImage[data-v-0ddefa3c] {\n  display: flex;\n  align-items: center;\n  justify-content: space-evenly;\n  margin-top: -3px;\n}\n.elements-buttons__item--fullstop[data-v-0ddefa3c] {\n  padding-left: 10px;\n}\n.elements-buttons__item--fullstop li[data-v-0ddefa3c] {\n  list-style: initial;\n}\n.elements-buttons__item--number[data-v-0ddefa3c] {\n  padding-left: 50px;\n}\n.elements-buttons__item--number li[data-v-0ddefa3c] {\n  list-style: auto;\n}\n.elements-buttons__item--image[data-v-0ddefa3c] {\n  padding-left: 15px;\n  margin-top: 10px;\n}\n.elements-buttons__item--image li[data-v-0ddefa3c] {\n  list-style-image: url(" + ___CSS_LOADER_URL_REPLACEMENT_0___ + ");\n}\n.elements-buttons__list[data-v-0ddefa3c] {\n  border: 1px solid #030087;\n  border-radius: 0 0 5px 5px;\n  background-color: #ffffff;\n  padding: 15px;\n  min-height: 130px;\n  display: none;\n  width: 215px;\n  -webkit-user-select: none;\n     -moz-user-select: none;\n          user-select: none;\n}\n.elements-buttons__list.activeList[data-v-0ddefa3c] {\n  display: flex;\n  flex-wrap: wrap;\n  margin-top: -3px;\n}\n.elements-buttons__table[data-v-0ddefa3c] {\n  border: 1px solid #030087;\n  border-radius: 0 0 5px 5px;\n  background-color: #ffffff;\n  padding: 15px;\n  min-height: 130px;\n  display: none;\n  width: 215px;\n}\n.elements-buttons__table.activeTable[data-v-0ddefa3c] {\n  display: flex;\n  flex-direction: column;\n  justify-content: center;\n  margin-top: -3px;\n}\n.elements-buttons__personalTable[data-v-0ddefa3c] {\n  border: 1px solid #030087;\n  border-radius: 0 0 5px 5px;\n  background-color: #ffffff;\n  padding: 15px;\n  min-height: 130px;\n  display: none;\n  width: 215px;\n  -webkit-user-select: none;\n     -moz-user-select: none;\n          user-select: none;\n}\n.elements-buttons__personalTable__image[data-v-0ddefa3c] {\n  display: flex;\n  justify-content: space-evenly;\n  border: 1px solid #c8c8c8;\n}\n.elements-buttons__personalTable__numbers[data-v-0ddefa3c] {\n  display: flex;\n  justify-content: space-evenly;\n  border-left: 1px solid #c8c8c8;\n  border-right: 1px solid #c8c8c8;\n}\n.elements-buttons__personalTable__text[data-v-0ddefa3c] {\n  display: flex;\n  justify-content: space-evenly;\n  border: 1px solid #c8c8c8;\n  font-size: 11px;\n}\n.elements-buttons__personalTable.activePersTable[data-v-0ddefa3c] {\n  display: flex;\n  flex-direction: column;\n  justify-content: center;\n  margin-top: -3px;\n}\n.elements-buttons__button[data-v-0ddefa3c] {\n  border: 1px solid #030087;\n  border-radius: 0 0 5px 5px;\n  background-color: #ffffff;\n  padding: 15px;\n  min-height: 130px;\n  display: none;\n  width: 215px;\n  -webkit-user-select: none;\n     -moz-user-select: none;\n          user-select: none;\n}\n.elements-buttons__button div[data-v-0ddefa3c] {\n  width: 185px;\n  height: 45px;\n  background: #030087;\n  border: 1px solid #030087;\n  color: #ffffff;\n  border-radius: 5px;\n  display: flex;\n  justify-content: center;\n  align-items: center;\n  font-weight: 700;\n  font-size: 16px;\n  line-height: 20px;\n}\n.elements-buttons__button.activeButton[data-v-0ddefa3c] {\n  display: flex;\n  align-items: center;\n  margin-top: -3px;\n}\n.elements__del[data-v-0ddefa3c] {\n  position: absolute;\n  top: 6px;\n  right: 6px;\n  width: 13px;\n  height: 13px;\n  cursor: pointer;\n}\n.table__element[data-v-0ddefa3c] {\n  width: 11.11111%;\n  min-width: 11.11111%;\n  height: 19px;\n  min-height: 19px;\n  background: transparent;\n  margin: 0;\n  border: 1px solid #000;\n  border-bottom: none;\n  border-right: none;\n}\n.table__element.active[data-v-0ddefa3c] {\n  background: #888;\n}\n.elements-buttons__table .table__element[data-v-0ddefa3c]:last-of-type {\n  border-right: 1px solid #000;\n}\n.elements-buttons__table > div:last-of-type .table__element[data-v-0ddefa3c] {\n  border-bottom: 1px solid #000;\n}\n.table__block[data-v-0ddefa3c] {\n  display: flex;\n  width: 100%;\n}\n.input-group[data-v-0ddefa3c] {\n  overflow: auto;\n}\n.elements-wrap[data-v-0ddefa3c] {\n  overflow: auto;\n}\n@media (max-width: 1355px) and (min-width: 1175px) {\n.elements-buttons[data-v-0ddefa3c] {\n    height: auto;\n    flex-direction: column;\n    justify-content: center;\n    align-items: center;\n}\n.elements-buttons-btn[data-v-0ddefa3c] {\n    border-right: none;\n    border-bottom: 1px solid #030087;\n    padding: 10px;\n    width: 100%;\n}\n.elements-buttons-btn[data-v-0ddefa3c]:last-child {\n    border-bottom: none;\n}\n}\n@media (max-width: 1170px) {\n.screen__elements .elements-item[data-v-0ddefa3c] {\n    width: 100%;\n}\n}\n.elements-buttons-btn[data-v-0ddefa3c]:hover {\n  background: #030087;\n}\n.elements-buttons-btn:hover path[fill=\"#222222\"][data-v-0ddefa3c],\n.elements-buttons-btn:hover circle[fill=\"#222222\"][data-v-0ddefa3c],\n.elements-buttons-btn:hover rect[stroke=\"#222222\"][data-v-0ddefa3c],\n.elements-buttons-btn:hover rect[fill=\"#222222\"][data-v-0ddefa3c] {\n  fill: #fff;\n}\n.elements-buttons-btn:hover path[fill=\"#6F6F6F\"][data-v-0ddefa3c] {\n  fill: #dddddd;\n}\n.elements-buttons .elements-buttons-btn:last-child:hover path[fill=\"#222222\"][data-v-0ddefa3c] {\n  fill: #222222;\n}\n", ""]);
 // Exports
 /* harmony default export */ __webpack_exports__["default"] = (___CSS_LOADER_EXPORT___);
 
@@ -39975,7 +40165,7 @@ __webpack_require__.r(__webpack_exports__);
 var ___CSS_LOADER_EXPORT___ = _node_modules_laravel_mix_node_modules_css_loader_dist_runtime_api_js__WEBPACK_IMPORTED_MODULE_0___default()(function(i){return i[1]});
 var ___CSS_LOADER_URL_REPLACEMENT_0___ = _node_modules_laravel_mix_node_modules_css_loader_dist_runtime_getUrl_js__WEBPACK_IMPORTED_MODULE_1___default()(_assets_images_image_svg__WEBPACK_IMPORTED_MODULE_2__["default"]);
 // Module
-___CSS_LOADER_EXPORT___.push([module.id, ".numbered-list[data-v-61414384] {\n  border: 1px solid rgba(3, 0, 135, 0.3);\n  border-radius: 5px;\n  padding: 30px;\n  width: 100%;\n}\n.numbered-list__title[data-v-61414384] {\n  font-weight: 700;\n  font-size: 16px;\n  line-height: 20px;\n  -webkit-user-select: none;\n     -moz-user-select: none;\n          user-select: none;\n}\n.numbered-list__ul[data-v-61414384] {\n  margin-left: 15px;\n  margin-top: 10px;\n}\n.numbered-list__ul li[data-v-61414384] {\n  list-style-image: url(" + ___CSS_LOADER_URL_REPLACEMENT_0___ + ");\n}\n.numbered-list__ul input[data-v-61414384] {\n  border: 0;\n  width: 100%;\n}\n.numbered-list__button[data-v-61414384] {\n  border: 1px solid rgba(3, 0, 135, 0.3);\n  border-radius: 5px;\n  margin-top: 30px;\n  padding: 15px;\n  display: flex;\n  justify-content: center;\n  align-items: center;\n  cursor: pointer;\n  -webkit-user-select: none;\n     -moz-user-select: none;\n          user-select: none;\n}\n.numbered-list__button svg[data-v-61414384] {\n  margin-right: 15px;\n}\n", ""]);
+___CSS_LOADER_EXPORT___.push([module.id, ".numbered-list[data-v-61414384] {\n  border: 1px solid rgba(3, 0, 135, 0.3);\n  border-radius: 5px;\n  padding: 30px;\n  width: 100%;\n}\n.numbered-list__title[data-v-61414384] {\n  font-weight: 700;\n  font-size: 16px;\n  line-height: 20px;\n  -webkit-user-select: none;\n     -moz-user-select: none;\n          user-select: none;\n  display: flex;\n}\n.numbered-list__ul[data-v-61414384] {\n  margin-left: 15px;\n  margin-top: 10px;\n  position: relative;\n}\n.numbered-list__ul li[data-v-61414384] {\n  list-style-image: url(" + ___CSS_LOADER_URL_REPLACEMENT_0___ + ");\n}\n.numbered-list__ul input[data-v-61414384] {\n  border: 0;\n  width: 100%;\n}\n.numbered-list__button[data-v-61414384] {\n  border: 1px solid rgba(3, 0, 135, 0.3);\n  border-radius: 5px;\n  margin-top: 30px;\n  padding: 15px;\n  display: flex;\n  justify-content: center;\n  align-items: center;\n  cursor: pointer;\n  -webkit-user-select: none;\n     -moz-user-select: none;\n          user-select: none;\n}\n.numbered-list__button svg[data-v-61414384] {\n  margin-right: 15px;\n}\n.numbered-list .close[data-v-61414384] {\n  margin-left: 10px;\n  height: 15px;\n}\n", ""]);
 // Exports
 /* harmony default export */ __webpack_exports__["default"] = (___CSS_LOADER_EXPORT___);
 
@@ -39996,7 +40186,7 @@ __webpack_require__.r(__webpack_exports__);
 
 var ___CSS_LOADER_EXPORT___ = _node_modules_laravel_mix_node_modules_css_loader_dist_runtime_api_js__WEBPACK_IMPORTED_MODULE_0___default()(function(i){return i[1]});
 // Module
-___CSS_LOADER_EXPORT___.push([module.id, ".menureports[data-v-c06fb376] {\n  position: fixed;\n  top: 0;\n  left: 0;\n  height: 100vh;\n  width: 300px;\n  padding: 30px 30px 110px;\n  background: #ffffff;\n  transition: ease-in-out 0.25s;\n  z-index: 1;\n}\n.menureports__logo[data-v-c06fb376] {\n  width: 120px;\n}\n.menureports-cont[data-v-c06fb376] {\n  height: 100%;\n  margin-top: 30px;\n  display: flex;\n  flex-direction: column;\n  justify-content: space-between;\n}\n.menureports-buttons__button[data-v-c06fb376] {\n  display: flex;\n  align-items: center;\n  justify-content: flex-start;\n  margin-bottom: 10px;\n  padding: 13px 30px;\n  font-weight: 700;\n  font-size: 16px;\n  line-height: 20px;\n  color: #222222;\n  cursor: pointer;\n  transition: ease-in-out 0.25s;\n}\n.menureports-buttons__button[data-v-c06fb376]:hover {\n  opacity: 0.8;\n}\n.menureports-buttons__button:hover svg[data-v-c06fb376] {\n  margin-right: 10px;\n  transition: ease-in-out 0.25s;\n}\n.menureports-buttons__button:hover svg[data-v-c06fb376]:hover {\n  opacity: 0.8;\n}\n.menureports-buttons__button svg[data-v-c06fb376] {\n  margin-right: 10px;\n}\n.menureports-buttons__button--newrep[data-v-c06fb376] {\n  padding: 13px;\n  justify-content: center;\n  color: #030087;\n  border: 1.5px solid #030087;\n  border-radius: 7px;\n  transition: ease-in-out 0.25s;\n}\n.menureports-buttons__button--newrep svg path[data-v-c06fb376] {\n  transition: ease-in-out 0.25s;\n}\n.menureports-buttons__button--newrep[data-v-c06fb376]:hover {\n  background-color: #030087;\n  color: #ffffff;\n}\n.menureports-buttons__button--newrep:hover svg path[data-v-c06fb376] {\n  fill: #fff;\n}\n.menureports-user[data-v-c06fb376] {\n  display: flex;\n  justify-content: flex-start;\n  align-items: center;\n  width: 100%;\n  margin-bottom: 30px;\n}\n.menureports-user__ava[data-v-c06fb376] {\n  height: 50px;\n  width: 50px;\n  border-radius: 50%;\n  margin-right: 10px;\n}\n.menureports-user__ava img[data-v-c06fb376] {\n  width: 100%;\n  height: 100%;\n  -o-object-fit: cover;\n     object-fit: cover;\n  border-radius: 50%;\n}\n.menureports-user__name[data-v-c06fb376] {\n  display: flex;\n  font-weight: 700;\n  font-size: 16px;\n  line-height: 20px;\n  color: #222222;\n}\n.menureports-user__name p[data-v-c06fb376] {\n  margin-right: 5px;\n}\n.menureports-user__author[data-v-c06fb376] {\n  font-weight: 600;\n  font-size: 14px;\n  line-height: 18px;\n  color: #222222;\n}\n.menureports-exit[data-v-c06fb376] {\n  font-weight: 700;\n  font-size: 16px;\n  line-height: 20px;\n  color: #030087;\n  display: flex;\n  align-items: center;\n  cursor: pointer;\n  transition: cubic-bezier(0.075, 0.82, 0.165, 1) 0.25s;\n}\n.menureports-exit[data-v-c06fb376]:hover {\n  opacity: 0.8;\n}\n.menureports-exit:hover svg[data-v-c06fb376] {\n  margin-right: 10px;\n  transition: cubic-bezier(0.075, 0.82, 0.165, 1) 0.25s;\n}\n.menureports-exit:hover svg[data-v-c06fb376]:hover {\n  opacity: 0.8;\n}\n.menureports-exit svg[data-v-c06fb376] {\n  margin-right: 13px;\n}\n.menureports.hidden[data-v-c06fb376] {\n  left: -100%;\n}\n.hide-menu[data-v-c06fb376] {\n  position: absolute;\n  right: -15px;\n  top: calc(50% - 31.5px);\n  cursor: pointer;\n  padding: 20px 10px;\n  background: #fff;\n  border-radius: 10px;\n  border: 1px solid #000;\n}\n.menureports.hidden .hide-menu[data-v-c06fb376] {\n  transform: rotate(180deg);\n}\n.hide-menu.fixed[data-v-c06fb376] {\n  position: fixed;\n  left: -7.5px;\n  z-index: 0;\n  width: -moz-fit-content;\n  width: fit-content;\n  transform: rotate(180deg);\n}\n.menureports-buttons__button--list[data-v-c06fb376] {\n  flex-direction: column;\n  max-height: calc(39px * 7);\n  overflow: auto;\n}\n.menureports-buttons__button--list .menureports-buttons__elements[data-v-c06fb376] {\n  width: 100%;\n  display: flex;\n  justify-content: space-between;\n  align-items: center;\n  font-weight: 600;\n  font-size: 14px;\n  line-height: 18px;\n  margin-bottom: 20px;\n}\n.menureports-buttons__button--list\n.menureports-buttons__elements\n.elements__text[data-v-c06fb376] {\n  display: flex;\n  align-items: center;\n  width: -moz-fit-content;\n  width: fit-content;\n}\n.menureports-buttons__button--list .menureports-buttons__elements[data-v-c06fb376]:last-of-type {\n  margin-bottom: 0;\n}\n.elements__text a[data-v-c06fb376] {\n  color: inherit;\n  text-decoration: none;\n  -webkit-user-select: none;\n     -moz-user-select: none;\n          user-select: none;\n}\n.elements__text input[data-v-c06fb376] {\n  display: none;\n}\n.elements__text.active input[data-v-c06fb376] {\n  display: block;\n  width: 75%;\n}\n.elements__text.active a[data-v-c06fb376] {\n  display: none;\n}\n.menureports-buttons__elements svg[data-v-c06fb376] {\n  min-width: 14px;\n  min-height: 16px;\n}\n.elements__text input[data-v-c06fb376] {\n  background: transparent;\n  outline: none;\n  border: 1px solid rgba(3, 0, 135, 0.3);\n  border-radius: 5px;\n  padding: 5px 10px;\n}\n@media (max-width: 1170px) {\n.menureports[data-v-c06fb376],\n  .hide-menu[data-v-c06fb376] {\n    display: none;\n}\n}\n.icons[data-v-c06fb376] {\n  display: flex;\n  align-items: center;\n  margin-left: 10px;\n}\n.elements__text a[data-v-c06fb376] {\n  word-break: break-word;\n}\n", ""]);
+___CSS_LOADER_EXPORT___.push([module.id, ".menureports[data-v-c06fb376] {\n  position: fixed;\n  top: 0;\n  left: 0;\n  height: 100vh;\n  width: 300px;\n  padding: 30px 30px 110px;\n  background: #ffffff;\n  transition: ease-in-out 0.25s;\n  z-index: 1;\n}\n.menureports__logo[data-v-c06fb376] {\n  width: 120px;\n}\n.menureports-cont[data-v-c06fb376] {\n  height: 100%;\n  margin-top: 30px;\n  display: flex;\n  flex-direction: column;\n  justify-content: space-between;\n}\n.menureports-buttons__button[data-v-c06fb376] {\n  display: flex;\n  align-items: center;\n  justify-content: flex-start;\n  margin-bottom: 10px;\n  padding: 13px 30px;\n  font-weight: 700;\n  font-size: 16px;\n  line-height: 20px;\n  color: #222222;\n  cursor: pointer;\n  transition: ease-in-out 0.25s;\n}\n.menureports-buttons__button[data-v-c06fb376]:hover {\n  opacity: 0.8;\n}\n.menureports-buttons__button:hover svg[data-v-c06fb376] {\n  margin-right: 10px;\n  transition: ease-in-out 0.25s;\n}\n.menureports-buttons__button:hover svg[data-v-c06fb376]:hover {\n  opacity: 0.8;\n}\n.menureports-buttons__button svg[data-v-c06fb376] {\n  margin-right: 10px;\n}\n.menureports-buttons__button--newrep[data-v-c06fb376] {\n  padding: 13px;\n  justify-content: center;\n  color: #030087;\n  border: 1.5px solid #030087;\n  border-radius: 7px;\n  transition: ease-in-out 0.25s;\n}\n.menureports-buttons__button--newrep svg path[data-v-c06fb376] {\n  transition: ease-in-out 0.25s;\n}\n.menureports-buttons__button--newrep[data-v-c06fb376]:hover {\n  background-color: #030087;\n  color: #ffffff;\n}\n.menureports-buttons__button--newrep:hover svg path[data-v-c06fb376] {\n  fill: #fff;\n}\n.menureports-user[data-v-c06fb376] {\n  display: flex;\n  justify-content: flex-start;\n  align-items: center;\n  width: 100%;\n  margin-bottom: 30px;\n}\n.menureports-user__ava[data-v-c06fb376] {\n  height: 50px;\n  width: 50px;\n  border-radius: 50%;\n  margin-right: 10px;\n}\n.menureports-user__ava img[data-v-c06fb376] {\n  width: 100%;\n  height: 100%;\n  -o-object-fit: cover;\n     object-fit: cover;\n  border-radius: 50%;\n}\n.menureports-user__name[data-v-c06fb376] {\n  display: flex;\n  font-weight: 700;\n  font-size: 16px;\n  line-height: 20px;\n  color: #222222;\n}\n.menureports-user__name p[data-v-c06fb376] {\n  margin-right: 5px;\n}\n.menureports-user__author[data-v-c06fb376] {\n  font-weight: 600;\n  font-size: 14px;\n  line-height: 18px;\n  color: #222222;\n}\n.menureports-exit[data-v-c06fb376] {\n  font-weight: 700;\n  font-size: 16px;\n  line-height: 20px;\n  color: #030087;\n  display: flex;\n  align-items: center;\n  cursor: pointer;\n  transition: cubic-bezier(0.075, 0.82, 0.165, 1) 0.25s;\n}\n.menureports-exit[data-v-c06fb376]:hover {\n  opacity: 0.8;\n}\n.menureports-exit:hover svg[data-v-c06fb376] {\n  margin-right: 10px;\n  transition: cubic-bezier(0.075, 0.82, 0.165, 1) 0.25s;\n}\n.menureports-exit:hover svg[data-v-c06fb376]:hover {\n  opacity: 0.8;\n}\n.menureports-exit svg[data-v-c06fb376] {\n  margin-right: 13px;\n}\n.menureports.hidden[data-v-c06fb376] {\n  left: -100%;\n}\n.hide-menu[data-v-c06fb376] {\n  position: absolute;\n  right: -15px;\n  top: calc(50% - 31.5px);\n  cursor: pointer;\n  padding: 20px 10px;\n  background: #fff;\n  border-radius: 10px;\n  border: 1px solid #000;\n}\n.menureports.hidden .hide-menu[data-v-c06fb376] {\n  transform: rotate(180deg);\n}\n.hide-menu.fixed[data-v-c06fb376] {\n  position: fixed;\n  left: -7.5px;\n  z-index: 0;\n  width: -moz-fit-content;\n  width: fit-content;\n  transform: rotate(180deg);\n}\n.menureports-buttons__button--list[data-v-c06fb376] {\n  flex-direction: column;\n  max-height: calc(39px * 7);\n  overflow: auto;\n}\n.menureports-buttons__button--list .menureports-buttons__elements[data-v-c06fb376] {\n  width: 100%;\n  display: flex;\n  justify-content: space-between;\n  align-items: center;\n  font-weight: 600;\n  font-size: 14px;\n  line-height: 18px;\n  margin-bottom: 20px;\n}\n.menureports-buttons__button--list\n.menureports-buttons__elements\n.elements__text[data-v-c06fb376] {\n  display: flex;\n  align-items: center;\n  width: -moz-fit-content;\n  width: fit-content;\n}\n.menureports-buttons__button--list .menureports-buttons__elements[data-v-c06fb376]:last-of-type {\n  margin-bottom: 0;\n}\n.elements__text a[data-v-c06fb376] {\n  color: inherit;\n  text-decoration: none;\n  -webkit-user-select: none;\n     -moz-user-select: none;\n          user-select: none;\n}\n.elements__text input[data-v-c06fb376] {\n  display: none;\n}\n.elements__text.active input[data-v-c06fb376] {\n  display: block;\n  width: 75%;\n}\n.elements__text.active a[data-v-c06fb376] {\n  display: none;\n}\n.menureports-buttons__elements svg[data-v-c06fb376] {\n  min-width: 14px;\n  min-height: 16px;\n}\n.elements__text input[data-v-c06fb376] {\n  background: transparent;\n  outline: none;\n  border: 1px solid rgba(3, 0, 135, 0.3);\n  border-radius: 5px;\n  padding: 5px 10px;\n}\n@media (max-width: 1170px) {\n.hide-menu[data-v-c06fb376] {\n    display: none;\n}\n}\n.icons[data-v-c06fb376] {\n  display: flex;\n  align-items: center;\n  margin-left: 10px;\n}\n.elements__text a[data-v-c06fb376] {\n  word-break: break-word;\n}\n.menureports[data-v-c06fb376] {\n  position: fixed;\n  top: 0;\n  left: 0;\n  height: 100%;\n  width: 300px;\n  padding: 30px 30px 110px;\n  background: #ffffff;\n  transition: ease-in-out 0.25s;\n  z-index: 1;\n}\n.menureports__logo[data-v-c06fb376] {\n  width: 120px;\n}\n.menureports-cont[data-v-c06fb376] {\n  height: 100%;\n  margin-top: 30px;\n  display: flex;\n  flex-direction: column;\n  justify-content: space-between;\n}\n.menureports-buttons__button[data-v-c06fb376] {\n  display: flex;\n  align-items: center;\n  justify-content: flex-start;\n  margin-bottom: 10px;\n  padding: 13px 30px;\n  font-weight: 700;\n  font-size: 16px;\n  line-height: 20px;\n  color: #222222;\n  cursor: pointer;\n  transition: ease-in-out 0.25s;\n}\n.menureports-buttons__button[data-v-c06fb376]:hover {\n  opacity: 0.8;\n}\n.menureports-buttons__button:hover svg[data-v-c06fb376] {\n  margin-right: 10px;\n  transition: ease-in-out 0.25s;\n}\n.menureports-buttons__button:hover svg[data-v-c06fb376]:hover {\n  opacity: 0.8;\n}\n.menureports-buttons__button svg[data-v-c06fb376] {\n  margin-right: 10px;\n}\n.menureports-buttons__button--newrep[data-v-c06fb376] {\n  padding: 13px;\n  justify-content: center;\n  color: #030087;\n  border: 1.5px solid #030087;\n  border-radius: 7px;\n  transition: ease-in-out 0.25s;\n}\n.menureports-buttons__button--newrep svg path[data-v-c06fb376] {\n  transition: ease-in-out 0.25s;\n}\n.menureports-buttons__button--newrep[data-v-c06fb376]:hover {\n  background-color: #030087;\n  color: #ffffff;\n}\n.menureports-buttons__button--newrep:hover svg path[data-v-c06fb376] {\n  fill: #fff;\n}\n.menureports-user[data-v-c06fb376] {\n  display: flex;\n  justify-content: flex-start;\n  align-items: center;\n  width: 100%;\n  margin-bottom: 30px;\n}\n.menureports-user__ava[data-v-c06fb376] {\n  height: 50px;\n  width: 50px;\n  border-radius: 50%;\n  margin-right: 10px;\n}\n.menureports-user__name[data-v-c06fb376] {\n  display: flex;\n  font-weight: 700;\n  font-size: 16px;\n  line-height: 20px;\n  color: #222222;\n}\n.menureports-user__name p[data-v-c06fb376] {\n  margin-right: 5px;\n}\n.menureports-user__author[data-v-c06fb376] {\n  font-weight: 600;\n  font-size: 14px;\n  line-height: 18px;\n  color: #222222;\n}\n.menureports-exit[data-v-c06fb376] {\n  font-weight: 700;\n  font-size: 16px;\n  line-height: 20px;\n  color: #030087;\n  display: flex;\n  align-items: center;\n  cursor: pointer;\n  transition: cubic-bezier(0.075, 0.82, 0.165, 1) 0.25s;\n}\n.menureports-exit[data-v-c06fb376]:hover {\n  opacity: 0.8;\n}\n.menureports-exit:hover svg[data-v-c06fb376] {\n  margin-right: 10px;\n  transition: cubic-bezier(0.075, 0.82, 0.165, 1) 0.25s;\n}\n.menureports-exit:hover svg[data-v-c06fb376]:hover {\n  opacity: 0.8;\n}\n.menureports-exit svg[data-v-c06fb376] {\n  margin-right: 13px;\n}\n.menureports.hidden[data-v-c06fb376] {\n  left: -100%;\n}\n.hide-menu[data-v-c06fb376] {\n  position: absolute;\n  right: -15px;\n  top: calc(50% - 31.5px);\n  cursor: pointer;\n  padding: 20px 10px;\n  background: #fff;\n  border-radius: 10px;\n  border: 1px solid #000;\n}\n.menureports.hidden .hide-menu[data-v-c06fb376] {\n  transform: rotate(180deg);\n}\n.hide-menu.fixed[data-v-c06fb376] {\n  position: fixed;\n  left: -7.5px;\n  z-index: 0;\n  width: -moz-fit-content;\n  width: fit-content;\n  transform: rotate(180deg);\n}\n.menureports-buttons__button--list[data-v-c06fb376] {\n  flex-direction: column;\n  max-height: calc(39px * 7);\n  overflow: auto;\n}\n.menureports-buttons__button--list .menureports-buttons__elements[data-v-c06fb376] {\n  width: 100%;\n  display: flex;\n  justify-content: space-between;\n  align-items: center;\n  font-weight: 600;\n  font-size: 14px;\n  line-height: 18px;\n  margin-bottom: 20px;\n}\n.menureports-buttons__button--list\n.menureports-buttons__elements\n.elements__text[data-v-c06fb376] {\n  display: flex;\n  align-items: center;\n  width: -moz-fit-content;\n  width: fit-content;\n}\n.menureports-buttons__button--list .menureports-buttons__elements[data-v-c06fb376]:last-of-type {\n  margin-bottom: 0;\n}\n.elements__text a[data-v-c06fb376] {\n  color: inherit;\n  text-decoration: none;\n  -webkit-user-select: none;\n     -moz-user-select: none;\n          user-select: none;\n}\n.elements__text input[data-v-c06fb376] {\n  display: none;\n}\n.elements__text.active input[data-v-c06fb376] {\n  display: block;\n  width: 75%;\n}\n.elements__text.active a[data-v-c06fb376] {\n  display: none;\n}\n.menureports-buttons__elements svg[data-v-c06fb376] {\n  min-width: 14px;\n  min-height: 16px;\n}\n.elements__text input[data-v-c06fb376] {\n  background: transparent;\n  outline: none;\n  border: 1px solid rgba(3, 0, 135, 0.3);\n  border-radius: 5px;\n  padding: 5px 10px;\n}\nheader[data-v-c06fb376],\n.closeMenu[data-v-c06fb376] {\n  display: none;\n}\n@media (max-width: 1170px) {\n.hide-menu[data-v-c06fb376] {\n    display: none;\n}\nheader[data-v-c06fb376] {\n    position: absolute;\n    display: flex;\n    align-items: center;\n    padding: 20px;\n    width: 100%;\n    z-index: 10000;\n}\nheader .burger[data-v-c06fb376] {\n    margin-right: 50px;\n}\nheader img[data-v-c06fb376] {\n    width: 150px;\n}\n.menureports[data-v-c06fb376] {\n    top: -100%;\n    width: 100%;\n    z-index: 100000;\n}\n.closeMenu[data-v-c06fb376] {\n    position: absolute;\n    right: 30px;\n    display: block;\n}\n.menureports.active[data-v-c06fb376] {\n    top: 0;\n}\n}\n", ""]);
 // Exports
 /* harmony default export */ __webpack_exports__["default"] = (___CSS_LOADER_EXPORT___);
 
@@ -40017,7 +40207,7 @@ __webpack_require__.r(__webpack_exports__);
 
 var ___CSS_LOADER_EXPORT___ = _node_modules_laravel_mix_node_modules_css_loader_dist_runtime_api_js__WEBPACK_IMPORTED_MODULE_0___default()(function(i){return i[1]});
 // Module
-___CSS_LOADER_EXPORT___.push([module.id, ".numbered-list[data-v-4debc95e] {\n  border: 1px solid rgba(3, 0, 135, 0.3);\n  border-radius: 5px;\n  padding: 30px;\n  width: 100%;\n}\n.numbered-list__title[data-v-4debc95e] {\n  font-weight: 700;\n  font-size: 16px;\n  line-height: 20px;\n  -webkit-user-select: none;\n     -moz-user-select: none;\n          user-select: none;\n}\n.numbered-list__ul[data-v-4debc95e] {\n  margin-left: 15px;\n  margin-top: 10px;\n}\n.numbered-list__ul li[data-v-4debc95e] {\n  list-style: auto;\n}\n.numbered-list__ul input[data-v-4debc95e] {\n  border: 0;\n  width: 100%;\n}\n.numbered-list__button[data-v-4debc95e] {\n  border: 1px solid rgba(3, 0, 135, 0.3);\n  border-radius: 5px;\n  margin-top: 30px;\n  padding: 15px;\n  display: flex;\n  justify-content: center;\n  align-items: center;\n  cursor: pointer;\n  -webkit-user-select: none;\n     -moz-user-select: none;\n          user-select: none;\n}\n.numbered-list__button svg[data-v-4debc95e] {\n  margin-right: 15px;\n}\n", ""]);
+___CSS_LOADER_EXPORT___.push([module.id, ".numbered-list[data-v-4debc95e] {\n  border: 1px solid rgba(3, 0, 135, 0.3);\n  border-radius: 5px;\n  padding: 30px;\n  width: 100%;\n}\n.numbered-list__title[data-v-4debc95e] {\n  font-weight: 700;\n  font-size: 16px;\n  line-height: 20px;\n  -webkit-user-select: none;\n     -moz-user-select: none;\n          user-select: none;\n  display: flex;\n}\n.numbered-list__ul[data-v-4debc95e] {\n  margin-left: 15px;\n  margin-top: 10px;\n  position: relative;\n}\n.numbered-list__ul li[data-v-4debc95e] {\n  list-style: auto;\n}\n.numbered-list__ul input[data-v-4debc95e] {\n  border: 0;\n  width: 100%;\n}\n.numbered-list__button[data-v-4debc95e] {\n  border: 1px solid rgba(3, 0, 135, 0.3);\n  border-radius: 5px;\n  margin-top: 30px;\n  padding: 15px;\n  display: flex;\n  justify-content: center;\n  align-items: center;\n  cursor: pointer;\n  -webkit-user-select: none;\n     -moz-user-select: none;\n          user-select: none;\n}\n.numbered-list__button svg[data-v-4debc95e] {\n  margin-right: 15px;\n}\n.numbered-list .close[data-v-4debc95e] {\n  margin-left: 10px;\n  height: 15px;\n}\n", ""]);
 // Exports
 /* harmony default export */ __webpack_exports__["default"] = (___CSS_LOADER_EXPORT___);
 
@@ -40038,7 +40228,7 @@ __webpack_require__.r(__webpack_exports__);
 
 var ___CSS_LOADER_EXPORT___ = _node_modules_laravel_mix_node_modules_css_loader_dist_runtime_api_js__WEBPACK_IMPORTED_MODULE_0___default()(function(i){return i[1]});
 // Module
-___CSS_LOADER_EXPORT___.push([module.id, ".table-label[data-v-4f71aaa6] {\n  display: flex;\n  align-items: flex-end;\n  margin-bottom: 15px;\n}\n.table-label__title[data-v-4f71aaa6] {\n  font-weight: 600;\n  font-size: 18px;\n  line-height: 20px;\n}\n.table-label__size[data-v-4f71aaa6] {\n  display: flex;\n  align-items: flex-end;\n  margin-left: 10px;\n}\n.table-label__size__columns[data-v-4f71aaa6] {\n  display: flex;\n  flex-direction: column;\n  align-items: center;\n}\n.table-label__size__columns label[data-v-4f71aaa6] {\n  font-weight: 700;\n  font-size: 8px;\n  line-height: 10px;\n}\n.table-label__size__columns input[data-v-4f71aaa6] {\n  width: 51px;\n  height: 20px;\n  border: 1px solid rgba(3, 0, 135, 0.3);\n  border-radius: 5px;\n  padding: 11px 11px;\n}\n.table-label__size p[data-v-4f71aaa6] {\n  font-weight: 600;\n  font-size: 16px;\n  line-height: 20px;\n  margin: 0 5px;\n}\n.table-pieCharts[data-v-4f71aaa6] {\n  margin: 0 auto;\n}\n.table-pieCharts__titles[data-v-4f71aaa6] {\n  border: 1px solid #030087;\n  border-right: none;\n  border-top: none;\n  display: flex;\n}\n.table-pieCharts__titles[data-v-4f71aaa6]:nth-child(1) {\n  border-radius: 5px 5px 0px 0px;\n  border-top: 1px solid #030087;\n}\n.table-pieCharts__titles[data-v-4f71aaa6]:nth-child(2n) {\n  background: #DAE5FF;\n}\n.table-pieCharts__titles[data-v-4f71aaa6]:last-child {\n  border-radius: 0px 0px 5px 5px;\n}\n.table-pieCharts__elements[data-v-4f71aaa6] {\n  width: 125px;\n  display: flex;\n  justify-content: center;\n  text-align: center;\n  border-right: 1px solid #030087;\n}\n.table-pieCharts__elements--col1[data-v-4f71aaa6] {\n  padding: 12px;\n}\n.table-pieCharts__elements--col2[data-v-4f71aaa6] {\n  padding: 12px;\n}\n.table-pieCharts__elements--col3[data-v-4f71aaa6] {\n  padding: 12px;\n}\n.table-pieCharts__elements input[data-v-4f71aaa6] {\n  color: #222222;\n  height: auto;\n  border: none;\n  margin-top: 0;\n  background: transparent;\n  font-weight: 600;\n  font-size: 16px;\n  line-height: 20px;\n  width: 100%;\n}\n", ""]);
+___CSS_LOADER_EXPORT___.push([module.id, ".table-label[data-v-4f71aaa6] {\n  display: flex;\n  align-items: flex-end;\n  margin-bottom: 15px;\n}\n.table-label__title[data-v-4f71aaa6] {\n  font-weight: 600;\n  font-size: 18px;\n  line-height: 20px;\n}\n.table-label__size[data-v-4f71aaa6] {\n  display: flex;\n  align-items: flex-end;\n  margin-left: 10px;\n}\n.table-label__size__columns[data-v-4f71aaa6] {\n  display: flex;\n  flex-direction: column;\n  align-items: center;\n}\n.table-label__size__columns label[data-v-4f71aaa6] {\n  font-weight: 700;\n  font-size: 8px;\n  line-height: 10px;\n}\n.table-label__size__columns input[data-v-4f71aaa6] {\n  width: 51px;\n  height: 20px;\n  border: 1px solid rgba(3, 0, 135, 0.3);\n  border-radius: 5px;\n  padding: 11px 11px;\n}\n.table-label__size p[data-v-4f71aaa6] {\n  font-weight: 600;\n  font-size: 16px;\n  line-height: 20px;\n  margin: 0 5px;\n}\n.table-pieCharts[data-v-4f71aaa6] {\n  margin: 0 auto;\n}\n.table-pieCharts__titles[data-v-4f71aaa6] {\n  border: 1px solid #030087;\n  border-right: none;\n  border-top: none;\n  display: flex;\n}\n.table-pieCharts__titles[data-v-4f71aaa6]:nth-child(1) {\n  border-radius: 5px 5px 0px 0px;\n  border-top: 1px solid #030087;\n}\n.table-pieCharts__titles[data-v-4f71aaa6]:nth-child(2n) {\n  background: #DAE5FF;\n}\n.table-pieCharts__titles[data-v-4f71aaa6]:last-child {\n  border-radius: 0px 0px 5px 5px;\n}\n.table-pieCharts__elements[data-v-4f71aaa6] {\n  width: 125px;\n  display: flex;\n  justify-content: center;\n  text-align: center;\n  border-right: 1px solid #030087;\n}\n.table-pieCharts__elements--col1[data-v-4f71aaa6] {\n  padding: 12px;\n}\n.table-pieCharts__elements--col2[data-v-4f71aaa6] {\n  padding: 12px;\n}\n.table-pieCharts__elements--col3[data-v-4f71aaa6] {\n  padding: 12px;\n}\n.table-pieCharts__elements input[data-v-4f71aaa6] {\n  color: #222222;\n  height: auto;\n  border: none;\n  margin-top: 0;\n  background: transparent;\n  font-weight: 600;\n  font-size: 16px;\n  line-height: 20px;\n  width: 100%;\n}\n.table-label__size[data-v-4f71aaa6] {\n  position: relative;\n}\n.table-label .close[data-v-4f71aaa6] {\n  top: 12px;\n  right: -25px;\n  position: absolute;\n}\n", ""]);
 // Exports
 /* harmony default export */ __webpack_exports__["default"] = (___CSS_LOADER_EXPORT___);
 
@@ -40065,7 +40255,7 @@ __webpack_require__.r(__webpack_exports__);
 var ___CSS_LOADER_EXPORT___ = _node_modules_laravel_mix_node_modules_css_loader_dist_runtime_api_js__WEBPACK_IMPORTED_MODULE_0___default()(function(i){return i[1]});
 var ___CSS_LOADER_URL_REPLACEMENT_0___ = _node_modules_laravel_mix_node_modules_css_loader_dist_runtime_getUrl_js__WEBPACK_IMPORTED_MODULE_1___default()(_assets_images_secreen_column_icon_svg__WEBPACK_IMPORTED_MODULE_2__["default"]);
 // Module
-___CSS_LOADER_EXPORT___.push([module.id, ".screen[data-v-619f5897] {\n  margin-top: 30px;\n}\n.screen__top[data-v-619f5897] {\n  display: flex;\n  align-items: center;\n  justify-content: space-between;\n}\n.screen__top-title[data-v-619f5897] {\n  display: flex;\n  align-items: center;\n  font-size: 14px;\n  line-height: 18px;\n  color: #222222;\n  font-weight: 600;\n}\n.screen__top-title svg[data-v-619f5897] {\n  margin-left: 10px;\n}\n.screen__top-buttons[data-v-619f5897] {\n  display: flex;\n  align-items: center;\n}\n.screen__top-button[data-v-619f5897] {\n  display: flex;\n  justify-content: center;\n  align-items: center;\n  width: 41px;\n  padding: 3px 0 2px;\n  border: 1px solid rgba(3, 0, 135, 0.3);\n  border-radius: 3px;\n  font-size: 8px;\n  line-height: 10px;\n  font-weight: 700;\n  text-transform: uppercase;\n  color: #222222;\n  cursor: pointer;\n}\n.screen__top-arrows[data-v-619f5897] {\n  display: flex;\n  margin: 0 5px;\n  cursor: pointer;\n}\n.screen__wrap[data-v-619f5897] {\n  background: #fff;\n  padding: 30px 30px 10px;\n  border-radius: 7px;\n  margin-top: 10px;\n  position: relative;\n}\n.screen__del[data-v-619f5897] {\n  position: absolute;\n  top: 10px;\n  right: 10px;\n  z-index: 2;\n  cursor: pointer;\n}\n.screen__columns[data-v-619f5897] {\n  display: flex;\n  justify-content: space-between;\n  padding: 20px 25px;\n  border: 2px dashed rgba(3, 0, 135, 0.3);\n  border-radius: 5px;\n}\n.screen__column[data-v-619f5897] {\n  max-width: 250px;\n  width: 100%;\n  display: flex;\n  justify-content: space-between;\n  position: relative;\n  margin-right: 10px;\n}\n.screen__column-item[data-v-619f5897] {\n  width: 100%;\n  height: 40px;\n  background: #f3f6fd;\n  border-radius: 5px;\n  cursor: pointer;\n}\n.screen__column:nth-child(2) .screen__column-item[data-v-619f5897] {\n  width: 49%;\n}\n.screen__column:nth-child(3) .screen__column-item[data-v-619f5897] {\n  width: 32%;\n}\n.screen__column:nth-child(4) .screen__column-item[data-v-619f5897] {\n  width: 24%;\n}\n.screen__column[data-v-619f5897]::after {\n  position: absolute;\n  width: 20px;\n  height: 20px;\n  content: \"\";\n  background: url(" + ___CSS_LOADER_URL_REPLACEMENT_0___ + ");\n  top: 50%;\n  left: 50%;\n  transform: translate(-50%, -50%);\n  opacity: 0;\n  visibility: hidden;\n  transition: ease-in-out 0.25s;\n}\n.screen__column[data-v-619f5897]:hover::after {\n  opacity: 1;\n  visibility: visible;\n}\n.screen__elements[data-v-619f5897] {\n  display: flex;\n  justify-content: space-between;\n}\n.image__wrapper[data-v-619f5897] {\n  margin-top: 100px;\n}\n.img__wrapper.active[data-v-619f5897] {\n  display: flex;\n  align-items: center;\n  justify-content: center;\n  width: -moz-fit-content;\n  width: fit-content;\n  margin: 20px auto 0;\n  padding: 35px;\n}\n.screen__top-title input[data-v-619f5897] {\n  display: none;\n}\n.screen__top-title.active input[data-v-619f5897] {\n  display: block;\n}\n.screen__top-title.active span[data-v-619f5897] {\n  display: none;\n}\n.screen__top input[data-v-619f5897] {\n  background: transparent;\n  outline: none;\n  border: 1px solid rgba(3, 0, 135, 0.3);\n  border-radius: 5px;\n  padding: 10px;\n}\n@media (max-width: 1170px) {\n.screen__elements[data-v-619f5897] {\n    flex-direction: column;\n}\n}\n", ""]);
+___CSS_LOADER_EXPORT___.push([module.id, ".screen[data-v-619f5897] {\n  margin-top: 30px;\n}\n.screen__top[data-v-619f5897] {\n  display: flex;\n  align-items: center;\n  justify-content: space-between;\n}\n.screen__top-title[data-v-619f5897] {\n  display: flex;\n  align-items: center;\n  font-size: 14px;\n  line-height: 18px;\n  color: #222222;\n  font-weight: 600;\n  margin-right: 10px;\n}\n.screen__top-title svg[data-v-619f5897] {\n  margin-left: 10px;\n}\n.screen__top-buttons[data-v-619f5897] {\n  display: flex;\n  align-items: center;\n}\n.screen__top-button[data-v-619f5897] {\n  display: flex;\n  justify-content: center;\n  align-items: center;\n  width: 41px;\n  padding: 3px 0 2px;\n  border: 1px solid rgba(3, 0, 135, 0.3);\n  border-radius: 3px;\n  font-size: 8px;\n  line-height: 10px;\n  font-weight: 700;\n  text-transform: uppercase;\n  color: #222222;\n  cursor: pointer;\n}\n.screen__top-arrows[data-v-619f5897] {\n  display: flex;\n  margin: 0 5px;\n  cursor: pointer;\n}\n.screen__wrap[data-v-619f5897] {\n  background: #fff;\n  padding: 30px 30px 10px;\n  border-radius: 7px;\n  margin-top: 10px;\n  position: relative;\n}\n.screen__del[data-v-619f5897] {\n  position: absolute;\n  top: 10px;\n  right: 10px;\n  z-index: 2;\n  cursor: pointer;\n}\n.screen__columns[data-v-619f5897] {\n  display: flex;\n  justify-content: space-between;\n  padding: 20px 25px;\n  border: 2px dashed rgba(3, 0, 135, 0.3);\n  border-radius: 5px;\n}\n.screen__column[data-v-619f5897] {\n  max-width: 250px;\n  width: 100%;\n  display: flex;\n  justify-content: space-between;\n  position: relative;\n  margin-right: 10px;\n}\n.screen__column-item[data-v-619f5897] {\n  width: 100%;\n  height: 40px;\n  background: #f3f6fd;\n  border-radius: 5px;\n  cursor: pointer;\n}\n.screen__column:nth-child(2) .screen__column-item[data-v-619f5897] {\n  width: 49%;\n}\n.screen__column:nth-child(3) .screen__column-item[data-v-619f5897] {\n  width: 32%;\n}\n.screen__column:nth-child(4) .screen__column-item[data-v-619f5897] {\n  width: 24%;\n}\n.screen__column[data-v-619f5897]::after {\n  position: absolute;\n  width: 20px;\n  height: 20px;\n  content: \"\";\n  background: url(" + ___CSS_LOADER_URL_REPLACEMENT_0___ + ");\n  top: 50%;\n  left: 50%;\n  transform: translate(-50%, -50%);\n  opacity: 0;\n  visibility: hidden;\n  transition: ease-in-out 0.25s;\n}\n.screen__column[data-v-619f5897]:hover::after {\n  opacity: 1;\n  visibility: visible;\n}\n.screen__elements[data-v-619f5897] {\n  display: flex;\n  justify-content: space-between;\n}\n.image__wrapper[data-v-619f5897] {\n  padding-top: 30px;\n}\n.img__wrapper.active[data-v-619f5897] {\n  display: flex;\n  align-items: center;\n  justify-content: center;\n  width: -moz-fit-content;\n  width: fit-content;\n  margin: 20px auto 0;\n  padding: 35px;\n}\n.screen__top-title input[data-v-619f5897] {\n  display: none;\n}\n.screen__top-title.active input[data-v-619f5897] {\n  display: block;\n}\n.screen__top-title.active span[data-v-619f5897] {\n  display: none;\n}\n.screen__top input[data-v-619f5897] {\n  background: transparent;\n  outline: none;\n  border: 1px solid rgba(3, 0, 135, 0.3);\n  border-radius: 5px;\n  padding: 10px;\n}\n@media (max-width: 1170px) {\n.screen__elements[data-v-619f5897] {\n    flex-direction: column;\n}\n}\n.screen__wrap__elements[data-v-619f5897] {\n  border-bottom: 1px solid;\n  margin-bottom: 30px;\n}\n.image__wrapper[data-v-619f5897] {\n  border-top: 1px solid;\n}\n", ""]);
 // Exports
 /* harmony default export */ __webpack_exports__["default"] = (___CSS_LOADER_EXPORT___);
 
@@ -40107,7 +40297,7 @@ __webpack_require__.r(__webpack_exports__);
 
 var ___CSS_LOADER_EXPORT___ = _node_modules_laravel_mix_node_modules_css_loader_dist_runtime_api_js__WEBPACK_IMPORTED_MODULE_0___default()(function(i){return i[1]});
 // Module
-___CSS_LOADER_EXPORT___.push([module.id, ".input-group label[data-v-5bd01d73] {\n  font-style: normal;\n  font-weight: 400;\n  font-size: 16px;\n  line-height: 20px;\n  color: #222222;\n}\n.input-group input.table__element[data-v-5bd01d73] {\n  color: #222222;\n  height: auto;\n  border: none;\n  margin-top: 0;\n  height: 42px;\n  background: transparent;\n  font-weight: 600;\n  font-size: 16px;\n  line-height: 20px;\n  width: auto;\n}\n.input-group input.table__element[data-v-5bd01d73]::-moz-placeholder {\n  color: #222222;\n}\n.input-group input.table__element[data-v-5bd01d73]::placeholder {\n  color: #222222;\n}\n.input-group .input-group__wrap[data-v-5bd01d73] {\n  position: relative;\n}\n.input-group .close[data-v-5bd01d73] {\n  position: absolute;\n  top: 15px;\n  right: 10px;\n  cursor: pointer;\n}\n.input-group table[data-v-5bd01d73] {\n  display: flex;\n  flex-direction: column;\n  margin-top: 15px;\n  width: -moz-fit-content;\n  width: fit-content;\n}\n.input-group tr[data-v-5bd01d73] {\n  display: flex;\n}\n.input-group tr.odd td[data-v-5bd01d73] {\n  background: #dae5ff;\n}\n.input-group td[data-v-5bd01d73] {\n  border: 1px solid #030087;\n  border-bottom: none;\n  border-right: none;\n}\n.input-group table tbody tr:last-child td[data-v-5bd01d73] {\n  border-bottom: 1px solid #030087;\n}\n.input-group table td[data-v-5bd01d73]:last-child {\n  border-right: 1px solid #030087;\n}\n.table__settings[data-v-5bd01d73] {\n  display: flex;\n  align-items: center;\n}\n.table__settings span[data-v-5bd01d73] {\n  margin-right: 5px;\n  font-weight: 600;\n  font-size: 18px;\n  line-height: 20px;\n  color: #222222;\n}\n.table__settings input[data-v-5bd01d73] {\n  width: 50px;\n  height: 20px;\n  margin-right: 5px;\n  margin-left: 5px;\n  margin-top: 0;\n}\n.table-label__size__columns[data-v-5bd01d73] {\n  display: flex;\n  flex-direction: column;\n  align-items: center;\n}\n.table-label__size__columns label[data-v-5bd01d73] {\n  font-weight: 700;\n  font-size: 8px;\n  line-height: 10px;\n}\n.table-label__size__columns input[data-v-5bd01d73] {\n  padding: 0 15px;\n  font-weight: 700;\n  font-size: 12px;\n  line-height: 15px;\n  text-align: center;\n}\n.table-label__size__columns input[data-v-5bd01d73]::-webkit-inner-spin-button {\n  -webkit-appearance: none;\n  margin: 0;\n}\n", ""]);
+___CSS_LOADER_EXPORT___.push([module.id, ".input-group label[data-v-5bd01d73] {\n  font-style: normal;\n  font-weight: 400;\n  font-size: 16px;\n  line-height: 20px;\n  color: #222222;\n}\n.input-group input.table__element[data-v-5bd01d73] {\n  color: #222222;\n  height: auto;\n  border: none;\n  margin-top: 0;\n  height: 42px;\n  background: transparent;\n  font-weight: 600;\n  font-size: 16px;\n  line-height: 20px;\n  width: auto;\n}\n.input-group input.table__element[data-v-5bd01d73]::-moz-placeholder {\n  color: #222222;\n}\n.input-group input.table__element[data-v-5bd01d73]::placeholder {\n  color: #222222;\n}\n.input-group .input-group__wrap[data-v-5bd01d73] {\n  position: relative;\n}\n.input-group .close[data-v-5bd01d73] {\n  position: absolute;\n  top: 15px;\n  right: 10px;\n  cursor: pointer;\n}\n.input-group table[data-v-5bd01d73] {\n  display: flex;\n  flex-direction: column;\n  margin-top: 15px;\n  width: -moz-fit-content;\n  width: fit-content;\n}\n.input-group tr[data-v-5bd01d73] {\n  display: flex;\n}\n.input-group tr.odd td[data-v-5bd01d73] {\n  background: #dae5ff;\n}\n.input-group td[data-v-5bd01d73] {\n  border: 1px solid #030087;\n  border-bottom: none;\n  border-right: none;\n}\n.input-group table tbody tr:last-child td[data-v-5bd01d73] {\n  border-bottom: 1px solid #030087;\n}\n.input-group table td[data-v-5bd01d73]:last-child {\n  border-right: 1px solid #030087;\n}\n.table__settings[data-v-5bd01d73] {\n  display: flex;\n  align-items: center;\n}\n.table__settings span[data-v-5bd01d73] {\n  margin-right: 5px;\n  font-weight: 600;\n  font-size: 18px;\n  line-height: 20px;\n  color: #222222;\n}\n.table__settings input[data-v-5bd01d73] {\n  width: 50px;\n  height: 20px;\n  margin-right: 5px;\n  margin-left: 5px;\n  margin-top: 0;\n}\n.table-label__size__columns[data-v-5bd01d73] {\n  display: flex;\n  flex-direction: column;\n  align-items: center;\n}\n.table-label__size__columns label[data-v-5bd01d73] {\n  font-weight: 700;\n  font-size: 8px;\n  line-height: 10px;\n}\n.table-label__size__columns input[data-v-5bd01d73] {\n  padding: 0 15px;\n  font-weight: 700;\n  font-size: 12px;\n  line-height: 15px;\n  text-align: center;\n}\n.table-label__size__columns input[data-v-5bd01d73]::-webkit-inner-spin-button {\n  -webkit-appearance: none;\n  margin: 0;\n}\n#input-group-table.input-group .close[data-v-5bd01d73] {\n  top: 10px;\n  right: -10px;\n}\n", ""]);
 // Exports
 /* harmony default export */ __webpack_exports__["default"] = (___CSS_LOADER_EXPORT___);
 
@@ -40128,7 +40318,7 @@ __webpack_require__.r(__webpack_exports__);
 
 var ___CSS_LOADER_EXPORT___ = _node_modules_laravel_mix_node_modules_css_loader_dist_runtime_api_js__WEBPACK_IMPORTED_MODULE_0___default()(function(i){return i[1]});
 // Module
-___CSS_LOADER_EXPORT___.push([module.id, ".input-group label[data-v-ce8b3a6a] {\n  font-style: normal;\n  font-weight: 400;\n  font-size: 16px;\n  line-height: 20px;\n  color: #222222;\n}\n.input-group .table__element[data-v-ce8b3a6a] {\n  color: #222222;\n  height: auto;\n  margin-top: 0;\n  background: transparent;\n  font-weight: 600;\n  font-size: 16px;\n  line-height: 20px;\n  width: 100%;\n  display: flex;\n  align-items: center;\n  justify-content: center;\n  text-align: center;\n}\n.input-group .tdHead[data-v-ce8b3a6a] {\n  display: flex;\n  flex-direction: column;\n  align-items: center;\n  justify-content: center;\n}\n.input-group input[data-v-ce8b3a6a] {\n  border: none;\n  height: 42px;\n}\n.input-group input[data-v-ce8b3a6a]::-moz-placeholder {\n  color: #222222;\n}\n.input-group input[data-v-ce8b3a6a]::placeholder {\n  color: #222222;\n}\n.input-group .input-group__wrap[data-v-ce8b3a6a] {\n  position: relative;\n}\n.input-group .close[data-v-ce8b3a6a] {\n  position: absolute;\n  top: 15px;\n  right: 10px;\n  cursor: pointer;\n}\n.input-group table[data-v-ce8b3a6a] {\n  display: flex;\n  flex-direction: column;\n  margin-top: 15px;\n  width: -moz-fit-content;\n  width: fit-content;\n}\n.input-group tr[data-v-ce8b3a6a] {\n  display: flex;\n}\n.input-group tr.odd td[data-v-ce8b3a6a] {\n  background: #dae5ff;\n}\n.input-group .table__element.tdFooter[data-v-ce8b3a6a] {\n  font-weight: 250;\n  color: #3e3e3e;\n  font-size: 14px;\n  line-height: 14px;\n  padding-top: 25px;\n}\n.input-group .table__element.tdHead[data-v-ce8b3a6a] {\n  font-weight: 400;\n  font-size: 20px;\n  line-height: 20px;\n  color: #3e3e3e;\n}\n.input-group .trHead[data-v-ce8b3a6a] {\n  border: 1px solid #e9e9e9;\n  border-radius: 10px;\n}\n.input-group tr[data-v-ce8b3a6a] {\n  padding: 15px;\n}\n.input-group .table__element.tdHead img[data-v-ce8b3a6a] {\n  margin-bottom: 10px;\n}\n.input-group .tdMain input[data-v-ce8b3a6a] {\n  font-weight: 700;\n  font-size: 42px;\n  line-height: 42px;\n  color: #5a5a5a;\n  padding: 0 5px;\n}\n.input-group .tdMain input[data-v-ce8b3a6a]::-moz-placeholder {\n  color: #5a5a5a;\n}\n.input-group .tdMain input[data-v-ce8b3a6a]::placeholder {\n  color: #5a5a5a;\n}\n.input-group .tdMain[data-v-ce8b3a6a] {\n  margin-top: 50px;\n  padding-bottom: 40px;\n  border-bottom: 1px solid #e9e9e9;\n}\n", ""]);
+___CSS_LOADER_EXPORT___.push([module.id, ".input-group label[data-v-ce8b3a6a] {\n  font-style: normal;\n  font-weight: 400;\n  font-size: 16px;\n  line-height: 20px;\n  color: #222222;\n}\n.input-group .table__element[data-v-ce8b3a6a] {\n  color: #222222;\n  height: auto;\n  margin-top: 0;\n  background: transparent;\n  font-weight: 600;\n  font-size: 16px;\n  line-height: 20px;\n  width: 100%;\n  display: flex;\n  align-items: center;\n  justify-content: center;\n  text-align: center;\n}\n.input-group .tdHead[data-v-ce8b3a6a] {\n  display: flex;\n  flex-direction: column;\n  align-items: center;\n  justify-content: center;\n}\n.input-group input[data-v-ce8b3a6a] {\n  border: none;\n  height: 42px;\n}\n.input-group input[data-v-ce8b3a6a]::-moz-placeholder {\n  color: #222222;\n}\n.input-group input[data-v-ce8b3a6a]::placeholder {\n  color: #222222;\n}\n.input-group .input-group__wrap[data-v-ce8b3a6a] {\n  position: relative;\n}\n.input-group .close[data-v-ce8b3a6a] {\n  position: absolute;\n  top: 15px;\n  right: 10px;\n  cursor: pointer;\n}\n.input-group table[data-v-ce8b3a6a] {\n  display: flex;\n  flex-direction: column;\n  margin-top: 15px;\n  width: -moz-fit-content;\n  width: fit-content;\n}\n.input-group tr[data-v-ce8b3a6a] {\n  display: flex;\n}\n.input-group tr.odd td[data-v-ce8b3a6a] {\n  background: #dae5ff;\n}\n.input-group .table__element.tdFooter[data-v-ce8b3a6a] {\n  font-weight: 250;\n  color: #3e3e3e;\n  font-size: 14px;\n  line-height: 14px;\n  padding-top: 25px;\n}\n.input-group .table__element.tdHead[data-v-ce8b3a6a] {\n  font-weight: 400;\n  font-size: 20px;\n  line-height: 20px;\n  color: #3e3e3e;\n}\n.input-group .trHead[data-v-ce8b3a6a] {\n  border: 1px solid #e9e9e9;\n  border-radius: 10px;\n  position: relative;\n}\n.input-group tr[data-v-ce8b3a6a] {\n  padding: 15px;\n}\n.input-group .table__element.tdHead img[data-v-ce8b3a6a] {\n  margin-bottom: 10px;\n}\n.input-group .tdMain input[data-v-ce8b3a6a] {\n  font-weight: 700;\n  font-size: 42px;\n  line-height: 42px;\n  color: #5a5a5a;\n  padding: 0 5px;\n}\n.input-group .tdMain input[data-v-ce8b3a6a]::-moz-placeholder {\n  color: #5a5a5a;\n}\n.input-group .tdMain input[data-v-ce8b3a6a]::placeholder {\n  color: #5a5a5a;\n}\n.input-group .tdMain[data-v-ce8b3a6a] {\n  margin-top: 50px;\n  padding-bottom: 40px;\n  border-bottom: 1px solid #e9e9e9;\n}\n", ""]);
 // Exports
 /* harmony default export */ __webpack_exports__["default"] = (___CSS_LOADER_EXPORT___);
 
@@ -40191,7 +40381,7 @@ __webpack_require__.r(__webpack_exports__);
 
 var ___CSS_LOADER_EXPORT___ = _node_modules_laravel_mix_node_modules_css_loader_dist_runtime_api_js__WEBPACK_IMPORTED_MODULE_0___default()(function(i){return i[1]});
 // Module
-___CSS_LOADER_EXPORT___.push([module.id, ".autorization {\n  height: 100vh;\n  display: flex;\n  justify-content: center;\n  align-items: center;\n  overflow-y: auto;\n  padding: 30px 0;\n}\n.autorization__notation .autorization__link {\n  display: inline;\n}\n.autorization__wrap {\n  max-width: 570px;\n  width: 100%;\n}\n.autorization__logo {\n  max-width: 265px;\n  width: 100%;\n  height: 95px;\n  margin: 0 auto;\n}\n.autorization__form {\n  margin-top: 50px;\n}\n.autorization__links {\n  margin-top: 30px;\n  text-align: center;\n  font-size: 16px;\n  line-height: 20px;\n  font-weight: 700;\n}\n.autorization__link {\n  display: block;\n  color: #030087;\n  transition: ease-in-out 0.25s;\n  margin-bottom: 10px;\n}\n.autorization__link:last-of-type {\n  margin-bottom: 0;\n}\n.autorization__link:hover {\n  color: #0400c5;\n}\n.error {\n  color: red;\n  margin-bottom: 30px;\n  display: none;\n}\n.error.active {\n  display: block;\n}\n", ""]);
+___CSS_LOADER_EXPORT___.push([module.id, ".autorization {\n  height: 100vh;\n  display: flex;\n  justify-content: center;\n  align-items: center;\n  overflow-y: auto;\n  padding: 30px 0;\n}\n.autorization__notation .autorization__link {\n  display: inline;\n}\n.autorization__wrap {\n  max-width: 570px;\n  width: 100%;\n}\n.autorization__logo {\n  max-width: 265px;\n  width: 100%;\n  height: 95px;\n  margin: 0 auto;\n}\n.autorization__form {\n  margin-top: 50px;\n}\n.autorization__links {\n  margin-top: 30px;\n  text-align: center;\n  font-size: 16px;\n  line-height: 20px;\n  font-weight: 700;\n}\n.autorization__link {\n  display: block;\n  color: #030087;\n  transition: ease-in-out 0.25s;\n  margin-bottom: 10px;\n}\n.autorization__link:last-of-type {\n  margin-bottom: 0;\n}\n.autorization__link:hover {\n  color: #0400c5;\n}\n.error {\n  color: red;\n  margin-bottom: 30px;\n  display: none;\n}\n.error.active {\n  display: block;\n}\n.autorization {\n  height: 100vh;\n  display: flex;\n  justify-content: center;\n  align-items: center;\n  overflow-y: auto;\n  padding: 30px 0;\n}\n.autorization__notation .autorization__link {\n  display: inline;\n}\n.autorization__wrap {\n  max-width: 570px;\n  width: 100%;\n}\n.autorization__logo {\n  max-width: 265px;\n  width: 100%;\n  height: 95px;\n  margin: 0 auto;\n}\n.autorization__form {\n  margin-top: 50px;\n}\n.autorization__links {\n  margin-top: 30px;\n  text-align: center;\n  font-size: 16px;\n  line-height: 20px;\n  font-weight: 700;\n}\n.autorization__link {\n  display: block;\n  color: #030087;\n  transition: ease-in-out 0.25s;\n  margin-bottom: 10px;\n}\n.autorization__link:last-of-type {\n  margin-bottom: 0;\n}\n.autorization__link:hover {\n  color: #0400c5;\n}\n@media (max-width: 630px) {\n.autorization__wrap {\n    padding: 30px;\n}\n}\n@media (max-width: 380px) {\n.autorization__wrap {\n    padding: 20px;\n}\n}\n", ""]);
 // Exports
 /* harmony default export */ __webpack_exports__["default"] = (___CSS_LOADER_EXPORT___);
 
@@ -40212,7 +40402,7 @@ __webpack_require__.r(__webpack_exports__);
 
 var ___CSS_LOADER_EXPORT___ = _node_modules_laravel_mix_node_modules_css_loader_dist_runtime_api_js__WEBPACK_IMPORTED_MODULE_0___default()(function(i){return i[1]});
 // Module
-___CSS_LOADER_EXPORT___.push([module.id, ".select[data-v-20db8272] {\n  width: 100%;\n  height: 45px;\n  border-radius: 5px;\n  z-index: 2;\n  position: relative;\n}\n.select__wrap[data-v-20db8272] {\n  position: absolute;\n  width: 100%;\n  height: auto;\n  max-height: 45px;\n  border-radius: 5px;\n  top: 0;\n  left: 0;\n  font-weight: 700;\n  font-size: 14px;\n  line-height: 18px;\n  color: #222222;\n  overflow: hidden;\n  transition: ease-in-out 0.25s;\n  cursor: pointer;\n}\n.select__wrap.open[data-v-20db8272] {\n  max-height: 1000px;\n}\n.select__wrap.open .top svg[data-v-20db8272] {\n  transform: rotate(-180deg);\n}\n.select__wrap .top[data-v-20db8272] {\n  padding: 5px 5px;\n  height: 45px;\n  display: flex;\n  align-items: center;\n  justify-content: space-between;\n}\n.select__wrap .top svg[data-v-20db8272] {\n  width: 8px;\n  height: 5px;\n  transition: ease-in-out 0.25s;\n}\n.select__wrap .bottom[data-v-20db8272] {\n  background-color: #f3f6fd;\n}\n.select__wrap .select__item[data-v-20db8272] {\n  border-top: 1px solid #6682a291;\n  padding: 5px;\n  cursor: pointer;\n  transition: ease-in-out 0.25s;\n}\n.select__wrap .select__item[data-v-20db8272]:hover {\n  color: #030087;\n}\n.listreports[data-v-20db8272] {\n  background-color: #f3f6fd;\n}\n.listreports__search[data-v-20db8272] {\n  position: relative;\n  max-width: 768px;\n  width: 100%;\n  height: 35px;\n  margin-right: 15%;\n}\n.listreports__search svg[data-v-20db8272] {\n  position: absolute;\n  left: 15px;\n  top: 0;\n  bottom: 0;\n  margin-bottom: auto;\n  margin-top: auto;\n  height: 13px;\n}\n.listreports__search input[data-v-20db8272] {\n  width: 100%;\n  height: 100%;\n  background: #ffffff;\n  border: 1px solid rgba(3, 0, 135, 0.3);\n  border-radius: 5px;\n  padding: 10px 10px 10px 40px;\n}\n.listreports__search input[data-v-20db8272]::-moz-placeholder {\n  font-weight: 700;\n  font-size: 14px;\n  line-height: 18px;\n  color: #666666;\n}\n.listreports__search input[data-v-20db8272]::placeholder {\n  font-weight: 700;\n  font-size: 14px;\n  line-height: 18px;\n  color: #666666;\n}\n.listreports__select[data-v-20db8272] {\n  display: flex;\n  align-items: center;\n  justify-content: space-between;\n  width: 100%;\n  max-width: 265px;\n  margin-right: 15px;\n}\n.listreports__select p[data-v-20db8272] {\n  font-weight: 700;\n  font-size: 14px;\n  line-height: 18px;\n  color: #666666;\n}\n.listreports-buttons[data-v-20db8272] {\n  display: flex;\n  justify-content: space-between;\n  align-items: center;\n}\n.listreports-buttons__button[data-v-20db8272] {\n  width: 21px;\n  height: 21px;\n  cursor: pointer;\n  transition: ease-in-out 0.25s;\n}\n.listreports-buttons__button.active svg rect[data-v-20db8272] {\n  fill: #030087;\n}\n.listreports-buttons__button.active svg .svg-btn[data-v-20db8272] {\n  fill: rgba(255, 0, 0, 0);\n  stroke: #030087;\n}\n.listreports-buttons__button svg[data-v-20db8272] {\n  transition: ease-in-out 0.25s;\n}\n.listreports-buttons__button svg rect[data-v-20db8272] {\n  transition: ease-in-out 0.25s;\n}\n.listreports-buttons__button:hover svg[data-v-20db8272] {\n  transform: scale(1.1);\n}\n.listreports-buttons__button[data-v-20db8272]:last-child {\n  margin-left: 10px;\n}\n.listreports-nav[data-v-20db8272] {\n  display: flex;\n  justify-content: space-between;\n  align-items: center;\n  width: 100%;\n  margin-bottom: 30px;\n}\n.listreports-cards[data-v-20db8272] {\n  width: calc(100% + 30px);\n  display: flex;\n  justify-content: flex-start;\n  flex-wrap: wrap;\n  margin: 0 -30px;\n}\n.listreports-card[data-v-20db8272] {\n  margin: 0 0 30px 30px;\n  padding: 20px;\n  background: #ffffff;\n  border: 1px solid rgba(3, 0, 135, 0.3);\n  border-radius: 5px;\n  display: flex;\n  justify-content: space-between;\n}\n.listreports-card.points[data-v-20db8272] {\n  width: calc(25% - 30px);\n}\n.listreports-card.list[data-v-20db8272] {\n  width: calc(100% - 30px);\n}\n.listreports-card__textblock[data-v-20db8272] {\n  display: flex;\n  flex-direction: column;\n  justify-content: space-between;\n}\n.listreports-card__data[data-v-20db8272] {\n  font-weight: 700;\n  font-size: 14px;\n  line-height: 18px;\n  color: #666666;\n}\n.listreports-card__name[data-v-20db8272] {\n  font-weight: 700;\n  font-size: 16px;\n  line-height: 20px;\n  color: #222222;\n}\n.listreports-card__button[data-v-20db8272] {\n  cursor: pointer;\n  transition: ease-in-out 0.25s;\n}\n.listreports-card__button[data-v-20db8272]:hover {\n  opacity: 0.7;\n}\n.listreports-card--lost[data-v-20db8272] {\n  display: flex;\n  align-items: center;\n  justify-content: center;\n  cursor: pointer;\n}\n.listreports-card--lost svg[data-v-20db8272] {\n  transition: ease-in-out 0.25s;\n}\n.listreports-card--lost:hover svg[data-v-20db8272] {\n  transform: scale(1.1);\n}\n", ""]);
+___CSS_LOADER_EXPORT___.push([module.id, ".select[data-v-20db8272] {\n  width: 100%;\n  height: 45px;\n  border-radius: 5px;\n  z-index: 2;\n  position: relative;\n}\n.select__wrap[data-v-20db8272] {\n  position: absolute;\n  width: 100%;\n  height: auto;\n  max-height: 45px;\n  border-radius: 5px;\n  top: 0;\n  left: 0;\n  font-weight: 700;\n  font-size: 14px;\n  line-height: 18px;\n  color: #222222;\n  overflow: hidden;\n  transition: ease-in-out 0.25s;\n  cursor: pointer;\n}\n.select__wrap.open[data-v-20db8272] {\n  max-height: 1000px;\n}\n.select__wrap.open .top svg[data-v-20db8272] {\n  transform: rotate(-180deg);\n}\n.select__wrap .top[data-v-20db8272] {\n  padding: 5px 5px;\n  height: 45px;\n  display: flex;\n  align-items: center;\n  justify-content: space-between;\n}\n.select__wrap .top svg[data-v-20db8272] {\n  width: 8px;\n  height: 5px;\n  transition: ease-in-out 0.25s;\n}\n.select__wrap .bottom[data-v-20db8272] {\n  background-color: #f3f6fd;\n}\n.select__wrap .select__item[data-v-20db8272] {\n  border-top: 1px solid #6682a291;\n  padding: 5px;\n  cursor: pointer;\n  transition: ease-in-out 0.25s;\n}\n.select__wrap .select__item[data-v-20db8272]:hover {\n  color: #030087;\n}\n.listreports[data-v-20db8272] {\n  background-color: #f3f6fd;\n}\n.listreports__search[data-v-20db8272] {\n  position: relative;\n  max-width: 768px;\n  width: 100%;\n  height: 35px;\n  margin-right: 15%;\n}\n.listreports__search svg[data-v-20db8272] {\n  position: absolute;\n  left: 15px;\n  top: 0;\n  bottom: 0;\n  margin-bottom: auto;\n  margin-top: auto;\n  height: 13px;\n}\n.listreports__search input[data-v-20db8272] {\n  width: 100%;\n  height: 100%;\n  background: #ffffff;\n  border: 1px solid rgba(3, 0, 135, 0.3);\n  border-radius: 5px;\n  padding: 10px 10px 10px 40px;\n}\n.listreports__search input[data-v-20db8272]::-moz-placeholder {\n  font-weight: 700;\n  font-size: 14px;\n  line-height: 18px;\n  color: #666666;\n}\n.listreports__search input[data-v-20db8272]::placeholder {\n  font-weight: 700;\n  font-size: 14px;\n  line-height: 18px;\n  color: #666666;\n}\n.listreports__select[data-v-20db8272] {\n  display: flex;\n  align-items: center;\n  justify-content: space-between;\n  width: 100%;\n  max-width: 265px;\n  margin-right: 15px;\n}\n.listreports__select p[data-v-20db8272] {\n  font-weight: 700;\n  font-size: 14px;\n  line-height: 18px;\n  color: #666666;\n}\n.listreports-buttons[data-v-20db8272] {\n  display: flex;\n  justify-content: space-between;\n  align-items: center;\n}\n.listreports-buttons__button[data-v-20db8272] {\n  width: 21px;\n  height: 21px;\n  cursor: pointer;\n  transition: ease-in-out 0.25s;\n}\n.listreports-buttons__button.active svg rect[data-v-20db8272] {\n  fill: #030087;\n}\n.listreports-buttons__button.active svg .svg-btn[data-v-20db8272] {\n  fill: rgba(255, 0, 0, 0);\n  stroke: #030087;\n}\n.listreports-buttons__button svg[data-v-20db8272] {\n  transition: ease-in-out 0.25s;\n}\n.listreports-buttons__button svg rect[data-v-20db8272] {\n  transition: ease-in-out 0.25s;\n}\n.listreports-buttons__button:hover svg[data-v-20db8272] {\n  transform: scale(1.1);\n}\n.listreports-buttons__button[data-v-20db8272]:last-child {\n  margin-left: 10px;\n}\n.listreports-nav[data-v-20db8272] {\n  display: flex;\n  justify-content: space-between;\n  align-items: center;\n  width: 100%;\n  margin-bottom: 30px;\n}\n.listreports-cards[data-v-20db8272] {\n  width: calc(100% + 30px);\n  display: flex;\n  justify-content: flex-start;\n  flex-wrap: wrap;\n  margin: 0 -30px;\n}\n.listreports-card[data-v-20db8272] {\n  margin: 0 0 30px 30px;\n  padding: 20px;\n  background: #ffffff;\n  border: 1px solid rgba(3, 0, 135, 0.3);\n  border-radius: 5px;\n  display: flex;\n  justify-content: space-between;\n}\n.listreports-card.points[data-v-20db8272] {\n  width: calc(25% - 30px);\n}\n.listreports-card.list[data-v-20db8272] {\n  width: calc(100% - 30px);\n}\n.listreports-card__textblock[data-v-20db8272] {\n  display: flex;\n  flex-direction: column;\n  justify-content: space-between;\n}\n.listreports-card__data[data-v-20db8272] {\n  font-weight: 700;\n  font-size: 14px;\n  line-height: 18px;\n  color: #666666;\n}\n.listreports-card__name[data-v-20db8272] {\n  font-weight: 700;\n  font-size: 16px;\n  line-height: 20px;\n  color: #222222;\n}\n.listreports-card__button[data-v-20db8272] {\n  cursor: pointer;\n  transition: ease-in-out 0.25s;\n}\n.listreports-card__button[data-v-20db8272]:hover {\n  opacity: 0.7;\n}\n.listreports-card--lost[data-v-20db8272] {\n  display: flex;\n  align-items: center;\n  justify-content: center;\n  cursor: pointer;\n}\n.listreports-card--lost svg[data-v-20db8272] {\n  transition: ease-in-out 0.25s;\n}\n.listreports-card--lost:hover svg[data-v-20db8272] {\n  transform: scale(1.1);\n}\n.select[data-v-20db8272] {\n  width: 100%;\n  height: 45px;\n  border-radius: 5px;\n  z-index: 2;\n  position: relative;\n}\n.select__wrap[data-v-20db8272] {\n  position: absolute;\n  width: 100%;\n  height: auto;\n  max-height: 45px;\n  border-radius: 5px;\n  top: 0;\n  left: 0;\n  font-weight: 700;\n  font-size: 14px;\n  line-height: 18px;\n  color: #222222;\n  overflow: hidden;\n  transition: ease-in-out 0.25s;\n  cursor: pointer;\n}\n.select__wrap.open[data-v-20db8272] {\n  max-height: 1000px;\n}\n.select__wrap.open .top svg[data-v-20db8272] {\n  transform: rotate(-180deg);\n}\n.select__wrap .top[data-v-20db8272] {\n  padding: 5px 5px;\n  height: 45px;\n  display: flex;\n  align-items: center;\n  justify-content: space-between;\n}\n.select__wrap .top svg[data-v-20db8272] {\n  width: 8px;\n  height: 5px;\n  transition: ease-in-out 0.25s;\n}\n.select__wrap .bottom[data-v-20db8272] {\n  background-color: #f3f6fd;\n}\n.select__wrap .select__item[data-v-20db8272] {\n  border-top: 1px solid #6682a291;\n  padding: 5px;\n  cursor: pointer;\n  transition: ease-in-out 0.25s;\n}\n.select__wrap .select__item[data-v-20db8272]:hover {\n  color: #030087;\n}\n.listreports[data-v-20db8272] {\n  background-color: #f3f6fd;\n}\n.listreports__search[data-v-20db8272] {\n  position: relative;\n  max-width: 768px;\n  width: 100%;\n  height: 35px;\n  margin-right: 15%;\n}\n.listreports__search svg[data-v-20db8272] {\n  position: absolute;\n  left: 15px;\n  top: 0;\n  bottom: 0;\n  margin-bottom: auto;\n  margin-top: auto;\n  height: 13px;\n}\n.listreports__search input[data-v-20db8272] {\n  width: 100%;\n  height: 100%;\n  background: #ffffff;\n  border: 1px solid rgba(3, 0, 135, 0.3);\n  border-radius: 5px;\n  padding: 10px 10px 10px 40px;\n}\n.listreports__search input[data-v-20db8272]::-moz-placeholder {\n  font-weight: 700;\n  font-size: 14px;\n  line-height: 18px;\n  color: #666666;\n}\n.listreports__search input[data-v-20db8272]::placeholder {\n  font-weight: 700;\n  font-size: 14px;\n  line-height: 18px;\n  color: #666666;\n}\n.listreports__select[data-v-20db8272] {\n  display: flex;\n  align-items: center;\n  justify-content: space-between;\n  width: 100%;\n  max-width: 265px;\n  margin-right: 15px;\n}\n.listreports__select p[data-v-20db8272] {\n  font-weight: 700;\n  font-size: 14px;\n  line-height: 18px;\n  color: #666666;\n}\n.listreports-buttons[data-v-20db8272] {\n  display: flex;\n  justify-content: space-between;\n  align-items: center;\n}\n.listreports-buttons__button[data-v-20db8272] {\n  width: 21px;\n  height: 21px;\n  cursor: pointer;\n  transition: ease-in-out 0.25s;\n}\n.listreports-buttons__button.active svg rect[data-v-20db8272] {\n  fill: #030087;\n}\n.listreports-buttons__button.active svg .svg-btn[data-v-20db8272] {\n  fill: rgba(255, 0, 0, 0);\n  stroke: #030087;\n}\n.listreports-buttons__button svg[data-v-20db8272] {\n  transition: ease-in-out 0.25s;\n}\n.listreports-buttons__button svg rect[data-v-20db8272] {\n  transition: ease-in-out 0.25s;\n}\n.listreports-buttons__button:hover svg[data-v-20db8272] {\n  transform: scale(1.1);\n}\n.listreports-buttons__button[data-v-20db8272]:last-child {\n  margin-left: 10px;\n}\n.listreports-nav[data-v-20db8272] {\n  display: flex;\n  justify-content: space-between;\n  align-items: center;\n  width: 100%;\n  margin-bottom: 30px;\n}\n.listreports-cards[data-v-20db8272] {\n  width: calc(100% + 30px);\n  display: flex;\n  justify-content: flex-start;\n  flex-wrap: wrap;\n  margin: 0 -30px;\n}\n.listreports-card[data-v-20db8272] {\n  margin: 0 0 30px 30px;\n  padding: 20px;\n  background: #ffffff;\n  border: 1px solid rgba(3, 0, 135, 0.3);\n  border-radius: 5px;\n  display: flex;\n  justify-content: space-between;\n}\n.listreports-card.points[data-v-20db8272] {\n  width: calc(25% - 30px);\n}\n.listreports-card.list[data-v-20db8272] {\n  width: calc(100% - 30px);\n}\n.listreports-card__textblock[data-v-20db8272] {\n  display: flex;\n  flex-direction: column;\n  justify-content: space-between;\n  margin-right: 10px;\n}\n.listreports-card__data[data-v-20db8272] {\n  font-weight: 700;\n  font-size: 14px;\n  line-height: 18px;\n  color: #666666;\n}\n.listreports-card__name[data-v-20db8272] {\n  font-weight: 700;\n  font-size: 16px;\n  line-height: 20px;\n  color: #222222;\n  word-break: break-all;\n}\n.listreports-card__button[data-v-20db8272] {\n  cursor: pointer;\n  transition: ease-in-out 0.25s;\n}\n.listreports-card__button[data-v-20db8272]:hover {\n  opacity: 0.7;\n}\n.listreports-card--lost[data-v-20db8272] {\n  display: flex;\n  align-items: center;\n  justify-content: center;\n  cursor: pointer;\n}\n.listreports-card--lost svg[data-v-20db8272] {\n  transition: ease-in-out 0.25s;\n}\n.listreports-card--lost:hover svg[data-v-20db8272] {\n  transform: scale(1.1);\n}\n@media (max-width: 830px) {\n.listreports[data-v-20db8272] {\n    padding: 100px 20px 20px 20px;\n}\n.listreports-buttons[data-v-20db8272] {\n    display: none;\n}\n.listreports-card.points[data-v-20db8272] {\n    width: 100%;\n}\n}\n@media (max-width: 670px) {\n.listreports-nav[data-v-20db8272] {\n    display: flex;\n    flex-direction: column;\n    margin-bottom: 10px;\n}\n.listreports__search[data-v-20db8272] {\n    margin-right: 0;\n}\n}\n@media (max-width: 380px) {\n.listreports h2[data-v-20db8272] {\n    font-size: 34px;\n    margin-bottom: 20px;\n}\n}\n", ""]);
 // Exports
 /* harmony default export */ __webpack_exports__["default"] = (___CSS_LOADER_EXPORT___);
 
@@ -40266,7 +40456,7 @@ __webpack_require__.r(__webpack_exports__);
 var ___CSS_LOADER_EXPORT___ = _node_modules_laravel_mix_node_modules_css_loader_dist_runtime_api_js__WEBPACK_IMPORTED_MODULE_0___default()(function(i){return i[1]});
 var ___CSS_LOADER_URL_REPLACEMENT_0___ = _node_modules_laravel_mix_node_modules_css_loader_dist_runtime_getUrl_js__WEBPACK_IMPORTED_MODULE_1___default()(_assets_images_check_icon_svg__WEBPACK_IMPORTED_MODULE_2__["default"]);
 // Module
-___CSS_LOADER_EXPORT___.push([module.id, ".newreport .input-file[data-v-48c04ec5] {\n  margin-top: 10px;\n  margin-bottom: 0;\n}\n.newreport .input-group[data-v-48c04ec5] {\n  margin-bottom: 20px;\n}\n.newreport .input-group-wrap[data-v-48c04ec5] {\n  display: flex;\n  align-items: center;\n}\n.newreport .input-group-wrap--dates div[data-v-48c04ec5] {\n  height: 2px;\n  width: 15px;\n  margin: 0 10px;\n  background: #000;\n}\n.newreport .input-group-wrap--color[data-v-48c04ec5] {\n  margin-top: 10px;\n}\n.newreport__input--color input[data-v-48c04ec5] {\n  display: none;\n}\n.newreport__input--color input:checked + label[data-v-48c04ec5]::before {\n  opacity: 1;\n  visibility: visible;\n}\n.newreport__input--color label[data-v-48c04ec5] {\n  align-items: center;\n  width: 56px;\n  height: 56px;\n  display: flex;\n  align-items: center;\n  justify-content: center;\n  border-radius: 50%;\n  border: 1px solid rgba(3, 0, 135, 0.3);\n  margin-right: 10px;\n  position: relative;\n  cursor: pointer;\n}\n.newreport__input--color label[data-v-48c04ec5]::before {\n  width: 46px;\n  height: 46px;\n  position: absolute;\n  top: 0px;\n  bottom: 0;\n  left: 0;\n  right: 0;\n  margin: auto;\n  border-radius: 3px;\n  z-index: 2;\n  content: url(" + ___CSS_LOADER_URL_REPLACEMENT_0___ + ");\n  opacity: 0;\n  visibility: hidden;\n  transition: ease-in-out 0.25s;\n}\n.newreport__field--dates input[data-v-48c04ec5] {\n  max-width: 195px;\n}\n.newreport__field--phone the-mask[data-v-48c04ec5] {\n  background-color: #ffffff;\n}\n.newreport-buttons[data-v-48c04ec5] {\n  display: flex;\n}\n.newreport-buttons__newreports[data-v-48c04ec5] {\n  width: 224px;\n  padding: 12px 0;\n  display: flex;\n  align-content: center;\n  justify-content: center;\n  color: #fff;\n  background-color: #030087;\n  border: 1.5px solid #030087;\n  border-radius: 7px;\n  transition: ease-in-out 0.25s;\n  margin-right: 30px;\n}\n.newreport-buttons__newreports svg[data-v-48c04ec5] {\n  margin-right: 10px;\n}\n.newreport-buttons__newreports svg path[data-v-48c04ec5] {\n  transition: ease-in-out 0.25s;\n}\n.newreport-buttons__newreports[data-v-48c04ec5]:hover {\n  color: #030087;\n  background-color: #ffffff;\n}\n.newreport-buttons__newreports:hover svg path[data-v-48c04ec5] {\n  fill: #030087;\n}\n.newreport-buttons__cancel[data-v-48c04ec5] {\n  width: 157px;\n  padding: 12px 0;\n  text-align: center;\n  font-weight: 700;\n  font-size: 16px;\n  line-height: 20px;\n  color: #030087;\n  background-color: #ffffff;\n  border: 1px solid #030087;\n  border-radius: 5px;\n  transition: ease-in-out 0.25s;\n}\n.newreport-buttons__cancel[data-v-48c04ec5]:hover {\n  background-color: #030087;\n  color: #ffffff;\n}\n.input-file > img[data-v-48c04ec5] {\n  max-width: 200px;\n  margin-top: 20px;\n}\n", ""]);
+___CSS_LOADER_EXPORT___.push([module.id, ".newreport .input-file[data-v-48c04ec5] {\n  margin-top: 10px;\n  margin-bottom: 0;\n}\n.newreport .input-group[data-v-48c04ec5] {\n  margin-bottom: 20px;\n}\n.newreport .input-group-wrap[data-v-48c04ec5] {\n  display: flex;\n  align-items: center;\n}\n.newreport .input-group-wrap--dates div[data-v-48c04ec5] {\n  height: 2px;\n  width: 15px;\n  margin: 0 10px;\n  background: #000;\n}\n.newreport .input-group-wrap--color[data-v-48c04ec5] {\n  margin-top: 10px;\n}\n.newreport__input--color input[data-v-48c04ec5] {\n  display: none;\n}\n.newreport__input--color input:checked + label[data-v-48c04ec5]::before {\n  opacity: 1;\n  visibility: visible;\n}\n.newreport__input--color label[data-v-48c04ec5] {\n  align-items: center;\n  width: 56px;\n  height: 56px;\n  display: flex;\n  align-items: center;\n  justify-content: center;\n  border-radius: 50%;\n  border: 1px solid rgba(3, 0, 135, 0.3);\n  margin-right: 10px;\n  position: relative;\n  cursor: pointer;\n}\n.newreport__input--color label[data-v-48c04ec5]::before {\n  width: 46px;\n  height: 46px;\n  position: absolute;\n  top: 0px;\n  bottom: 0;\n  left: 0;\n  right: 0;\n  margin: auto;\n  border-radius: 3px;\n  z-index: 2;\n  content: url(" + ___CSS_LOADER_URL_REPLACEMENT_0___ + ");\n  opacity: 0;\n  visibility: hidden;\n  transition: ease-in-out 0.25s;\n}\n.newreport__field--dates input[data-v-48c04ec5] {\n  max-width: 195px;\n}\n.newreport__field--phone the-mask[data-v-48c04ec5] {\n  background-color: #ffffff;\n}\n.newreport-buttons[data-v-48c04ec5] {\n  display: flex;\n}\n.newreport-buttons__newreports[data-v-48c04ec5] {\n  width: 224px;\n  padding: 12px 0;\n  display: flex;\n  align-content: center;\n  justify-content: center;\n  color: #fff;\n  background-color: #030087;\n  border: 1.5px solid #030087;\n  border-radius: 7px;\n  transition: ease-in-out 0.25s;\n  margin-right: 30px;\n}\n.newreport-buttons__newreports svg[data-v-48c04ec5] {\n  margin-right: 10px;\n}\n.newreport-buttons__newreports svg path[data-v-48c04ec5] {\n  transition: ease-in-out 0.25s;\n}\n.newreport-buttons__newreports[data-v-48c04ec5]:hover {\n  color: #030087;\n  background-color: #ffffff;\n}\n.newreport-buttons__newreports:hover svg path[data-v-48c04ec5] {\n  fill: #030087;\n}\n.newreport-buttons__cancel[data-v-48c04ec5] {\n  width: 157px;\n  padding: 12px 0;\n  text-align: center;\n  font-weight: 700;\n  font-size: 16px;\n  line-height: 20px;\n  color: #030087;\n  background-color: #ffffff;\n  border: 1px solid #030087;\n  border-radius: 5px;\n  transition: ease-in-out 0.25s;\n}\n.newreport-buttons__cancel[data-v-48c04ec5]:hover {\n  background-color: #030087;\n  color: #ffffff;\n}\n.input-file > img[data-v-48c04ec5] {\n  max-width: 200px;\n  margin-top: 20px;\n}\n.newreport .input-file[data-v-48c04ec5] {\n  margin-top: 10px;\n  margin-bottom: 0;\n}\n.newreport .input-group[data-v-48c04ec5] {\n  margin-bottom: 20px;\n}\n.newreport .input-group-wrap[data-v-48c04ec5] {\n  display: flex;\n  align-items: center;\n}\n.newreport .input-group-wrap--dates div[data-v-48c04ec5] {\n  height: 2px;\n  width: 15px;\n  margin: 0 10px;\n  background: #000;\n}\n.newreport .input-group-wrap--color[data-v-48c04ec5] {\n  margin-top: 10px;\n}\n.newreport__input--color input[data-v-48c04ec5] {\n  display: none;\n}\n.newreport__input--color input:checked + label[data-v-48c04ec5]::before {\n  opacity: 1;\n  visibility: visible;\n}\n.newreport__input--color label[data-v-48c04ec5] {\n  align-items: center;\n  width: 56px;\n  height: 56px;\n  display: flex;\n  align-items: center;\n  justify-content: center;\n  border-radius: 50%;\n  border: 1px solid rgba(3, 0, 135, 0.3);\n  margin-right: 10px;\n  position: relative;\n  cursor: pointer;\n}\n.newreport__input--color label[data-v-48c04ec5]::before {\n  width: 46px;\n  height: 46px;\n  position: absolute;\n  top: 0px;\n  bottom: 0;\n  left: 0;\n  right: 0;\n  margin: auto;\n  border-radius: 3px;\n  z-index: 2;\n  content: url(" + ___CSS_LOADER_URL_REPLACEMENT_0___ + ");\n  opacity: 0;\n  visibility: hidden;\n  transition: ease-in-out 0.25s;\n}\n.newreport__field--dates input[data-v-48c04ec5] {\n  max-width: 195px;\n}\n.newreport__field--phone the-mask[data-v-48c04ec5] {\n  background-color: #ffffff;\n}\n.newreport-buttons[data-v-48c04ec5] {\n  display: flex;\n}\n.newreport-buttons__newreports[data-v-48c04ec5] {\n  width: 224px;\n  padding: 12px 0;\n  display: flex;\n  align-content: center;\n  justify-content: center;\n  color: #fff;\n  background-color: #030087;\n  border: 1.5px solid #030087;\n  border-radius: 7px;\n  transition: ease-in-out 0.25s;\n  margin-right: 30px;\n}\n.newreport-buttons__newreports svg[data-v-48c04ec5] {\n  margin-right: 10px;\n}\n.newreport-buttons__newreports svg path[data-v-48c04ec5] {\n  transition: ease-in-out 0.25s;\n}\n.newreport-buttons__newreports[data-v-48c04ec5]:hover {\n  color: #030087;\n  background-color: #ffffff;\n}\n.newreport-buttons__newreports:hover svg path[data-v-48c04ec5] {\n  fill: #030087;\n}\n.newreport-buttons__cancel[data-v-48c04ec5] {\n  width: 157px;\n  padding: 12px 0;\n  text-align: center;\n  font-weight: 700;\n  font-size: 16px;\n  line-height: 20px;\n  color: #030087;\n  background-color: #ffffff;\n  border: 1px solid #030087;\n  border-radius: 5px;\n  transition: ease-in-out 0.25s;\n}\n.newreport-buttons__cancel[data-v-48c04ec5]:hover {\n  background-color: #030087;\n  color: #ffffff;\n}\n@media (max-width: 700px) {\n.newreport[data-v-48c04ec5] {\n    padding: 100px 30px 30px 30px;\n}\n}\n@media (max-width: 650px) {\n.input-group-wrap--color[data-v-48c04ec5] {\n    display: flex;\n    flex-wrap: wrap;\n}\n.newreport-buttons[data-v-48c04ec5] {\n    display: flex;\n    flex-direction: column;\n}\n.newreport-buttons__newreports[data-v-48c04ec5] {\n    margin-right: 0;\n    width: 100%;\n    margin-bottom: 10px;\n}\n.newreport-buttons__cancel[data-v-48c04ec5] {\n    width: 100%;\n}\n}\n", ""]);
 // Exports
 /* harmony default export */ __webpack_exports__["default"] = (___CSS_LOADER_EXPORT___);
 
@@ -40314,7 +40504,7 @@ __webpack_require__.r(__webpack_exports__);
 
 var ___CSS_LOADER_EXPORT___ = _node_modules_laravel_mix_node_modules_css_loader_dist_runtime_api_js__WEBPACK_IMPORTED_MODULE_0___default()(function(i){return i[1]});
 // Module
-___CSS_LOADER_EXPORT___.push([module.id, ".personalArea-top[data-v-13fe15e8] {\n  display: flex;\n  justify-content: space-between;\n  align-items: flex-start;\n}\n.personalArea-top__button[data-v-13fe15e8] {\n  display: flex;\n  align-items: center;\n  justify-content: center;\n  width: 200px;\n  padding: 13px 5px;\n  background-color: #ffffff;\n  border: 1px solid #030087;\n  border-radius: 5px;\n  cursor: pointer;\n  font-weight: 600;\n  font-size: 16px;\n  line-height: 20px;\n  color: #030087;\n  transition: ease-in-out 0.25s;\n}\n.personalArea-top__button svg[data-v-13fe15e8] {\n  margin-right: 15px;\n}\n.personalArea-top__button svg g rect[data-v-13fe15e8] {\n  transition: ease-in-out 0.25s;\n}\n.personalArea-top__button[data-v-13fe15e8]:hover {\n  color: #ffffff;\n  background-color: #030087;\n}\n.personalArea-top__button:hover svg[data-v-13fe15e8] {\n  margin-right: 15px;\n}\n.personalArea-top__button:hover svg g rect[data-v-13fe15e8] {\n  fill: #ffffff;\n}\n.personalArea .input-file[data-v-13fe15e8] {\n  margin-top: 10px;\n  margin-bottom: 0;\n}\n.personalArea .input-file__image[data-v-13fe15e8] {\n  width: 82px;\n}\n.personalArea .input-group[data-v-13fe15e8] {\n  margin-bottom: 20px;\n}\n.personalArea__field--companyPhone the-mask[data-v-13fe15e8], .personalArea__field--phone the-mask[data-v-13fe15e8] {\n  background-color: #ffffff;\n}\n.personalArea-buttons[data-v-13fe15e8] {\n  display: flex;\n}\n.personalArea-buttons__personalAreas[data-v-13fe15e8] {\n  width: 224px;\n  padding: 12px 0;\n  display: flex;\n  align-content: center;\n  justify-content: center;\n  color: #fff;\n  background-color: #030087;\n  border: 1.5px solid #030087;\n  border-radius: 7px;\n  transition: ease-in-out 0.25s;\n  cursor: pointer;\n  margin-right: 30px;\n}\n.personalArea-buttons__personalAreas svg[data-v-13fe15e8] {\n  margin-right: 10px;\n}\n.personalArea-buttons__personalAreas svg path[data-v-13fe15e8] {\n  transition: ease-in-out 0.25s;\n}\n.personalArea-buttons__personalAreas[data-v-13fe15e8]:hover {\n  color: #030087;\n  background-color: #ffffff;\n}\n.personalArea-buttons__personalAreas:hover svg path[data-v-13fe15e8] {\n  fill: #030087;\n}\n.personalArea-buttons__cancel[data-v-13fe15e8] {\n  padding: 12px 40px;\n  text-align: center;\n  font-weight: 700;\n  font-size: 16px;\n  line-height: 20px;\n  color: #030087;\n  background-color: #ffffff;\n  border: 1px solid #030087;\n  border-radius: 5px;\n  transition: ease-in-out 0.25s;\n}\n.personalArea-buttons__cancel[data-v-13fe15e8]:hover {\n  background-color: #030087;\n  color: #ffffff;\n}\n.input-file > img[data-v-13fe15e8] {\n  max-width: 200px;\n  margin-top: 20px;\n}\n", ""]);
+___CSS_LOADER_EXPORT___.push([module.id, ".personalArea-top[data-v-13fe15e8] {\n  display: flex;\n  justify-content: space-between;\n  align-items: flex-start;\n}\n.personalArea-top__button[data-v-13fe15e8] {\n  display: flex;\n  align-items: center;\n  justify-content: center;\n  width: 200px;\n  padding: 13px 5px;\n  background-color: #ffffff;\n  border: 1px solid #030087;\n  border-radius: 5px;\n  cursor: pointer;\n  font-weight: 600;\n  font-size: 16px;\n  line-height: 20px;\n  color: #030087;\n  transition: ease-in-out 0.25s;\n}\n.personalArea-top__button svg[data-v-13fe15e8] {\n  margin-right: 15px;\n}\n.personalArea-top__button svg g rect[data-v-13fe15e8] {\n  transition: ease-in-out 0.25s;\n}\n.personalArea-top__button[data-v-13fe15e8]:hover {\n  color: #ffffff;\n  background-color: #030087;\n}\n.personalArea-top__button:hover svg[data-v-13fe15e8] {\n  margin-right: 15px;\n}\n.personalArea-top__button:hover svg g rect[data-v-13fe15e8] {\n  fill: #ffffff;\n}\n.personalArea .input-file[data-v-13fe15e8] {\n  margin-top: 10px;\n  margin-bottom: 0;\n}\n.personalArea .input-file__image[data-v-13fe15e8] {\n  width: 82px;\n}\n.personalArea .input-group[data-v-13fe15e8] {\n  margin-bottom: 20px;\n}\n.personalArea__field--companyPhone the-mask[data-v-13fe15e8], .personalArea__field--phone the-mask[data-v-13fe15e8] {\n  background-color: #ffffff;\n}\n.personalArea-buttons[data-v-13fe15e8] {\n  display: flex;\n}\n.personalArea-buttons__personalAreas[data-v-13fe15e8] {\n  width: 224px;\n  padding: 12px 0;\n  display: flex;\n  align-content: center;\n  justify-content: center;\n  color: #fff;\n  background-color: #030087;\n  border: 1.5px solid #030087;\n  border-radius: 7px;\n  transition: ease-in-out 0.25s;\n  cursor: pointer;\n  margin-right: 30px;\n}\n.personalArea-buttons__personalAreas svg[data-v-13fe15e8] {\n  margin-right: 10px;\n}\n.personalArea-buttons__personalAreas svg path[data-v-13fe15e8] {\n  transition: ease-in-out 0.25s;\n}\n.personalArea-buttons__personalAreas[data-v-13fe15e8]:hover {\n  color: #030087;\n  background-color: #ffffff;\n}\n.personalArea-buttons__personalAreas:hover svg path[data-v-13fe15e8] {\n  fill: #030087;\n}\n.personalArea-buttons__cancel[data-v-13fe15e8] {\n  padding: 12px 40px;\n  text-align: center;\n  font-weight: 700;\n  font-size: 16px;\n  line-height: 20px;\n  color: #030087;\n  background-color: #ffffff;\n  border: 1px solid #030087;\n  border-radius: 5px;\n  transition: ease-in-out 0.25s;\n}\n.personalArea-buttons__cancel[data-v-13fe15e8]:hover {\n  background-color: #030087;\n  color: #ffffff;\n}\n.input-file > img[data-v-13fe15e8] {\n  max-width: 200px;\n  margin-top: 20px;\n}\n.personalArea-top[data-v-13fe15e8] {\n  display: flex;\n  justify-content: space-between;\n  align-items: flex-start;\n}\n.personalArea-top__button[data-v-13fe15e8] {\n  display: flex;\n  align-items: center;\n  justify-content: center;\n  width: 200px;\n  padding: 13px 5px;\n  background-color: #ffffff;\n  border: 1px solid #030087;\n  border-radius: 5px;\n  cursor: pointer;\n  font-weight: 600;\n  font-size: 16px;\n  line-height: 20px;\n  color: #030087;\n  transition: ease-in-out 0.25s;\n}\n.personalArea-top__button svg[data-v-13fe15e8] {\n  margin-right: 15px;\n}\n.personalArea-top__button svg g rect[data-v-13fe15e8] {\n  transition: ease-in-out 0.25s;\n}\n.personalArea-top__button[data-v-13fe15e8]:hover {\n  color: #ffffff;\n  background-color: #030087;\n}\n.personalArea-top__button:hover svg[data-v-13fe15e8] {\n  margin-right: 15px;\n}\n.personalArea-top__button:hover svg g rect[data-v-13fe15e8] {\n  fill: #ffffff;\n}\n.personalArea .input-file[data-v-13fe15e8] {\n  margin-top: 10px;\n  margin-bottom: 0;\n}\n.personalArea .input-file__image[data-v-13fe15e8] {\n  width: 82px;\n}\n.personalArea .input-group[data-v-13fe15e8] {\n  margin-bottom: 20px;\n}\n.personalArea__field--companyPhone the-mask[data-v-13fe15e8], .personalArea__field--phone the-mask[data-v-13fe15e8] {\n  background-color: #ffffff;\n}\n.personalArea-buttons[data-v-13fe15e8] {\n  display: flex;\n}\n.personalArea-buttons__personalAreas[data-v-13fe15e8] {\n  width: 224px;\n  padding: 12px 0;\n  display: flex;\n  align-content: center;\n  justify-content: center;\n  color: #fff;\n  background-color: #030087;\n  border: 1.5px solid #030087;\n  border-radius: 7px;\n  transition: ease-in-out 0.25s;\n  margin-right: 30px;\n}\n.personalArea-buttons__personalAreas svg[data-v-13fe15e8] {\n  margin-right: 10px;\n}\n.personalArea-buttons__personalAreas svg path[data-v-13fe15e8] {\n  transition: ease-in-out 0.25s;\n}\n.personalArea-buttons__personalAreas[data-v-13fe15e8]:hover {\n  color: #030087;\n  background-color: #ffffff;\n}\n.personalArea-buttons__personalAreas:hover svg path[data-v-13fe15e8] {\n  fill: #030087;\n}\n.personalArea-buttons__cancel[data-v-13fe15e8] {\n  padding: 12px 40px;\n  text-align: center;\n  font-weight: 700;\n  font-size: 16px;\n  line-height: 20px;\n  color: #030087;\n  background-color: #ffffff;\n  border: 1px solid #030087;\n  border-radius: 5px;\n  transition: ease-in-out 0.25s;\n}\n.personalArea-buttons__cancel[data-v-13fe15e8]:hover {\n  background-color: #030087;\n  color: #ffffff;\n}\n@media (max-width: 630px) {\n.personalArea-top__button[data-v-13fe15e8] {\n    max-width: 100px;\n}\n.personalArea-top__button span[data-v-13fe15e8] {\n    display: none;\n}\n.personalArea-top__button svg[data-v-13fe15e8] {\n    margin-right: 0;\n}\n.personalArea[data-v-13fe15e8] {\n    padding: 30px;\n}\n}\n@media (max-width: 535px) {\n.personalArea-top__button[data-v-13fe15e8] {\n    max-width: 90px;\n}\n.personalArea[data-v-13fe15e8] {\n    padding: 20px;\n}\n.personalArea-buttons[data-v-13fe15e8] {\n    display: flex;\n    flex-direction: column;\n}\n.personalArea-buttons__personalAreas[data-v-13fe15e8] {\n    margin-right: 0;\n    margin-bottom: 15px;\n    width: 100%;\n}\n}\n@media (max-width: 450px) {\n.personalArea-top h2[data-v-13fe15e8] {\n    font-weight: 600;\n    font-size: 24px;\n    line-height: 31px;\n    margin-top: 10px;\n}\n}\n@media (max-width: 450px) and (max-width: 350px) {\n.personalArea-top h2[data-v-13fe15e8] {\n    font-weight: 600;\n    font-size: 21px;\n    line-height: 31px;\n    margin-top: 10px;\n}\n}\n", ""]);
 // Exports
 /* harmony default export */ __webpack_exports__["default"] = (___CSS_LOADER_EXPORT___);
 
@@ -40362,7 +40552,7 @@ __webpack_require__.r(__webpack_exports__);
 var ___CSS_LOADER_EXPORT___ = _node_modules_laravel_mix_node_modules_css_loader_dist_runtime_api_js__WEBPACK_IMPORTED_MODULE_0___default()(function(i){return i[1]});
 var ___CSS_LOADER_URL_REPLACEMENT_0___ = _node_modules_laravel_mix_node_modules_css_loader_dist_runtime_getUrl_js__WEBPACK_IMPORTED_MODULE_1___default()(_assets_images_check_icon_svg__WEBPACK_IMPORTED_MODULE_2__["default"]);
 // Module
-___CSS_LOADER_EXPORT___.push([module.id, ".newreport .input-file[data-v-299b5513] {\n  margin-top: 10px;\n  margin-bottom: 0;\n}\n.newreport .input-group[data-v-299b5513] {\n  margin-bottom: 20px;\n}\n.newreport .input-group-wrap[data-v-299b5513] {\n  display: flex;\n  align-items: center;\n}\n.newreport .input-group-wrap--dates div[data-v-299b5513] {\n  height: 2px;\n  width: 15px;\n  margin: 0 10px;\n  background: #000;\n}\n.newreport .input-group-wrap--color[data-v-299b5513] {\n  margin-top: 10px;\n}\n.newreport__input--color input[data-v-299b5513] {\n  display: none;\n}\n.newreport__input--color input:checked + label[data-v-299b5513]::before {\n  opacity: 1;\n  visibility: visible;\n}\n.newreport__input--color label[data-v-299b5513] {\n  align-items: center;\n  width: 56px;\n  height: 56px;\n  display: flex;\n  align-items: center;\n  justify-content: center;\n  border-radius: 50%;\n  border: 1px solid rgba(3, 0, 135, 0.3);\n  margin-right: 10px;\n  position: relative;\n  cursor: pointer;\n}\n.newreport__input--color label[data-v-299b5513]::before {\n  width: 46px;\n  height: 46px;\n  position: absolute;\n  top: 0px;\n  bottom: 0;\n  left: 0;\n  right: 0;\n  margin: auto;\n  border-radius: 3px;\n  z-index: 2;\n  content: url(" + ___CSS_LOADER_URL_REPLACEMENT_0___ + ");\n  opacity: 0;\n  visibility: hidden;\n  transition: ease-in-out 0.25s;\n}\n.newreport__field--dates input[data-v-299b5513] {\n  max-width: 195px;\n}\n.newreport__field--phone the-mask[data-v-299b5513] {\n  background-color: #ffffff;\n}\n.newreport-buttons[data-v-299b5513] {\n  display: flex;\n}\n.newreport-buttons__newreports[data-v-299b5513] {\n  width: 224px;\n  padding: 12px 0;\n  display: flex;\n  align-content: center;\n  justify-content: center;\n  color: #fff;\n  background-color: #030087;\n  border: 1.5px solid #030087;\n  border-radius: 7px;\n  transition: ease-in-out 0.25s;\n  margin-right: 30px;\n}\n.newreport-buttons__newreports svg[data-v-299b5513] {\n  margin-right: 10px;\n}\n.newreport-buttons__newreports svg path[data-v-299b5513] {\n  transition: ease-in-out 0.25s;\n}\n.newreport-buttons__newreports[data-v-299b5513]:hover {\n  color: #030087;\n  background-color: #ffffff;\n}\n.newreport-buttons__newreports:hover svg path[data-v-299b5513] {\n  fill: #030087;\n}\n.newreport-buttons__cancel[data-v-299b5513] {\n  width: 157px;\n  padding: 12px 0;\n  text-align: center;\n  font-weight: 700;\n  font-size: 16px;\n  line-height: 20px;\n  color: #030087;\n  background-color: #ffffff;\n  border: 1px solid #030087;\n  border-radius: 5px;\n  transition: ease-in-out 0.25s;\n}\n.newreport-buttons__cancel[data-v-299b5513]:hover {\n  background-color: #030087;\n  color: #ffffff;\n}\n.input-file > img[data-v-299b5513] {\n  max-width: 200px;\n  margin-top: 20px;\n}\n", ""]);
+___CSS_LOADER_EXPORT___.push([module.id, ".newreport .input-file[data-v-299b5513] {\n  margin-top: 10px;\n  margin-bottom: 0;\n}\n.newreport .input-group[data-v-299b5513] {\n  margin-bottom: 20px;\n}\n.newreport .input-group-wrap[data-v-299b5513] {\n  display: flex;\n  align-items: center;\n}\n.newreport .input-group-wrap--dates div[data-v-299b5513] {\n  height: 2px;\n  width: 15px;\n  margin: 0 10px;\n  background: #000;\n}\n.newreport .input-group-wrap--color[data-v-299b5513] {\n  margin-top: 10px;\n}\n.newreport__input--color input[data-v-299b5513] {\n  display: none;\n}\n.newreport__input--color input:checked + label[data-v-299b5513]::before {\n  opacity: 1;\n  visibility: visible;\n}\n.newreport__input--color label[data-v-299b5513] {\n  align-items: center;\n  width: 56px;\n  height: 56px;\n  display: flex;\n  align-items: center;\n  justify-content: center;\n  border-radius: 50%;\n  border: 1px solid rgba(3, 0, 135, 0.3);\n  margin-right: 10px;\n  position: relative;\n  cursor: pointer;\n}\n.newreport__input--color label[data-v-299b5513]::before {\n  width: 46px;\n  height: 46px;\n  position: absolute;\n  top: 0px;\n  bottom: 0;\n  left: 0;\n  right: 0;\n  margin: auto;\n  border-radius: 3px;\n  z-index: 2;\n  content: url(" + ___CSS_LOADER_URL_REPLACEMENT_0___ + ");\n  opacity: 0;\n  visibility: hidden;\n  transition: ease-in-out 0.25s;\n}\n.newreport__field--dates input[data-v-299b5513] {\n  max-width: 195px;\n}\n.newreport__field--phone the-mask[data-v-299b5513] {\n  background-color: #ffffff;\n}\n.newreport-buttons[data-v-299b5513] {\n  display: flex;\n}\n.newreport-buttons__newreports[data-v-299b5513] {\n  width: 224px;\n  padding: 12px 0;\n  display: flex;\n  align-content: center;\n  justify-content: center;\n  color: #fff;\n  background-color: #030087;\n  border: 1.5px solid #030087;\n  border-radius: 7px;\n  transition: ease-in-out 0.25s;\n  margin-right: 30px;\n}\n.newreport-buttons__newreports svg[data-v-299b5513] {\n  margin-right: 10px;\n}\n.newreport-buttons__newreports svg path[data-v-299b5513] {\n  transition: ease-in-out 0.25s;\n}\n.newreport-buttons__newreports[data-v-299b5513]:hover {\n  color: #030087;\n  background-color: #ffffff;\n}\n.newreport-buttons__newreports:hover svg path[data-v-299b5513] {\n  fill: #030087;\n}\n.newreport-buttons__cancel[data-v-299b5513] {\n  width: 157px;\n  padding: 12px 0;\n  text-align: center;\n  font-weight: 700;\n  font-size: 16px;\n  line-height: 20px;\n  color: #030087;\n  background-color: #ffffff;\n  border: 1px solid #030087;\n  border-radius: 5px;\n  transition: ease-in-out 0.25s;\n}\n.newreport-buttons__cancel[data-v-299b5513]:hover {\n  background-color: #030087;\n  color: #ffffff;\n}\n.input-file > img[data-v-299b5513] {\n  max-width: 200px;\n  margin-top: 20px;\n}\n.newreport .input-file[data-v-299b5513] {\n  margin-top: 10px;\n  margin-bottom: 0;\n}\n.newreport .input-group[data-v-299b5513] {\n  margin-bottom: 20px;\n}\n.newreport .input-group-wrap[data-v-299b5513] {\n  display: flex;\n  align-items: center;\n}\n.newreport .input-group-wrap--dates div[data-v-299b5513] {\n  height: 2px;\n  width: 15px;\n  margin: 0 10px;\n  background: #000;\n}\n.newreport .input-group-wrap--color[data-v-299b5513] {\n  margin-top: 10px;\n}\n.newreport__input--color input[data-v-299b5513] {\n  display: none;\n}\n.newreport__input--color input:checked + label[data-v-299b5513]::before {\n  opacity: 1;\n  visibility: visible;\n}\n.newreport__input--color label[data-v-299b5513] {\n  align-items: center;\n  width: 56px;\n  height: 56px;\n  display: flex;\n  align-items: center;\n  justify-content: center;\n  border-radius: 50%;\n  border: 1px solid rgba(3, 0, 135, 0.3);\n  margin-right: 10px;\n  position: relative;\n  cursor: pointer;\n}\n.newreport__input--color label[data-v-299b5513]::before {\n  width: 46px;\n  height: 46px;\n  position: absolute;\n  top: 0px;\n  bottom: 0;\n  left: 0;\n  right: 0;\n  margin: auto;\n  border-radius: 3px;\n  z-index: 2;\n  content: url(" + ___CSS_LOADER_URL_REPLACEMENT_0___ + ");\n  opacity: 0;\n  visibility: hidden;\n  transition: ease-in-out 0.25s;\n}\n.newreport__field--dates input[data-v-299b5513] {\n  max-width: 195px;\n}\n.newreport__field--phone the-mask[data-v-299b5513] {\n  background-color: #ffffff;\n}\n.newreport-buttons[data-v-299b5513] {\n  display: flex;\n}\n.newreport-buttons__newreports[data-v-299b5513] {\n  width: 224px;\n  padding: 12px 0;\n  display: flex;\n  align-content: center;\n  justify-content: center;\n  color: #fff;\n  background-color: #030087;\n  border: 1.5px solid #030087;\n  border-radius: 7px;\n  transition: ease-in-out 0.25s;\n  margin-right: 30px;\n}\n.newreport-buttons__newreports svg[data-v-299b5513] {\n  margin-right: 10px;\n}\n.newreport-buttons__newreports svg path[data-v-299b5513] {\n  transition: ease-in-out 0.25s;\n}\n.newreport-buttons__newreports[data-v-299b5513]:hover {\n  color: #030087;\n  background-color: #ffffff;\n}\n.newreport-buttons__newreports:hover svg path[data-v-299b5513] {\n  fill: #030087;\n}\n.newreport-buttons__cancel[data-v-299b5513] {\n  width: 157px;\n  padding: 12px 0;\n  text-align: center;\n  font-weight: 700;\n  font-size: 16px;\n  line-height: 20px;\n  color: #030087;\n  background-color: #ffffff;\n  border: 1px solid #030087;\n  border-radius: 5px;\n  transition: ease-in-out 0.25s;\n}\n.newreport-buttons__cancel[data-v-299b5513]:hover {\n  background-color: #030087;\n  color: #ffffff;\n}\n@media (max-width: 700px) {\n.newreport[data-v-299b5513] {\n    padding: 100px 30px 30px 30px;\n}\n}\n@media (max-width: 650px) {\n.input-group-wrap--color[data-v-299b5513] {\n    display: flex;\n    flex-wrap: wrap;\n}\n.newreport-buttons[data-v-299b5513] {\n    display: flex;\n    flex-direction: column;\n}\n.newreport-buttons__newreports[data-v-299b5513] {\n    margin-right: 0;\n    width: 100%;\n    margin-bottom: 10px;\n}\n.newreport-buttons__cancel[data-v-299b5513] {\n    width: 100%;\n}\n}\n", ""]);
 // Exports
 /* harmony default export */ __webpack_exports__["default"] = (___CSS_LOADER_EXPORT___);
 
@@ -40383,7 +40573,7 @@ __webpack_require__.r(__webpack_exports__);
 
 var ___CSS_LOADER_EXPORT___ = _node_modules_laravel_mix_node_modules_css_loader_dist_runtime_api_js__WEBPACK_IMPORTED_MODULE_0___default()(function(i){return i[1]});
 // Module
-___CSS_LOADER_EXPORT___.push([module.id, ".reports h2[data-v-0d7aee70] {\n  margin-bottom: 0;\n}\n.reports__title[data-v-0d7aee70] {\n  display: flex;\n  align-items: center;\n  justify-content: space-between;\n}\n.reports__icons[data-v-0d7aee70] {\n  display: flex;\n  align-items: center;\n}\n.reports__icon[data-v-0d7aee70] {\n  display: flex;\n  align-items: center;\n  justify-content: center;\n  width: 44px;\n  height: 44px;\n  border: 1px solid #030087;\n  border-radius: 5px;\n  transition: ease-in-out 0.25s;\n  margin-right: 15px;\n}\n.reports__icon[data-v-0d7aee70]:last-of-type {\n  margin-right: 0;\n}\n.reports__icon[data-v-0d7aee70]:hover {\n  background: #030087;\n}\n.reports__icon:hover svg[data-v-0d7aee70] {\n  fill: #fff;\n}\n.reports__icon svg[data-v-0d7aee70] {\n  fill: #030087;\n  transition: ease-in-out 0.25s;\n}\n.reports__add[data-v-0d7aee70] {\n  margin-top: 25px;\n  cursor: pointer;\n}\n.reports__add-title[data-v-0d7aee70] {\n  font-size: 14px;\n  line-height: 18px;\n  color: #222222;\n  font-weight: 600;\n}\n.reports__add-btn[data-v-0d7aee70] {\n  width: 100%;\n  height: 80px;\n  display: flex;\n  justify-content: center;\n  align-items: center;\n  border: 1px dashed #030087;\n  border-radius: 7px;\n  margin-top: 10px;\n}\n@media (max-width: 1170px) {\n.page-glob[data-v-0d7aee70] {\n    padding-left: 0;\n}\n.reports__title[data-v-0d7aee70] {\n    flex-direction: column;\n}\n.reports__title h2[data-v-0d7aee70] {\n    font-size: 24px;\n    line-height: 31px;\n}\n.reports__title .reports__icons[data-v-0d7aee70] {\n    width: 100%;\n    margin-top: 30px;\n}\n.reports__title .reports__icon[data-v-0d7aee70] {\n    width: 33.33333%;\n}\n}\n", ""]);
+___CSS_LOADER_EXPORT___.push([module.id, ".reports h2[data-v-0d7aee70] {\n  margin-bottom: 0;\n}\n.reports__title[data-v-0d7aee70] {\n  display: flex;\n  align-items: center;\n  justify-content: space-between;\n}\n.reports__icons[data-v-0d7aee70] {\n  display: flex;\n  align-items: center;\n}\n.reports__icon[data-v-0d7aee70] {\n  display: flex;\n  align-items: center;\n  justify-content: center;\n  width: 44px;\n  height: 44px;\n  border: 1px solid #030087;\n  border-radius: 5px;\n  transition: ease-in-out 0.25s;\n  margin-right: 15px;\n}\n.reports__icon[data-v-0d7aee70]:last-of-type {\n  margin-right: 0;\n}\n.reports__icon[data-v-0d7aee70]:hover {\n  background: #030087;\n}\n.reports__icon:hover svg[data-v-0d7aee70] {\n  fill: #fff;\n}\n.reports__icon svg[data-v-0d7aee70] {\n  fill: #030087;\n  transition: ease-in-out 0.25s;\n}\n.reports__add[data-v-0d7aee70] {\n  margin-top: 25px;\n  cursor: pointer;\n}\n.reports__add-title[data-v-0d7aee70] {\n  font-size: 14px;\n  line-height: 18px;\n  color: #222222;\n  font-weight: 600;\n}\n.reports__add-btn[data-v-0d7aee70] {\n  width: 100%;\n  height: 80px;\n  display: flex;\n  justify-content: center;\n  align-items: center;\n  border: 1px dashed #030087;\n  border-radius: 7px;\n  margin-top: 10px;\n}\n@media (max-width: 1170px) {\n.page-glob[data-v-0d7aee70] {\n    padding-left: 0;\n}\n.wrap-glob[data-v-0d7aee70] {\n    width: calc(100% - 100px);\n}\n.reports__title[data-v-0d7aee70] {\n    flex-direction: column;\n}\n.reports__title h2[data-v-0d7aee70] {\n    font-size: 24px;\n    line-height: 31px;\n}\n.reports__title .reports__icons[data-v-0d7aee70] {\n    width: 100%;\n    margin-top: 30px;\n}\n.reports__title .reports__icon[data-v-0d7aee70] {\n    width: 33.33333%;\n}\n}\n", ""]);
 // Exports
 /* harmony default export */ __webpack_exports__["default"] = (___CSS_LOADER_EXPORT___);
 
@@ -40404,7 +40594,28 @@ __webpack_require__.r(__webpack_exports__);
 
 var ___CSS_LOADER_EXPORT___ = _node_modules_laravel_mix_node_modules_css_loader_dist_runtime_api_js__WEBPACK_IMPORTED_MODULE_0___default()(function(i){return i[1]});
 // Module
-___CSS_LOADER_EXPORT___.push([module.id, ".settings-top[data-v-6af1f6c2] {\n  display: flex;\n  justify-content: space-between;\n  align-items: flex-start;\n}\n.settings-top__button[data-v-6af1f6c2] {\n  display: flex;\n  align-items: center;\n  justify-content: center;\n  width: 200px;\n  padding: 13px 5px;\n  background-color: #ffffff;\n  border: 1px solid #030087;\n  border-radius: 5px;\n  cursor: pointer;\n  font-weight: 600;\n  font-size: 16px;\n  line-height: 20px;\n  color: #030087;\n  transition: ease-in-out 0.25s;\n}\n.settings-top__button svg[data-v-6af1f6c2] {\n  margin-right: 15px;\n}\n.settings-top__button svg g rect[data-v-6af1f6c2] {\n  transition: ease-in-out 0.25s;\n}\n.settings-top__button[data-v-6af1f6c2]:hover {\n  color: #ffffff;\n  background-color: #030087;\n}\n.settings-top__button:hover svg[data-v-6af1f6c2] {\n  margin-right: 15px;\n}\n.settings-top__button:hover svg g rect[data-v-6af1f6c2] {\n  fill: #ffffff;\n}\n.settings .input-file[data-v-6af1f6c2] {\n  margin-top: 10px;\n  margin-bottom: 0;\n}\n.settings .input-group[data-v-6af1f6c2] {\n  margin-bottom: 20px;\n}\n.settings__field--companyPhone the-mask[data-v-6af1f6c2], .settings__field--phone the-mask[data-v-6af1f6c2] {\n  background-color: #ffffff;\n}\n.input-file > img[data-v-6af1f6c2] {\n  max-width: 200px;\n  margin-top: 20px;\n}\n.input-file input[data-v-6af1f6c2] {\n  height: 0;\n  border: none;\n  position: absolute;\n  display: block;\n}\n", ""]);
+___CSS_LOADER_EXPORT___.push([module.id, ".settings-top[data-v-6af1f6c2] {\n  display: flex;\n  justify-content: space-between;\n  align-items: flex-start;\n}\n.settings-top__button[data-v-6af1f6c2] {\n  display: flex;\n  align-items: center;\n  justify-content: center;\n  width: 200px;\n  padding: 13px 5px;\n  background-color: #ffffff;\n  border: 1px solid #030087;\n  border-radius: 5px;\n  cursor: pointer;\n  font-weight: 600;\n  font-size: 16px;\n  line-height: 20px;\n  color: #030087;\n  transition: ease-in-out 0.25s;\n}\n.settings-top__button svg[data-v-6af1f6c2] {\n  margin-right: 15px;\n}\n.settings-top__button svg g rect[data-v-6af1f6c2] {\n  transition: ease-in-out 0.25s;\n}\n.settings-top__button[data-v-6af1f6c2]:hover {\n  color: #ffffff;\n  background-color: #030087;\n}\n.settings-top__button:hover svg[data-v-6af1f6c2] {\n  margin-right: 15px;\n}\n.settings-top__button:hover svg g rect[data-v-6af1f6c2] {\n  fill: #ffffff;\n}\n.settings .input-file[data-v-6af1f6c2] {\n  margin-top: 10px;\n  margin-bottom: 0;\n}\n.settings .input-group[data-v-6af1f6c2] {\n  margin-bottom: 20px;\n}\n.settings__field--companyPhone the-mask[data-v-6af1f6c2], .settings__field--phone the-mask[data-v-6af1f6c2] {\n  background-color: #ffffff;\n}\n.input-file > img[data-v-6af1f6c2] {\n  max-width: 200px;\n  margin-top: 20px;\n}\n.input-file input[data-v-6af1f6c2] {\n  height: 0;\n  border: none;\n  position: absolute;\n  display: block;\n}\n.settings-top[data-v-6af1f6c2] {\n  display: flex;\n  justify-content: space-between;\n  align-items: flex-start;\n}\n.settings-top__button[data-v-6af1f6c2] {\n  display: flex;\n  align-items: center;\n  justify-content: center;\n  width: 200px;\n  padding: 13px 5px;\n  background-color: #ffffff;\n  border: 1px solid #030087;\n  border-radius: 5px;\n  cursor: pointer;\n  font-weight: 600;\n  font-size: 16px;\n  line-height: 20px;\n  color: #030087;\n  transition: ease-in-out 0.25s;\n}\n.settings-top__button svg[data-v-6af1f6c2] {\n  margin-right: 15px;\n}\n.settings-top__button svg g rect[data-v-6af1f6c2] {\n  transition: ease-in-out 0.25s;\n}\n.settings-top__button[data-v-6af1f6c2]:hover {\n  color: #ffffff;\n  background-color: #030087;\n}\n.settings-top__button:hover svg[data-v-6af1f6c2] {\n  margin-right: 15px;\n}\n.settings-top__button:hover svg g rect[data-v-6af1f6c2] {\n  fill: #ffffff;\n}\n.settings .input-file[data-v-6af1f6c2] {\n  margin-top: 10px;\n  margin-bottom: 0;\n}\n.settings .input-group[data-v-6af1f6c2] {\n  margin-bottom: 20px;\n}\n.settings__field--companyPhone the-mask[data-v-6af1f6c2], .settings__field--phone the-mask[data-v-6af1f6c2] {\n  background-color: #ffffff;\n}\n@media (max-width: 1170px) {\n.page-glob[data-v-6af1f6c2] {\n    padding-left: 0;\n}\n}\n@media (max-width: 530px) {\n.settings-top h2[data-v-6af1f6c2] {\n    font-size: 30px;\n}\n.settings-top__button[data-v-6af1f6c2] {\n    max-width: 100px;\n}\n.settings-top__button span[data-v-6af1f6c2] {\n    display: none;\n}\n.settings-top__button svg[data-v-6af1f6c2] {\n    margin-right: 0;\n}\n}\n@media (max-width: 450px) {\n.settings-top h2[data-v-6af1f6c2] {\n    font-size: 26px;\n}\n.wrap-glob[data-v-6af1f6c2] {\n    padding: 100px 20px 20px 20px;\n}\n}\n@media (max-width: 450px) {\n.input-file__text[data-v-6af1f6c2] {\n    font-weight: 600;\n    font-size: 14px;\n}\n}\n@media (max-width: 415px) {\n.settings-top h2[data-v-6af1f6c2] {\n    font-size: 24px;\n}\n.input-file__text[data-v-6af1f6c2] {\n    font-weight: 600;\n    font-size: 16px;\n}\n}\n@media (max-width: 395px) {\n.input-file__text[data-v-6af1f6c2] {\n    font-weight: 500;\n    font-size: 16px;\n}\n}\n@media (max-width: 385px) {\n.input-file__text[data-v-6af1f6c2] {\n    font-weight: 500;\n    font-size: 14px;\n}\n}\n", ""]);
+// Exports
+/* harmony default export */ __webpack_exports__["default"] = (___CSS_LOADER_EXPORT___);
+
+
+/***/ }),
+
+/***/ "./node_modules/laravel-mix/node_modules/css-loader/dist/cjs.js??clonedRuleSet-8.use[1]!./node_modules/vue-loader/dist/stylePostLoader.js!./node_modules/laravel-mix/node_modules/postcss-loader/dist/cjs.js??clonedRuleSet-8.use[2]!./node_modules/vue-loader/dist/index.js??ruleSet[0].use[0]!./resources/js/components/Button.vue?vue&type=style&index=0&id=e0422746&lang=css":
+/*!***************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************!*\
+  !*** ./node_modules/laravel-mix/node_modules/css-loader/dist/cjs.js??clonedRuleSet-8.use[1]!./node_modules/vue-loader/dist/stylePostLoader.js!./node_modules/laravel-mix/node_modules/postcss-loader/dist/cjs.js??clonedRuleSet-8.use[2]!./node_modules/vue-loader/dist/index.js??ruleSet[0].use[0]!./resources/js/components/Button.vue?vue&type=style&index=0&id=e0422746&lang=css ***!
+  \***************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************/
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony import */ var _node_modules_laravel_mix_node_modules_css_loader_dist_runtime_api_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ../../../node_modules/laravel-mix/node_modules/css-loader/dist/runtime/api.js */ "./node_modules/laravel-mix/node_modules/css-loader/dist/runtime/api.js");
+/* harmony import */ var _node_modules_laravel_mix_node_modules_css_loader_dist_runtime_api_js__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(_node_modules_laravel_mix_node_modules_css_loader_dist_runtime_api_js__WEBPACK_IMPORTED_MODULE_0__);
+// Imports
+
+var ___CSS_LOADER_EXPORT___ = _node_modules_laravel_mix_node_modules_css_loader_dist_runtime_api_js__WEBPACK_IMPORTED_MODULE_0___default()(function(i){return i[1]});
+// Module
+___CSS_LOADER_EXPORT___.push([module.id, "\n.elements-buttons__button {\n    width: 100%;\n    margin-bottom: 30px;\n    height: 55px;\n    background: #030087;\n    border: 1px solid #030087;\n    color: #ffffff;\n    border-radius: 5px;\n    display: flex;\n    justify-content: center;\n    align-items: center;\n    font-weight: 700;\n    font-size: 16px;\n    line-height: 20px;\n    cursor: pointer;\n}\n", ""]);
 // Exports
 /* harmony default export */ __webpack_exports__["default"] = (___CSS_LOADER_EXPORT___);
 
@@ -40425,7 +40636,7 @@ __webpack_require__.r(__webpack_exports__);
 
 var ___CSS_LOADER_EXPORT___ = _node_modules_laravel_mix_node_modules_css_loader_dist_runtime_api_js__WEBPACK_IMPORTED_MODULE_0___default()(function(i){return i[1]});
 // Module
-___CSS_LOADER_EXPORT___.push([module.id, "\n.input__wrapper {\n  width: 100%;\n  position: relative;\n  text-align: center;\n  border: 1px solid rgba(3, 0, 135, 0.3);\n  border-radius: 5px;\n  height: 45px;\n  display: flex;\n  align-items: center;\n  padding: 0 10px;\n}\n.img__wrapper {\n  position: relative;\n  display: none;\n}\n.img__wrapper.active {\n  display: flex;\n  align-items: center;\n  justify-content: center;\n  width: -moz-fit-content;\n  width: fit-content;\n  margin: 20px auto 0;\n  padding: 35px;\n}\n.input__wrapper.loaded {\n  flex-direction: column;\n  justify-content: space-between;\n  height: 100%;\n  padding: 20px 0;\n}\n.input__file {\n  opacity: 0;\n  visibility: hidden;\n  position: absolute;\n}\n.input-group .input__file {\n  width: 0;\n}\n.input__file-icon-wrapper {\n  margin-right: 15px;\n  display: flex;\n  align-items: center;\n  justify-content: center;\n}\n.input__file-button-text {\n  line-height: 1;\n  margin-top: 1px;\n}\n.input__file-button {\n  color: #030087;\n  font-size: 16px;\n  font-weight: 600;\n  display: flex;\n  align-items: center;\n  justify-content: center;\n  cursor: pointer;\n  margin: 0 auto;\n}\n.elements__del {\n  position: absolute;\n  top: 10px;\n  right: 10px;\n  z-index: 2;\n  cursor: pointer;\n}\n", ""]);
+___CSS_LOADER_EXPORT___.push([module.id, "\n.input-group.image label {\n  display: flex;\n  align-items: center;\n}\n.input__wrapper {\n  width: 100%;\n  position: relative;\n  text-align: center;\n  border: 1px solid rgba(3, 0, 135, 0.3);\n  border-radius: 5px;\n  height: 45px;\n  display: flex;\n  align-items: center;\n  padding: 0 10px;\n}\n.img__wrapper {\n  position: relative;\n  display: none;\n}\n.img__wrapper.active {\n  display: flex;\n  align-items: center;\n  justify-content: center;\n  width: -moz-fit-content;\n  width: fit-content;\n  margin: 20px auto 0;\n  padding: 35px;\n}\n.input__wrapper.loaded {\n  flex-direction: column;\n  justify-content: space-between;\n  height: 100%;\n  padding: 20px 0;\n}\n.input__file {\n  opacity: 0;\n  visibility: hidden;\n  position: absolute;\n}\n.input-group .input__file {\n  width: 0;\n}\n.input__file-icon-wrapper {\n  margin-right: 15px;\n  display: flex;\n  align-items: center;\n  justify-content: center;\n}\n.input__file-button-text {\n  line-height: 1;\n  margin-top: 1px;\n}\n.input__file-button {\n  color: #030087;\n  font-size: 16px;\n  font-weight: 600;\n  display: flex;\n  align-items: center;\n  justify-content: center;\n  cursor: pointer;\n  margin: 0 auto;\n}\n.elements__del {\n  position: absolute;\n  top: 10px;\n  right: 10px;\n  z-index: 2;\n  cursor: pointer;\n}\n.input-group.image .close {\n  margin-left: 10px;\n  height: 15px;\n}\n", ""]);
 // Exports
 /* harmony default export */ __webpack_exports__["default"] = (___CSS_LOADER_EXPORT___);
 
@@ -59084,6 +59295,33 @@ var update = _node_modules_style_loader_dist_runtime_injectStylesIntoStyleTag_js
 
 /***/ }),
 
+/***/ "./node_modules/style-loader/dist/cjs.js!./node_modules/laravel-mix/node_modules/css-loader/dist/cjs.js??clonedRuleSet-8.use[1]!./node_modules/vue-loader/dist/stylePostLoader.js!./node_modules/laravel-mix/node_modules/postcss-loader/dist/cjs.js??clonedRuleSet-8.use[2]!./node_modules/vue-loader/dist/index.js??ruleSet[0].use[0]!./resources/js/components/Button.vue?vue&type=style&index=0&id=e0422746&lang=css":
+/*!*******************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************!*\
+  !*** ./node_modules/style-loader/dist/cjs.js!./node_modules/laravel-mix/node_modules/css-loader/dist/cjs.js??clonedRuleSet-8.use[1]!./node_modules/vue-loader/dist/stylePostLoader.js!./node_modules/laravel-mix/node_modules/postcss-loader/dist/cjs.js??clonedRuleSet-8.use[2]!./node_modules/vue-loader/dist/index.js??ruleSet[0].use[0]!./resources/js/components/Button.vue?vue&type=style&index=0&id=e0422746&lang=css ***!
+  \*******************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************/
+/***/ (function(__unused_webpack_module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony import */ var _node_modules_style_loader_dist_runtime_injectStylesIntoStyleTag_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! !../../../node_modules/style-loader/dist/runtime/injectStylesIntoStyleTag.js */ "./node_modules/style-loader/dist/runtime/injectStylesIntoStyleTag.js");
+/* harmony import */ var _node_modules_style_loader_dist_runtime_injectStylesIntoStyleTag_js__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(_node_modules_style_loader_dist_runtime_injectStylesIntoStyleTag_js__WEBPACK_IMPORTED_MODULE_0__);
+/* harmony import */ var _node_modules_laravel_mix_node_modules_css_loader_dist_cjs_js_clonedRuleSet_8_use_1_node_modules_vue_loader_dist_stylePostLoader_js_node_modules_laravel_mix_node_modules_postcss_loader_dist_cjs_js_clonedRuleSet_8_use_2_node_modules_vue_loader_dist_index_js_ruleSet_0_use_0_Button_vue_vue_type_style_index_0_id_e0422746_lang_css__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! !!../../../node_modules/laravel-mix/node_modules/css-loader/dist/cjs.js??clonedRuleSet-8.use[1]!../../../node_modules/vue-loader/dist/stylePostLoader.js!../../../node_modules/laravel-mix/node_modules/postcss-loader/dist/cjs.js??clonedRuleSet-8.use[2]!../../../node_modules/vue-loader/dist/index.js??ruleSet[0].use[0]!./Button.vue?vue&type=style&index=0&id=e0422746&lang=css */ "./node_modules/laravel-mix/node_modules/css-loader/dist/cjs.js??clonedRuleSet-8.use[1]!./node_modules/vue-loader/dist/stylePostLoader.js!./node_modules/laravel-mix/node_modules/postcss-loader/dist/cjs.js??clonedRuleSet-8.use[2]!./node_modules/vue-loader/dist/index.js??ruleSet[0].use[0]!./resources/js/components/Button.vue?vue&type=style&index=0&id=e0422746&lang=css");
+
+            
+
+var options = {};
+
+options.insert = "head";
+options.singleton = false;
+
+var update = _node_modules_style_loader_dist_runtime_injectStylesIntoStyleTag_js__WEBPACK_IMPORTED_MODULE_0___default()(_node_modules_laravel_mix_node_modules_css_loader_dist_cjs_js_clonedRuleSet_8_use_1_node_modules_vue_loader_dist_stylePostLoader_js_node_modules_laravel_mix_node_modules_postcss_loader_dist_cjs_js_clonedRuleSet_8_use_2_node_modules_vue_loader_dist_index_js_ruleSet_0_use_0_Button_vue_vue_type_style_index_0_id_e0422746_lang_css__WEBPACK_IMPORTED_MODULE_1__["default"], options);
+
+
+
+/* harmony default export */ __webpack_exports__["default"] = (_node_modules_laravel_mix_node_modules_css_loader_dist_cjs_js_clonedRuleSet_8_use_1_node_modules_vue_loader_dist_stylePostLoader_js_node_modules_laravel_mix_node_modules_postcss_loader_dist_cjs_js_clonedRuleSet_8_use_2_node_modules_vue_loader_dist_index_js_ruleSet_0_use_0_Button_vue_vue_type_style_index_0_id_e0422746_lang_css__WEBPACK_IMPORTED_MODULE_1__["default"].locals || {});
+
+/***/ }),
+
 /***/ "./node_modules/style-loader/dist/cjs.js!./node_modules/laravel-mix/node_modules/css-loader/dist/cjs.js??clonedRuleSet-8.use[1]!./node_modules/vue-loader/dist/stylePostLoader.js!./node_modules/laravel-mix/node_modules/postcss-loader/dist/cjs.js??clonedRuleSet-8.use[2]!./node_modules/vue-loader/dist/index.js??ruleSet[0].use[0]!./resources/js/components/Image.vue?vue&type=style&index=0&id=c4020700&lang=css":
 /*!******************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************!*\
   !*** ./node_modules/style-loader/dist/cjs.js!./node_modules/laravel-mix/node_modules/css-loader/dist/cjs.js??clonedRuleSet-8.use[1]!./node_modules/vue-loader/dist/stylePostLoader.js!./node_modules/laravel-mix/node_modules/postcss-loader/dist/cjs.js??clonedRuleSet-8.use[2]!./node_modules/vue-loader/dist/index.js??ruleSet[0].use[0]!./resources/js/components/Image.vue?vue&type=style&index=0&id=c4020700&lang=css ***!
@@ -62878,15 +63116,20 @@ exports["default"] = (sfc, props) => {
 "use strict";
 __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _App_vue_vue_type_template_id_f348271a__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./App.vue?vue&type=template&id=f348271a */ "./resources/js/App.vue?vue&type=template&id=f348271a");
-/* harmony import */ var _App_vue_vue_type_style_index_0_id_f348271a_lang_scss__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./App.vue?vue&type=style&index=0&id=f348271a&lang=scss */ "./resources/js/App.vue?vue&type=style&index=0&id=f348271a&lang=scss");
-/* harmony import */ var _home_umaxdev_02_umax_reports_laravel_node_modules_vue_loader_dist_exportHelper_js__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ./node_modules/vue-loader/dist/exportHelper.js */ "./node_modules/vue-loader/dist/exportHelper.js");
+/* harmony import */ var _App_vue_vue_type_script_lang_js__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./App.vue?vue&type=script&lang=js */ "./resources/js/App.vue?vue&type=script&lang=js");
+/* harmony reexport (unknown) */ var __WEBPACK_REEXPORT_OBJECT__ = {};
+/* harmony reexport (unknown) */ for(var __WEBPACK_IMPORT_KEY__ in _App_vue_vue_type_script_lang_js__WEBPACK_IMPORTED_MODULE_1__) if(__WEBPACK_IMPORT_KEY__ !== "default") __WEBPACK_REEXPORT_OBJECT__[__WEBPACK_IMPORT_KEY__] = function(key) { return _App_vue_vue_type_script_lang_js__WEBPACK_IMPORTED_MODULE_1__[key]; }.bind(0, __WEBPACK_IMPORT_KEY__)
+/* harmony reexport (unknown) */ __webpack_require__.d(__webpack_exports__, __WEBPACK_REEXPORT_OBJECT__);
+/* harmony import */ var _App_vue_vue_type_style_index_0_id_f348271a_lang_scss__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ./App.vue?vue&type=style&index=0&id=f348271a&lang=scss */ "./resources/js/App.vue?vue&type=style&index=0&id=f348271a&lang=scss");
+/* harmony import */ var _home_umaxdev_02_umax_reports_laravel_node_modules_vue_loader_dist_exportHelper_js__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ./node_modules/vue-loader/dist/exportHelper.js */ "./node_modules/vue-loader/dist/exportHelper.js");
 
-const script = {}
+
+
 
 ;
 
 
-const __exports__ = /*#__PURE__*/(0,_home_umaxdev_02_umax_reports_laravel_node_modules_vue_loader_dist_exportHelper_js__WEBPACK_IMPORTED_MODULE_2__["default"])(script, [['render',_App_vue_vue_type_template_id_f348271a__WEBPACK_IMPORTED_MODULE_0__.render],['__file',"resources/js/App.vue"]])
+const __exports__ = /*#__PURE__*/(0,_home_umaxdev_02_umax_reports_laravel_node_modules_vue_loader_dist_exportHelper_js__WEBPACK_IMPORTED_MODULE_3__["default"])(_App_vue_vue_type_script_lang_js__WEBPACK_IMPORTED_MODULE_1__["default"], [['render',_App_vue_vue_type_template_id_f348271a__WEBPACK_IMPORTED_MODULE_0__.render],['__file',"resources/js/App.vue"]])
 /* hot reload */
 if (false) {}
 
@@ -62933,13 +63176,16 @@ if (false) {}
 __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _Button_vue_vue_type_template_id_e0422746__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./Button.vue?vue&type=template&id=e0422746 */ "./resources/js/components/Button.vue?vue&type=template&id=e0422746");
 /* harmony import */ var _Button_vue_vue_type_script_lang_js__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./Button.vue?vue&type=script&lang=js */ "./resources/js/components/Button.vue?vue&type=script&lang=js");
-/* harmony import */ var _home_umaxdev_02_umax_reports_laravel_node_modules_vue_loader_dist_exportHelper_js__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ./node_modules/vue-loader/dist/exportHelper.js */ "./node_modules/vue-loader/dist/exportHelper.js");
+/* harmony import */ var _Button_vue_vue_type_style_index_0_id_e0422746_lang_css__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ./Button.vue?vue&type=style&index=0&id=e0422746&lang=css */ "./resources/js/components/Button.vue?vue&type=style&index=0&id=e0422746&lang=css");
+/* harmony import */ var _home_umaxdev_02_umax_reports_laravel_node_modules_vue_loader_dist_exportHelper_js__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ./node_modules/vue-loader/dist/exportHelper.js */ "./node_modules/vue-loader/dist/exportHelper.js");
 
 
 
 
 ;
-const __exports__ = /*#__PURE__*/(0,_home_umaxdev_02_umax_reports_laravel_node_modules_vue_loader_dist_exportHelper_js__WEBPACK_IMPORTED_MODULE_2__["default"])(_Button_vue_vue_type_script_lang_js__WEBPACK_IMPORTED_MODULE_1__["default"], [['render',_Button_vue_vue_type_template_id_e0422746__WEBPACK_IMPORTED_MODULE_0__.render],['__file',"resources/js/components/Button.vue"]])
+
+
+const __exports__ = /*#__PURE__*/(0,_home_umaxdev_02_umax_reports_laravel_node_modules_vue_loader_dist_exportHelper_js__WEBPACK_IMPORTED_MODULE_3__["default"])(_Button_vue_vue_type_script_lang_js__WEBPACK_IMPORTED_MODULE_1__["default"], [['render',_Button_vue_vue_type_template_id_e0422746__WEBPACK_IMPORTED_MODULE_0__.render],['__file',"resources/js/components/Button.vue"]])
 /* hot reload */
 if (false) {}
 
@@ -63616,6 +63862,26 @@ if (false) {}
 
 
 /* harmony default export */ __webpack_exports__["default"] = (__exports__);
+
+/***/ }),
+
+/***/ "./resources/js/App.vue?vue&type=script&lang=js":
+/*!******************************************************!*\
+  !*** ./resources/js/App.vue?vue&type=script&lang=js ***!
+  \******************************************************/
+/***/ (function(__unused_webpack_module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   "default": function() { return /* reexport default from dynamic */ _node_modules_babel_loader_lib_index_js_clonedRuleSet_5_use_0_node_modules_vue_loader_dist_index_js_ruleSet_0_use_0_App_vue_vue_type_script_lang_js__WEBPACK_IMPORTED_MODULE_0___default.a; }
+/* harmony export */ });
+/* harmony import */ var _node_modules_babel_loader_lib_index_js_clonedRuleSet_5_use_0_node_modules_vue_loader_dist_index_js_ruleSet_0_use_0_App_vue_vue_type_script_lang_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! -!../../node_modules/babel-loader/lib/index.js??clonedRuleSet-5.use[0]!../../node_modules/vue-loader/dist/index.js??ruleSet[0].use[0]!./App.vue?vue&type=script&lang=js */ "./node_modules/babel-loader/lib/index.js??clonedRuleSet-5.use[0]!./node_modules/vue-loader/dist/index.js??ruleSet[0].use[0]!./resources/js/App.vue?vue&type=script&lang=js");
+/* harmony import */ var _node_modules_babel_loader_lib_index_js_clonedRuleSet_5_use_0_node_modules_vue_loader_dist_index_js_ruleSet_0_use_0_App_vue_vue_type_script_lang_js__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(_node_modules_babel_loader_lib_index_js_clonedRuleSet_5_use_0_node_modules_vue_loader_dist_index_js_ruleSet_0_use_0_App_vue_vue_type_script_lang_js__WEBPACK_IMPORTED_MODULE_0__);
+/* harmony reexport (unknown) */ var __WEBPACK_REEXPORT_OBJECT__ = {};
+/* harmony reexport (unknown) */ for(var __WEBPACK_IMPORT_KEY__ in _node_modules_babel_loader_lib_index_js_clonedRuleSet_5_use_0_node_modules_vue_loader_dist_index_js_ruleSet_0_use_0_App_vue_vue_type_script_lang_js__WEBPACK_IMPORTED_MODULE_0__) if(__WEBPACK_IMPORT_KEY__ !== "default") __WEBPACK_REEXPORT_OBJECT__[__WEBPACK_IMPORT_KEY__] = function(key) { return _node_modules_babel_loader_lib_index_js_clonedRuleSet_5_use_0_node_modules_vue_loader_dist_index_js_ruleSet_0_use_0_App_vue_vue_type_script_lang_js__WEBPACK_IMPORTED_MODULE_0__[key]; }.bind(0, __WEBPACK_IMPORT_KEY__)
+/* harmony reexport (unknown) */ __webpack_require__.d(__webpack_exports__, __WEBPACK_REEXPORT_OBJECT__);
+ 
 
 /***/ }),
 
@@ -64775,6 +65041,19 @@ __webpack_require__.r(__webpack_exports__);
 "use strict";
 __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _node_modules_style_loader_dist_cjs_js_node_modules_laravel_mix_node_modules_css_loader_dist_cjs_js_clonedRuleSet_11_use_1_node_modules_vue_loader_dist_stylePostLoader_js_node_modules_laravel_mix_node_modules_postcss_loader_dist_cjs_js_clonedRuleSet_11_use_2_node_modules_sass_loader_dist_cjs_js_clonedRuleSet_11_use_3_node_modules_vue_loader_dist_index_js_ruleSet_0_use_0_Settings_vue_vue_type_style_index_0_id_6af1f6c2_lang_scss_scoped_true__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! -!../../../node_modules/style-loader/dist/cjs.js!../../../node_modules/laravel-mix/node_modules/css-loader/dist/cjs.js??clonedRuleSet-11.use[1]!../../../node_modules/vue-loader/dist/stylePostLoader.js!../../../node_modules/laravel-mix/node_modules/postcss-loader/dist/cjs.js??clonedRuleSet-11.use[2]!../../../node_modules/sass-loader/dist/cjs.js??clonedRuleSet-11.use[3]!../../../node_modules/vue-loader/dist/index.js??ruleSet[0].use[0]!./Settings.vue?vue&type=style&index=0&id=6af1f6c2&lang=scss&scoped=true */ "./node_modules/style-loader/dist/cjs.js!./node_modules/laravel-mix/node_modules/css-loader/dist/cjs.js??clonedRuleSet-11.use[1]!./node_modules/vue-loader/dist/stylePostLoader.js!./node_modules/laravel-mix/node_modules/postcss-loader/dist/cjs.js??clonedRuleSet-11.use[2]!./node_modules/sass-loader/dist/cjs.js??clonedRuleSet-11.use[3]!./node_modules/vue-loader/dist/index.js??ruleSet[0].use[0]!./resources/js/views/Settings.vue?vue&type=style&index=0&id=6af1f6c2&lang=scss&scoped=true");
+
+
+/***/ }),
+
+/***/ "./resources/js/components/Button.vue?vue&type=style&index=0&id=e0422746&lang=css":
+/*!****************************************************************************************!*\
+  !*** ./resources/js/components/Button.vue?vue&type=style&index=0&id=e0422746&lang=css ***!
+  \****************************************************************************************/
+/***/ (function(__unused_webpack_module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony import */ var _node_modules_style_loader_dist_cjs_js_node_modules_laravel_mix_node_modules_css_loader_dist_cjs_js_clonedRuleSet_8_use_1_node_modules_vue_loader_dist_stylePostLoader_js_node_modules_laravel_mix_node_modules_postcss_loader_dist_cjs_js_clonedRuleSet_8_use_2_node_modules_vue_loader_dist_index_js_ruleSet_0_use_0_Button_vue_vue_type_style_index_0_id_e0422746_lang_css__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! -!../../../node_modules/style-loader/dist/cjs.js!../../../node_modules/laravel-mix/node_modules/css-loader/dist/cjs.js??clonedRuleSet-8.use[1]!../../../node_modules/vue-loader/dist/stylePostLoader.js!../../../node_modules/laravel-mix/node_modules/postcss-loader/dist/cjs.js??clonedRuleSet-8.use[2]!../../../node_modules/vue-loader/dist/index.js??ruleSet[0].use[0]!./Button.vue?vue&type=style&index=0&id=e0422746&lang=css */ "./node_modules/style-loader/dist/cjs.js!./node_modules/laravel-mix/node_modules/css-loader/dist/cjs.js??clonedRuleSet-8.use[1]!./node_modules/vue-loader/dist/stylePostLoader.js!./node_modules/laravel-mix/node_modules/postcss-loader/dist/cjs.js??clonedRuleSet-8.use[2]!./node_modules/vue-loader/dist/index.js??ruleSet[0].use[0]!./resources/js/components/Button.vue?vue&type=style&index=0&id=e0422746&lang=css");
 
 
 /***/ }),

@@ -25,3 +25,4 @@ Route::get('getSettings/{id}', [IndexController::class, 'getSettings'])->name('g
 Route::post('reportElements', [IndexController::class, 'reportElements'])->name('reportElements');
 Route::post('getReportElements', [IndexController::class, 'getReportElements'])->name('getReportElements');
 Route::get('getUserByToken/{token}', [IndexController::class, 'getUserByToken'])->name('getUserByToken');
+Route::get('getPdf/{report}', [IndexController::class, 'getPdf'])->name('getPdf');

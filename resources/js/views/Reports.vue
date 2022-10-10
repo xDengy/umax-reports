@@ -83,6 +83,7 @@
       </div>
       <Screen
         v-for="(item, i) in this.current"
+        ref="screen"
         :key="i"
         @screenClose="screenDelete(i)"
         @screenDown="screenDown"
@@ -119,6 +120,12 @@
             />
           </svg>
         </div>
+      </div>
+      <div id="save">
+        Сохранено
+      </div>
+      <div id="report-error">
+        Ошибка
       </div>
     </div>
   </section>
@@ -177,7 +184,6 @@ export default {
       this.current[el.id].title = el.title;
     },
     addSreen() {
-      console.log(this.current);
       this.current.push([{
         id: this.current.length,
         title: this.current.length + 1 + " экран",
@@ -191,9 +197,9 @@ export default {
           res.newIndex,
           res.oldIndex
         );
+        
         this.$refs.menuList.updateAr(this.current);
-
-        this.changeWrap(res);
+        this.changeWrap(res, 'screenDown');
       }
     },
     screenUp(res) {
@@ -203,17 +209,14 @@ export default {
           res.newIndex,
           res.oldIndex
         );
+        
         this.$refs.menuList.updateAr(this.current);
-
-        this.changeWrap(res);
+        this.changeWrap(res, 'screenUp');
       }
     },
-    changeWrap(res) {
-      let screens = document.querySelectorAll(".screen .screen__wrap");
-      let curScreen = screens[res.newIndex].innerHTML;
-      let subScreen = screens[res.oldIndex].innerHTML;
-      screens[res.oldIndex].innerHTML = curScreen;
-      screens[res.newIndex].innerHTML = subScreen;
+    changeWrap(res, method) {
+      let screens = document.querySelectorAll(".screen");
+      screens[res.newIndex].parentNode.insertBefore(screens[res.newIndex], screens[res.oldIndex])
     },
     array_move(arr, old_index, new_index) {
       while (old_index < 0) {
@@ -244,10 +247,25 @@ export default {
         headers: {
           "Content-Type": "multipart/form-data",
         },
+      }).then(res => {
+        let save = document.querySelector('#save')
+        save.classList.add('active')
+        setTimeout(() => {
+          save.classList.remove('active')
+        }, 1000);
+      })
+      .catch(res => {
+        let error = document.querySelector('#report-error')
+        error.classList.add('active')
+        setTimeout(() => {
+          error.classList.remove('active')
+        }, 1000);
       });
     },
     generateReport() {
       let arr = this.generateArray();
+      let id = this.id[this.id.length - 1];
+      axios.get("/api/getPdf/" + id)
       // html2Pdf(res)
     },
     generateArray() {
@@ -265,9 +283,22 @@ export default {
           if (!elementRow[j].innerHTML) {
             continue;
           }
+          let screenImg = elementRow[j].parentNode.querySelector(
+            ".image__wrapper"
+          );
+          let imgInput = screenImg.querySelector('.input__file')
+          let screenImgFile
+          if(typeof imgInput.files[0] == 'undefined') {
+            let img = imgInput.parentNode.querySelector('img')
+            screenImgFile = img.getAttribute('src');
+          }
+          else
+            screenImgFile = imgInput.files[0];
+
           let elementItem = elementRow[j].querySelectorAll(".elements-item");
           arr[i][j] = {
             count: elementItem.length,
+            img: screenImgFile,
             elements: [],
           };
           for (let z = 0; z < elementItem.length; z++) {
@@ -376,6 +407,10 @@ export default {
 @media (max-width: 1170px) {
   .page-glob {
     padding-left: 0;
+  }
+
+  .wrap-glob {
+    width: calc(100% - 100px);
   }
 
   .reports__title {

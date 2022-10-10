@@ -189,7 +189,10 @@
             />
           </svg>
         </div>
-        <div @click="setActive('isActivePersTable')" class="elements-buttons-btn">
+        <div
+          @click="setActive('isActivePersTable')"
+          class="elements-buttons-btn"
+        >
           <svg
             width="20"
             height="20"
@@ -229,7 +232,8 @@
           </svg>
         </div>
       </div>
-      <div v-if="global"
+      <div
+        v-if="global"
         class="elements-buttons__options"
         :class="{ active: isActive }"
       >
@@ -237,7 +241,8 @@
         <div @click="hide('isOpenSubTitle')">Подзаголок</div>
         <div @click="hide('isOpenTextArea')">Текст</div>
       </div>
-      <div v-if="global"
+      <div
+        v-if="global"
         class="elements-buttons__image"
         :class="{ activeImage: isActiveImage }"
       >
@@ -258,7 +263,8 @@
           </svg>
         </div>
       </div>
-      <div v-if="global"
+      <div
+        v-if="global"
         class="elements-buttons__image"
         :class="{ activeImage: isActiveGraph }"
       >
@@ -281,7 +287,8 @@
           </svg>
         </div>
       </div>
-      <div v-if="global"
+      <div
+        v-if="global"
         class="elements-buttons__list"
         :class="{ activeList: isActiveList }"
       >
@@ -310,7 +317,9 @@
           <li>пункт 3</li>
         </ul>
       </div>
-      <div class="elements-buttons__table" v-if="global"
+      <div
+        class="elements-buttons__table"
+        v-if="global"
         :class="{ activeTable: isActiveTable }"
         @mouseleave="unhover($event.target)"
       >
@@ -320,7 +329,7 @@
             v-for="i in 9"
             :id="'table-' + i"
             :key="i"
-            @click="hide('isActiveTable'), createTable($event.target, i)"
+            @click="hide('isOpenTable'), createTable($event.target, i)"
             @mouseover="hoverTable($event.target)"
           ></div>
         </div>
@@ -330,7 +339,7 @@
             v-for="i in 9"
             :id="'table-' + i"
             :key="i"
-            @click="hide('isActiveTable'), createTable($event.target, i + 9)"
+            @click="hide('isOpenTable'), createTable($event.target, i + 9)"
             @mouseover="hoverTable($event.target)"
           ></div>
         </div>
@@ -340,7 +349,7 @@
             v-for="i in 9"
             :id="'table-' + i"
             :key="i"
-            @click="hide('isActiveTable'), createTable($event.target, i + 18)"
+            @click="hide('isOpenTable'), createTable($event.target, i + 18)"
             @mouseover="hoverTable($event.target)"
           ></div>
         </div>
@@ -350,7 +359,7 @@
             v-for="i in 9"
             :id="'table-' + i"
             :key="i"
-            @click="hide('isActiveTable'), createTable($event.target, i + 27)"
+            @click="hide('isOpenTable'), createTable($event.target, i + 27)"
             @mouseover="hoverTable($event.target)"
           ></div>
         </div>
@@ -360,12 +369,15 @@
             v-for="i in 9"
             :id="'table-' + i"
             :key="i"
-            @click="hide('isActiveTable'), createTable($event.target, i + 36)"
+            @click="hide('isOpenTable'), createTable($event.target, i + 36)"
             @mouseover="hoverTable($event.target)"
           ></div>
         </div>
       </div>
-      <div class="elements-buttons__personalTable" :class="{ activePersTable: isActivePersTable }" v-if="global"
+      <div
+        class="elements-buttons__personalTable"
+        :class="{ activePersTable: isActivePersTable }"
+        v-if="global"
         @click="hide('isOpenTableGraph')"
       >
         <div class="elements-buttons__personalTable__image">
@@ -483,23 +495,86 @@
           <p>текс</p>
         </div>
       </div>
-      <div v-if="global"
+      <div
+        v-if="global"
         class="elements-buttons__button"
         :class="{ activeButton: isActiveButton }"
       >
         <div @click="hide('isOpenButton')">Кнопка</div>
       </div>
-      <Title v-if="isOpenTitle" :values="curElement.value" :elementId="this.elementId" />
-      <SubTitle v-if="isOpenSubTitle" :values="curElement.value" :elementId="this.elementId" />
-      <TextArea v-if="isOpenTextArea" :values="curElement.value" :elementId="this.elementId" />
-      <Image v-if="isOpenImage" :values="curElement.value" :elementId="this.elementId" />
-      <PieCharts v-if="isOpenPieCharts" :values="curElement.value" :elementId="this.elementId" />
-      <Button v-if="isOpenButton" :values="curElement.value" :elementId="this.elementId" />
-      <BulletList v-if="isOpenListUl" :values="curElement.value" :elementId="this.elementId" />
-      <NumberedList v-if="isOpenListOl" :values="curElement.value" :elementId="this.elementId" />
-      <ImageList v-if="isOpenListImage" :values="curElement.value" :elementId="this.elementId" />
-      <Table v-if="isOpenTable" :setTr="tr" :setTd="td" :values="curElement.value" :elementId="this.elementId" />
-      <TableGraph v-if="isOpenTableGraph" :values="curElement.value" :elementId="this.elementId" />
+      <Title
+        v-if="isOpenTitle"
+        :values="curElement.value"
+        :elementId="this.elementId"
+        :screenId="this.screenId"
+        :elementNumber="this.elementNumber"
+      />
+      <SubTitle
+        v-if="isOpenSubTitle"
+        :values="curElement.value"
+        :elementId="this.elementId"
+        :screenId="this.screenId"
+        :elementNumber="this.elementNumber"
+      />
+      <TextArea
+        v-if="isOpenTextArea"
+        :values="curElement.value"
+        :elementId="this.elementId"
+        :screenId="this.screenId"
+        :elementNumber="this.elementNumber"
+      />
+      <Image
+        v-if="isOpenImage"
+        :values="curElement.value"
+        :elementId="this.elementId"
+        :screenId="this.screenId"
+        :elementNumber="this.elementNumber"
+      />
+      <PieCharts
+        v-if="isOpenPieCharts"
+        :values="curElement.value"
+      />
+      <Button
+        v-if="isOpenButton"
+        :values="curElement.value"
+      />
+      <BulletList
+        v-if="isOpenListUl"
+        :values="curElement.value"
+        :elementId="this.elementId"
+        :screenId="this.screenId"
+        :elementNumber="this.elementNumber"
+      />
+      <NumberedList
+        v-if="isOpenListOl"
+        :values="curElement.value"
+        :elementId="this.elementId"
+        :screenId="this.screenId"
+        :elementNumber="this.elementNumber"
+      />
+      <ImageList
+        v-if="isOpenListImage"
+        :values="curElement.value"
+        :elementId="this.elementId"
+        :screenId="this.screenId"
+        :elementNumber="this.elementNumber"
+      />
+      <Table
+        v-if="isOpenTable"
+        :setTr="tr"
+        :setTd="td"
+        :values="curElement.value"
+        :elementId="this.elementId"
+        :screenId="this.screenId"
+        :elementNumber="this.elementNumber"
+      />
+      <TableGraph
+        v-if="isOpenTableGraph"
+        :values="curElement.value"
+        :elementId="this.elementId"
+        :screenId="this.screenId"
+        :elementNumber="this.elementNumber"
+      />
     </div>
   </div>
 </template>
@@ -517,7 +592,7 @@ import Button from "./Button.vue";
 import TableGraph from "./TableGraph.vue";
 export default {
   name: "Elements",
-  props: ["type", "count", 'element', 'elementId'],
+  props: ["type", "count", "element", "elementId", "screenId", "elementNumber"],
   data: () => ({
     isOpenTitle: false,
     isOpenSubTitle: false,
@@ -541,34 +616,70 @@ export default {
     tr: 0,
     td: 0,
     tagname: {
-      isOpenTitle: 'h1',
-      isOpenSubTitle: 'h3',
-      isOpenTextArea: 'text',
-      isOpenImage: 'img',
-      isOpenPieCharts: 'graph',
-      isOpenTable: 'table',
-      isOpenListUl: 'listMarc',
-      isOpenListOl: 'listNumeric',
-      isOpenListImage: 'listIcon',
-      isOpenButton: 'btn',
-      isOpenTableGraph: 'tableGraph'
+      isOpenTitle: "h1",
+      isOpenSubTitle: "h3",
+      isOpenTextArea: "text",
+      isOpenImage: "img",
+      isOpenPieCharts: "graph",
+      isOpenTable: "table",
+      isOpenListUl: "listMarc",
+      isOpenListOl: "listNumeric",
+      isOpenListImage: "listIcon",
+      isOpenButton: "btn",
+      isOpenTableGraph: "tableGraph",
     },
     curElement: null,
-    activeType: '',
+    activeType: "",
+    clickChecker: 0,
   }),
   beforeMount() {
-    this.curElement = this.element
+    this.curElement = this.element;
     for (const key in this.tagname) {
       if (this.tagname[key] == this.curElement.type) {
         this.global = false;
-        this.activeType = this.tagname[key]
+        this.activeType = this.tagname[key];
         this[key] = true;
       }
     }
   },
   methods: {
     elementDel() {
-      this.$emit("elementClose", {});
+      this.clickChecker++;
+      this.curElement.value = []
+      if (this.clickChecker == 1) {
+        this.elementClose();
+      } else if (this.clickChecker == 2) {
+        this.$emit("elementClose", { element: this.$el });
+        this.clickChecker = 0;
+      }
+    },
+    elementClose() {
+      delete this.curElement;
+      let elAr = [
+        "isOpenTitle",
+        "isOpenSubTitle",
+        "isOpenTextArea",
+        "isOpenImage",
+        "isOpenPieCharts",
+        "isOpenTable",
+        "isOpenListUl",
+        "isOpenListOl",
+        "isOpenListImage",
+        "isOpenButton",
+        "isOpenTableGraph",
+        "isActiveList",
+        "isActiveTable",
+        "isActivePersTable",
+        "isActiveButton",
+        "isActive",
+        "isActiveImage",
+        "isActiveGraph",
+      ];
+      for (let i = 0; i < elAr.length; i++) {
+        this[elAr[i]] = false;
+      }
+      this.activeType = false;
+      this.global = true;
     },
     hoverTable(el) {
       if (!this.isOpenTable) {
@@ -623,6 +734,7 @@ export default {
       }
     },
     hide(el) {
+      this.clickChecker = 0;
       this[el] = true;
       this.global = false;
       this.activeType = this.tagname[el];
@@ -644,6 +756,248 @@ export default {
 };
 </script>
 <style lang="scss" scoped>
+.elements {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+
+  &active {
+    display: block;
+  }
+
+  &-wrap {
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+  }
+
+  &-item {
+    width: 100%;
+    position: relative;
+    background: #ffffff;
+    border: 0.5px solid rgba(3, 0, 135, 0.3);
+    border-radius: 4.7541px;
+    padding: 20px 17px;
+    min-height: 75px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-bottom: 20px;
+    margin-right: 30px;
+
+    &:last-child {
+      margin-right: 0;
+    }
+  }
+
+  &-buttons {
+    display: flex;
+    width: 100%;
+    max-width: 214px;
+    height: 38px;
+    background: #f3f6fd;
+    border: 1px solid #030087;
+    border-radius: 5px;
+    overflow: hidden;
+
+    &-btn {
+      height: 100%;
+      width: 40px;
+      border-right: 1px solid #030087;
+
+      display: flex;
+      align-items: center;
+      justify-content: center;
+
+      &:last-child {
+        border-right: 0;
+      }
+    }
+
+    &__options {
+      border: 1px solid #030087;
+      border-radius: 0 0 5px 5px;
+      background-color: #ffffff;
+      padding: 15px;
+      min-height: 130px;
+      display: none;
+      width: 215px;
+      user-select: none;
+
+      &.active {
+        display: block;
+        margin-top: -3px;
+      }
+
+      & div {
+        margin: 10px 0;
+        cursor: pointer;
+      }
+    }
+
+    &__image {
+      border: 1px solid #030087;
+      border-radius: 0 0 5px 5px;
+      background-color: #ffffff;
+      padding: 15px;
+      min-height: 130px;
+      display: none;
+      width: 215px;
+
+      &.activeImage {
+        display: flex;
+        align-items: center;
+        justify-content: space-evenly;
+        margin-top: -3px;
+      }
+    }
+
+    &__item {
+      &--fullstop {
+        padding-left: 10px;
+
+        & li {
+          list-style: initial;
+        }
+      }
+    }
+
+    &__item {
+      &--number {
+        padding-left: 50px;
+
+        & li {
+          list-style: auto;
+        }
+      }
+    }
+
+    &__item {
+      &--image {
+        padding-left: 15px;
+        margin-top: 10px;
+
+        & li {
+          list-style-image: url("../assets/images/image.svg");
+        }
+      }
+    }
+
+    &__list {
+      border: 1px solid #030087;
+      border-radius: 0 0 5px 5px;
+      background-color: #ffffff;
+      padding: 15px;
+      min-height: 130px;
+      display: none;
+      width: 215px;
+      user-select: none;
+
+      &.activeList {
+        display: flex;
+        flex-wrap: wrap;
+        margin-top: -3px;
+      }
+    }
+
+    &__table {
+      border: 1px solid #030087;
+      border-radius: 0 0 5px 5px;
+      background-color: #ffffff;
+      padding: 15px;
+      min-height: 130px;
+      display: none;
+      width: 215px;
+
+      &.activeTable {
+        display: flex;
+        justify-content: center;
+        margin-top: -3px;
+      }
+    }
+
+    &__personalTable {
+      border: 1px solid #030087;
+      border-radius: 0 0 5px 5px;
+      background-color: #ffffff;
+      padding: 15px;
+      min-height: 130px;
+      display: none;
+      width: 215px;
+      user-select: none;
+
+      &__image {
+        display: flex;
+        justify-content: space-evenly;
+        border: 1px solid #c8c8c8;
+      }
+
+      &__numbers {
+        display: flex;
+        justify-content: space-evenly;
+        border-left: 1px solid #c8c8c8;
+        border-right: 1px solid #c8c8c8;
+      }
+
+      &__text {
+        display: flex;
+        justify-content: space-evenly;
+        border: 1px solid #c8c8c8;
+        font-size: 11px;
+      }
+
+      &.activePersTable {
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        margin-top: -3px;
+      }
+    }
+
+    &__button {
+      border: 1px solid #030087;
+      border-radius: 0 0 5px 5px;
+      background-color: #ffffff;
+      padding: 15px;
+      min-height: 130px;
+      display: none;
+      width: 215px;
+      user-select: none;
+
+      & div {
+        width: 185px;
+        height: 45px;
+        background: #030087;
+        border: 1px solid #030087;
+        color: #ffffff;
+        border-radius: 5px;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        font-weight: 700;
+        font-size: 16px;
+        line-height: 20px;
+      }
+
+      &.activeButton {
+        display: flex;
+        align-items: center;
+        margin-top: -3px;
+      }
+    }
+  }
+
+  &__del {
+    position: absolute;
+    top: 6px;
+    right: 6px;
+    width: 13px;
+    height: 13px;
+    cursor: pointer;
+  }
+}
+
 .elements {
   display: flex;
   align-items: center;
@@ -1181,7 +1535,337 @@ export default {
   background: #030087;
 }
 
-.elements-buttons-btn:hover path[fill="#222222"], .elements-buttons-btn:hover circle[fill="#222222"], .elements-buttons-btn:hover rect[stroke="#222222"], .elements-buttons-btn:hover rect[fill="#222222"] {
+.elements-buttons-btn:hover path[fill="#222222"],
+.elements-buttons-btn:hover circle[fill="#222222"],
+.elements-buttons-btn:hover rect[stroke="#222222"],
+.elements-buttons-btn:hover rect[fill="#222222"] {
+  fill: #fff;
+}
+
+.elements-buttons-btn:hover path[fill="#6F6F6F"] {
+  fill: #dddddd;
+}
+
+.elements-buttons .elements-buttons-btn:last-child:hover path[fill="#222222"] {
+  fill: #222222;
+}
+.elements-item.count-1 {
+  width: 100%;
+}
+.elements-item.count-2 {
+  width: calc(50% - 30px);
+}
+.elements-item.count-3 {
+  width: calc(33.33333% - 30px);
+}
+.elements-item.count-4 {
+  width: calc(25% - 30px);
+}
+
+.elements {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+
+  &active {
+    display: block;
+  }
+
+  &-wrap {
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+  }
+
+  &-item {
+    position: relative;
+    background: #ffffff;
+    border: 0.5px solid rgba(3, 0, 135, 0.3);
+    border-radius: 4.7541px;
+    padding: 20px 17px;
+    min-height: 75px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-bottom: 20px;
+    margin-right: 30px;
+
+    &:last-child {
+      margin-right: 0;
+    }
+  }
+  &-buttons {
+    display: flex;
+    width: 100%;
+    max-width: 214px;
+    height: 38px;
+    background: #f3f6fd;
+    border: 1px solid #030087;
+    border-radius: 5px;
+    overflow: hidden;
+
+    &-btn {
+      height: 100%;
+      width: 40px;
+      border-right: 1px solid #030087;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+
+      &:last-child {
+        border-right: 0;
+      }
+    }
+
+    &__options {
+      border: 1px solid #030087;
+      border-radius: 0 0 5px 5px;
+      background-color: #ffffff;
+      padding: 15px;
+      min-height: 130px;
+      display: none;
+      width: 215px;
+      user-select: none;
+
+      &.active {
+        display: block;
+        margin-top: -3px;
+      }
+
+      & div {
+        margin: 10px 0;
+        cursor: pointer;
+      }
+    }
+
+    &__image {
+      border: 1px solid #030087;
+      border-radius: 0 0 5px 5px;
+      background-color: #ffffff;
+      padding: 15px;
+      min-height: 130px;
+      display: none;
+      width: 215px;
+
+      &.activeImage {
+        display: flex;
+        align-items: center;
+        justify-content: space-evenly;
+        margin-top: -3px;
+      }
+    }
+
+    &__item {
+      &--fullstop {
+        padding-left: 10px;
+
+        & li {
+          list-style: initial;
+        }
+      }
+    }
+
+    &__item {
+      &--number {
+        padding-left: 50px;
+
+        & li {
+          list-style: auto;
+        }
+      }
+    }
+
+    &__item {
+      &--image {
+        padding-left: 15px;
+        margin-top: 10px;
+
+        & li {
+          list-style-image: url("../assets/images/image.svg");
+        }
+      }
+    }
+
+    &__list {
+      border: 1px solid #030087;
+      border-radius: 0 0 5px 5px;
+      background-color: #ffffff;
+      padding: 15px;
+      min-height: 130px;
+      display: none;
+      width: 215px;
+      user-select: none;
+
+      &.activeList {
+        display: flex;
+        flex-wrap: wrap;
+        margin-top: -3px;
+      }
+    }
+
+    &__table {
+      border: 1px solid #030087;
+      border-radius: 0 0 5px 5px;
+      background-color: #ffffff;
+      padding: 15px;
+      min-height: 130px;
+      display: none;
+      width: 215px;
+
+      &.activeTable {
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        margin-top: -3px;
+      }
+    }
+
+    &__personalTable {
+      border: 1px solid #030087;
+      border-radius: 0 0 5px 5px;
+      background-color: #ffffff;
+      padding: 15px;
+      min-height: 130px;
+      display: none;
+      width: 215px;
+      user-select: none;
+
+      &__image {
+        display: flex;
+        justify-content: space-evenly;
+        border: 1px solid #c8c8c8;
+      }
+
+      &__numbers {
+        display: flex;
+        justify-content: space-evenly;
+        border-left: 1px solid #c8c8c8;
+        border-right: 1px solid #c8c8c8;
+      }
+
+      &__text {
+        display: flex;
+        justify-content: space-evenly;
+        border: 1px solid #c8c8c8;
+        font-size: 11px;
+      }
+
+      &.activePersTable {
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        margin-top: -3px;
+      }
+    }
+    &__button {
+      border: 1px solid #030087;
+      border-radius: 0 0 5px 5px;
+      background-color: #ffffff;
+      padding: 15px;
+      min-height: 130px;
+      display: none;
+      width: 215px;
+      user-select: none;
+
+      & div {
+        width: 185px;
+        height: 45px;
+        background: #030087;
+        border: 1px solid #030087;
+        color: #ffffff;
+        border-radius: 5px;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        font-weight: 700;
+        font-size: 16px;
+        line-height: 20px;
+      }
+
+      &.activeButton {
+        display: flex;
+        align-items: center;
+        margin-top: -3px;
+      }
+    }
+  }
+
+  &__del {
+    position: absolute;
+    top: 6px;
+    right: 6px;
+    width: 13px;
+    height: 13px;
+    cursor: pointer;
+  }
+}
+
+.table__element {
+  width: 11.11111%;
+  min-width: 11.11111%;
+  height: 19px;
+  min-height: 19px;
+  background: transparent;
+  margin: 0;
+  border: 1px solid #000;
+  border-bottom: none;
+  border-right: none;
+}
+.table__element.active {
+  background: #888;
+}
+.elements-buttons__table .table__element:last-of-type {
+  border-right: 1px solid #000;
+}
+.elements-buttons__table > div:last-of-type .table__element {
+  border-bottom: 1px solid #000;
+}
+.table__block {
+  display: flex;
+  width: 100%;
+}
+.input-group {
+  overflow: auto;
+}
+
+.elements-wrap {
+  overflow: auto;
+}
+
+@media (max-width: 1355px) and (min-width: 1175px) {
+  .elements-buttons {
+    height: auto;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+  }
+  .elements-buttons-btn {
+    border-right: none;
+    border-bottom: 1px solid #030087;
+    padding: 10px;
+    width: 100%;
+  }
+  .elements-buttons-btn:last-child {
+    border-bottom: none;
+  }
+}
+
+@media (max-width: 1170px) {
+  .screen__elements .elements-item {
+    width: 100%;
+  }
+}
+
+.elements-buttons-btn:hover {
+  background: #030087;
+}
+
+.elements-buttons-btn:hover path[fill="#222222"],
+.elements-buttons-btn:hover circle[fill="#222222"],
+.elements-buttons-btn:hover rect[stroke="#222222"],
+.elements-buttons-btn:hover rect[fill="#222222"] {
   fill: #fff;
 }
 

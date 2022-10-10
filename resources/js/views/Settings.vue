@@ -270,4 +270,153 @@ export default {
   position: absolute;
   display: block;
 }
+
+
+.settings {
+  &-top {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+
+    &__button {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+
+      width: 200px;
+      padding: 13px 5px;
+      background-color: #ffffff;
+      border: 1px solid #030087;
+      border-radius: 5px;
+      cursor: pointer;
+
+      font-weight: 600;
+      font-size: 16px;
+      line-height: 20px;
+      color: #030087;
+      transition: ease-in-out 0.25s;
+
+      & svg {
+        margin-right: 15px;
+
+        & g {
+          & rect {
+            transition: ease-in-out 0.25s;
+          }
+        }
+      }
+
+      &:hover {
+        color: #ffffff;
+        background-color: #030087;
+
+        & svg {
+          margin-right: 15px;
+
+          & g {
+            & rect {
+              fill: #ffffff;
+            }
+          }
+        }
+      }
+    }
+  }
+
+  & .input-file {
+    margin-top: 10px;
+    margin-bottom: 0;
+  }
+
+  & .input-group {
+    margin-bottom: 20px;
+  }
+
+  &__field {
+
+    &--companyPhone,
+    &--phone {
+      & the-mask {
+        background-color: #ffffff;
+      }
+    }
+  }
+}
+
+@media (max-width: 1170px) {
+  .page-glob {
+    padding-left: 0;
+  }
+
+}
+
+@media (max-width: 530px) {
+  
+  .settings-top h2 {
+    font-size: 30px;
+  }
+  .settings-top__button {
+    max-width: 100px;
+  }
+  .settings-top__button span {
+    display: none;
+  }
+
+  .settings-top__button svg {
+    margin-right: 0;
+  }
+
+}
+
+@media (max-width: 450px) {
+  
+  .settings-top h2 {
+    font-size: 26px;
+  }
+  // .settings-top__button {
+  //   max-width: 90px;
+  // }
+
+  .wrap-glob {
+    padding: 100px 20px 20px 20px;
+  }
+
+}
+
+@media (max-width: 450px) {
+  .input-file__text {
+    font-weight: 600;
+    font-size: 14px;
+  }
+}
+
+@media (max-width: 415px) {
+  
+  .settings-top h2 {
+    font-size: 24px;
+  }
+  // .settings-top__button {
+  //   max-width: 80px;
+  // }
+
+  .input-file__text {
+    font-weight: 600;
+    font-size: 16px;
+  }
+
+}
+
+@media (max-width: 395px) {
+  .input-file__text {
+    font-weight: 500;
+    font-size: 16px;
+  }
+}
+
+@media (max-width: 385px) {
+  .input-file__text {
+    font-weight: 500;
+    font-size: 14px;
+  }
+}
 </style>
