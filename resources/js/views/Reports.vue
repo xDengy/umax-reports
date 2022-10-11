@@ -5,7 +5,7 @@
       <div class="reports__title">
         <h2>Отчёт по SEO продвижению</h2>
         <div class="reports__icons">
-          <a href="#" class="reports__icon" @click="generateReport()">
+          <a href="#" class="reports__icon" @click="previewReport()">
             <svg
               width="20"
               height="14"
@@ -64,7 +64,7 @@
               </defs>
             </svg>
           </a>
-          <a href="#" class="reports__icon">
+          <a href="#" class="reports__icon" @click="downloadReport()">
             <svg
               width="18"
               height="16"
@@ -125,12 +125,42 @@
       <div id="report-error">Ошибка</div>
     </div>
   </section>
+  <div class="pdf-view">
+    <div class="closePdf" @click="closePdf">
+      <svg
+        width="15"
+        height="15"
+        viewBox="0 0 15 15"
+        fill="none"
+        xmlns="http://www.w3.org/2000/svg"
+      >
+        <line
+          x1="1.06066"
+          y1="1"
+          x2="13"
+          y2="12.9393"
+          stroke="#222222"
+          stroke-width="1.5"
+          stroke-linecap="round"
+        />
+        <path
+          d="M1 13.293L13.2929 1.00008"
+          stroke="#222222"
+          stroke-width="1.5"
+          stroke-linecap="round"
+        />
+      </svg>
+    </div>
+    <iframe src="" frameborder="0"></iframe>
+  </div>
 </template>
 
 <script>
 import MenuReports from "../components/MenuReports.vue";
 import Screen from "../components/Screen.vue";
 import html2Pdf from "html2pdf.js";
+import html2canvas from "html2canvas";
+
 export default {
   name: "Reports",
   components: {
@@ -266,8 +296,51 @@ export default {
           }, 1000);
         });
     },
-    generateReport() {
+    previewReport() {
       let arr = this.generateArray();
+      let arLength = arr.length;
+      let id = this.id[this.id.length - 1];
+      arr.push({ report: id });
+      arr.push({ sort: [] });
+      for (let i = 0; i < arLength; i++) {
+        arr[arr.length - 1].sort.push(arr[i].title);
+      }
+      axios
+        .post("/api/getPdf/" + id, arr, {
+          headers: {
+            "Content-Type": "multipart/form-data",
+          },
+        })
+        .then((res) => {
+          let dom = new DOMParser()
+            .parseFromString(res.data, "text/xml")
+            .querySelector("html");
+
+          document.body.style.overflow = "hidden";
+          let frame = document
+            .querySelector(".pdf-view iframe")
+            .contentDocument.querySelector("html");
+          frame.innerHTML = dom.innerHTML;
+          let a = frame.querySelectorAll(".content .content__list a");
+          for (let i = 0; i < a.length; i++) {
+            const element = a[i];
+            let id = element.getAttribute("sub-id").replace("#", "");
+            element.style.cursor = "pointer";
+            element.removeAttribute("sub-id");
+            element.addEventListener("click", function () {
+              frame
+                .querySelector('section[name="' + id + '"]')
+                .scrollIntoView({ behavior: "smooth" });
+            });
+          }
+          document.querySelector(".pdf-view").classList.add("active");
+        });
+    },
+    closePdf() {
+      document.body.style.overflow = "auto";
+      document.querySelector(".pdf-view").classList.remove("active");
+    },
+    downloadReport() {
       let id = this.id[this.id.length - 1];
       axios.get("/api/getPdf/" + id).then((res) => {
         let dom = new DOMParser()
@@ -276,47 +349,7 @@ export default {
         let html = document.createElement("html");
         html.innerHTML = dom.innerHTML;
         html.style.width = "1920px";
-
-        // html2Pdf(html, {
-        //   margin: 10,
-        //   filename: 'test.pdf',
-        //   image: { type: 'jpeg', quality: 1.00 },
-        //   jsPDF: { unit: 'pt', format: 'a3', orientation: 'portrait' },
-        //   enableLinks: true
-        // });
-
-        // const options = {
-        //   html2canvas: {
-        //     width: 1920,
-        //     scale: 1,
-        //     letterRendering: true,
-        //     height: 1080 * html.querySelectorAll('section').length
-        //   },
-        //   margin: [0, 15, 15, 15],
-        //   filename: "pdfFileName.pdf",
-        //   image: { type: "jpeg", quality: 0.98 },
-        //   jsPDF: { unit: "pt", format: "letter", orientation: "portrait" },
-        //   pagebreak: { after: "section", mode: ["avoid-all", "css", "legacy"] },
-        //   enableLinks: true,
-        // };
-
-        // const options = {
-        //   html2canvas: {
-        //     width: 1920,
-        //     enableLinks: true,
-        //     height: html.querySelectorAll('section').length * 1080
-        //   },
-        //   pagebreak: { mode: mode },
-        //   enableLinks: true,
-        // };
-        let mode = 'legacy'
-        var pagebreak = (mode === 'specify') ?
-            { mode: '', before: '.before', after: '.after', avoid: '.avoid' } :
-        { mode: mode };
-
         console.log(html);
-
-        // html2pdf().from(html).set(options).toPdf().get('pdf').save()
         html2pdf().from(html).set({
           filename: 'mypdf.pdf',
           html2canvas: {
@@ -326,6 +359,13 @@ export default {
           },
           jsPDF: {orientation: 'portrait', unit: 'in', format: 'letter', compressPDF: true}
         }).save();
+
+        // let printPreview = window.open("", "print_preview");
+        // let printDocument = printPreview.document;
+        // printDocument.open();
+        // printDocument.write(html.innerHTML);
+        // printPreview.print();
+        // printPreview.close();
       });
     },
     generateArray() {
@@ -485,5 +525,32 @@ export default {
       width: 33.33333%;
     }
   }
+}
+
+.pdf-view {
+  position: fixed;
+  top: 0;
+  left: 0;
+  overflow: auto;
+  display: none;
+  z-index: 100000;
+  width: 100%;
+  height: 100%;
+}
+
+.pdf-view iframe {
+  width: 100%;
+  height: 100%;
+}
+
+.pdf-view.active {
+  display: block;
+}
+
+.closePdf {
+  position: fixed;
+  top: 100px;
+  right: 100px;
+  cursor: pointer;
 }
 </style>

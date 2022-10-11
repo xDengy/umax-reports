@@ -21683,6 +21683,9 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _components_Screen_vue__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ../components/Screen.vue */ "./resources/js/components/Screen.vue");
 /* harmony import */ var html2pdf_js__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! html2pdf.js */ "./node_modules/html2pdf.js/dist/html2pdf.js");
 /* harmony import */ var html2pdf_js__WEBPACK_IMPORTED_MODULE_2___default = /*#__PURE__*/__webpack_require__.n(html2pdf_js__WEBPACK_IMPORTED_MODULE_2__);
+/* harmony import */ var html2canvas__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! html2canvas */ "./node_modules/html2canvas/dist/html2canvas.js");
+/* harmony import */ var html2canvas__WEBPACK_IMPORTED_MODULE_3___default = /*#__PURE__*/__webpack_require__.n(html2canvas__WEBPACK_IMPORTED_MODULE_3__);
+
 
 
 
@@ -21815,55 +21818,63 @@ __webpack_require__.r(__webpack_exports__);
         }, 1000);
       });
     },
-    generateReport: function generateReport() {
+    previewReport: function previewReport() {
       var arr = this.generateArray();
+      var arLength = arr.length;
+      var id = this.id[this.id.length - 1];
+      arr.push({
+        report: id
+      });
+      arr.push({
+        sort: []
+      });
+
+      for (var i = 0; i < arLength; i++) {
+        arr[arr.length - 1].sort.push(arr[i].title);
+      }
+
+      axios.post("/api/getPdf/" + id, arr, {
+        headers: {
+          "Content-Type": "multipart/form-data"
+        }
+      }).then(function (res) {
+        var dom = new DOMParser().parseFromString(res.data, "text/xml").querySelector("html");
+        document.body.style.overflow = "hidden";
+        var frame = document.querySelector(".pdf-view iframe").contentDocument.querySelector("html");
+        frame.innerHTML = dom.innerHTML;
+        var a = frame.querySelectorAll(".content .content__list a");
+
+        var _loop = function _loop(_i) {
+          var element = a[_i];
+          var id = element.getAttribute("sub-id").replace("#", "");
+          element.style.cursor = "pointer";
+          element.removeAttribute("sub-id");
+          element.addEventListener("click", function () {
+            frame.querySelector('section[name="' + id + '"]').scrollIntoView({
+              behavior: "smooth"
+            });
+          });
+        };
+
+        for (var _i = 0; _i < a.length; _i++) {
+          _loop(_i);
+        }
+
+        document.querySelector(".pdf-view").classList.add("active");
+      });
+    },
+    closePdf: function closePdf() {
+      document.body.style.overflow = "auto";
+      document.querySelector(".pdf-view").classList.remove("active");
+    },
+    downloadReport: function downloadReport() {
       var id = this.id[this.id.length - 1];
       axios.get("/api/getPdf/" + id).then(function (res) {
         var dom = new DOMParser().parseFromString(res.data, "text/xml").querySelector("html");
         var html = document.createElement("html");
         html.innerHTML = dom.innerHTML;
-        html.style.width = "1920px"; // html2Pdf(html, {
-        //   margin: 10,
-        //   filename: 'test.pdf',
-        //   image: { type: 'jpeg', quality: 1.00 },
-        //   jsPDF: { unit: 'pt', format: 'a3', orientation: 'portrait' },
-        //   enableLinks: true
-        // });
-        // const options = {
-        //   html2canvas: {
-        //     width: 1920,
-        //     scale: 1,
-        //     letterRendering: true,
-        //     height: 1080 * html.querySelectorAll('section').length
-        //   },
-        //   margin: [0, 15, 15, 15],
-        //   filename: "pdfFileName.pdf",
-        //   image: { type: "jpeg", quality: 0.98 },
-        //   jsPDF: { unit: "pt", format: "letter", orientation: "portrait" },
-        //   pagebreak: { after: "section", mode: ["avoid-all", "css", "legacy"] },
-        //   enableLinks: true,
-        // };
-        // const options = {
-        //   html2canvas: {
-        //     width: 1920,
-        //     enableLinks: true,
-        //     height: html.querySelectorAll('section').length * 1080
-        //   },
-        //   pagebreak: { mode: mode },
-        //   enableLinks: true,
-        // };
-
-        var mode = 'legacy';
-        var pagebreak = mode === 'specify' ? {
-          mode: '',
-          before: '.before',
-          after: '.after',
-          avoid: '.avoid'
-        } : {
-          mode: mode
-        };
-        console.log(html); // html2pdf().from(html).set(options).toPdf().get('pdf').save()
-
+        html.style.width = "1920px";
+        console.log(html);
         html2pdf().from(html).set({
           filename: 'mypdf.pdf',
           html2canvas: {
@@ -21877,7 +21888,12 @@ __webpack_require__.r(__webpack_exports__);
             format: 'letter',
             compressPDF: true
           }
-        }).save();
+        }).save(); // let printPreview = window.open("", "print_preview");
+        // let printDocument = printPreview.document;
+        // printDocument.open();
+        // printDocument.write(html.innerHTML);
+        // printPreview.print();
+        // printPreview.close();
       });
     },
     generateArray: function generateArray() {
@@ -26914,10 +26930,7 @@ var _hoisted_8 = /*#__PURE__*/_withScopeId(function () {
 var _hoisted_9 = [_hoisted_8];
 
 var _hoisted_10 = /*#__PURE__*/_withScopeId(function () {
-  return /*#__PURE__*/(0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("a", {
-    href: "#",
-    "class": "reports__icon"
-  }, [/*#__PURE__*/(0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("svg", {
+  return /*#__PURE__*/(0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("svg", {
     width: "18",
     height: "16",
     viewBox: "0 0 18 16",
@@ -26927,16 +26940,17 @@ var _hoisted_10 = /*#__PURE__*/_withScopeId(function () {
     "fill-rule": "evenodd",
     "clip-rule": "evenodd",
     d: "M8.60243 0.0651318C8.37894 0.151015 8.15195 0.381132 8.06713 0.607811C8.00231 0.781109 8.00194 0.804205 8.00194 4.72547V8.66886L7.0404 7.71061C5.92754 6.6015 5.89188 6.57603 5.45481 6.57872C5.14684 6.58059 4.95691 6.65723 4.74552 6.86487C4.53881 7.06789 4.45886 7.26497 4.45655 7.57729C4.45311 8.04421 4.37236 7.94589 6.52651 10.0973C8.32113 11.8897 8.43364 11.9959 8.60475 12.0585C8.72395 12.102 8.8594 12.1246 9.00204 12.1246C9.14468 12.1246 9.28013 12.102 9.39933 12.0585C9.57044 11.9959 9.68295 11.8897 11.4776 10.0973C13.6317 7.94589 13.551 8.04421 13.5475 7.57729C13.5452 7.26497 13.4653 7.06789 13.2586 6.86487C13.0472 6.65723 12.8572 6.58059 12.5493 6.57872C12.1122 6.57603 12.0765 6.6015 10.9637 7.71061L10.0021 8.66886V4.72547C10.0021 0.804205 10.0018 0.781109 9.93694 0.607811C9.7959 0.230867 9.43249 -0.00312503 8.99304 3.15394e-05C8.84496 0.00109415 8.71098 0.0234401 8.60243 0.0651318ZM1.60174 14.0665C1.49991 14.1057 1.37809 14.1885 1.28411 14.2825C0.78456 14.782 0.964641 15.6931 1.61064 15.9348L1.78491 16H9.00204H16.2192L16.3934 15.9348C17.2058 15.6309 17.2058 14.3689 16.3934 14.065L16.2192 13.9998L8.99304 14.0014C1.80716 14.0031 1.76603 14.0034 1.60174 14.0665Z"
-  })])], -1
+  })], -1
   /* HOISTED */
   );
 });
 
-var _hoisted_11 = {
+var _hoisted_11 = [_hoisted_10];
+var _hoisted_12 = {
   "class": "reports__add"
 };
 
-var _hoisted_12 = /*#__PURE__*/_withScopeId(function () {
+var _hoisted_13 = /*#__PURE__*/_withScopeId(function () {
   return /*#__PURE__*/(0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("div", {
     "class": "reports__add-title"
   }, "Добавить экран", -1
@@ -26944,7 +26958,7 @@ var _hoisted_12 = /*#__PURE__*/_withScopeId(function () {
   );
 });
 
-var _hoisted_13 = /*#__PURE__*/_withScopeId(function () {
+var _hoisted_14 = /*#__PURE__*/_withScopeId(function () {
   return /*#__PURE__*/(0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("svg", {
     width: "41",
     height: "40",
@@ -26966,9 +26980,9 @@ var _hoisted_13 = /*#__PURE__*/_withScopeId(function () {
   );
 });
 
-var _hoisted_14 = [_hoisted_13];
+var _hoisted_15 = [_hoisted_14];
 
-var _hoisted_15 = /*#__PURE__*/_withScopeId(function () {
+var _hoisted_16 = /*#__PURE__*/_withScopeId(function () {
   return /*#__PURE__*/(0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("div", {
     id: "save"
   }, "Сохранено", -1
@@ -26976,10 +26990,50 @@ var _hoisted_15 = /*#__PURE__*/_withScopeId(function () {
   );
 });
 
-var _hoisted_16 = /*#__PURE__*/_withScopeId(function () {
+var _hoisted_17 = /*#__PURE__*/_withScopeId(function () {
   return /*#__PURE__*/(0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("div", {
     id: "report-error"
   }, "Ошибка", -1
+  /* HOISTED */
+  );
+});
+
+var _hoisted_18 = {
+  "class": "pdf-view"
+};
+
+var _hoisted_19 = /*#__PURE__*/_withScopeId(function () {
+  return /*#__PURE__*/(0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("svg", {
+    width: "15",
+    height: "15",
+    viewBox: "0 0 15 15",
+    fill: "none",
+    xmlns: "http://www.w3.org/2000/svg"
+  }, [/*#__PURE__*/(0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("line", {
+    x1: "1.06066",
+    y1: "1",
+    x2: "13",
+    y2: "12.9393",
+    stroke: "#222222",
+    "stroke-width": "1.5",
+    "stroke-linecap": "round"
+  }), /*#__PURE__*/(0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("path", {
+    d: "M1 13.293L13.2929 1.00008",
+    stroke: "#222222",
+    "stroke-width": "1.5",
+    "stroke-linecap": "round"
+  })], -1
+  /* HOISTED */
+  );
+});
+
+var _hoisted_20 = [_hoisted_19];
+
+var _hoisted_21 = /*#__PURE__*/_withScopeId(function () {
+  return /*#__PURE__*/(0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("iframe", {
+    src: "",
+    frameborder: "0"
+  }, null, -1
   /* HOISTED */
   );
 });
@@ -26989,7 +27043,7 @@ function render(_ctx, _cache, $props, $setup, $data, $options) {
 
   var _component_Screen = (0,vue__WEBPACK_IMPORTED_MODULE_0__.resolveComponent)("Screen");
 
-  return (0,vue__WEBPACK_IMPORTED_MODULE_0__.openBlock)(), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementBlock)("section", _hoisted_1, [(0,vue__WEBPACK_IMPORTED_MODULE_0__.createVNode)(_component_MenuReports, {
+  return (0,vue__WEBPACK_IMPORTED_MODULE_0__.openBlock)(), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementBlock)(vue__WEBPACK_IMPORTED_MODULE_0__.Fragment, null, [(0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("section", _hoisted_1, [(0,vue__WEBPACK_IMPORTED_MODULE_0__.createVNode)(_component_MenuReports, {
     ref: "menuList"
   }, null, 512
   /* NEED_PATCH */
@@ -26997,7 +27051,7 @@ function render(_ctx, _cache, $props, $setup, $data, $options) {
     href: "#",
     "class": "reports__icon",
     onClick: _cache[0] || (_cache[0] = function ($event) {
-      return $options.generateReport();
+      return $options.previewReport();
     })
   }, _hoisted_7), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("a", {
     href: "#",
@@ -27005,7 +27059,13 @@ function render(_ctx, _cache, $props, $setup, $data, $options) {
     onClick: _cache[1] || (_cache[1] = function ($event) {
       return $options.save();
     })
-  }, _hoisted_9), _hoisted_10])]), ((0,vue__WEBPACK_IMPORTED_MODULE_0__.openBlock)(true), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementBlock)(vue__WEBPACK_IMPORTED_MODULE_0__.Fragment, null, (0,vue__WEBPACK_IMPORTED_MODULE_0__.renderList)(this.current, function (item, i) {
+  }, _hoisted_9), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("a", {
+    href: "#",
+    "class": "reports__icon",
+    onClick: _cache[2] || (_cache[2] = function ($event) {
+      return $options.downloadReport();
+    })
+  }, _hoisted_11)])]), ((0,vue__WEBPACK_IMPORTED_MODULE_0__.openBlock)(true), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementBlock)(vue__WEBPACK_IMPORTED_MODULE_0__.Fragment, null, (0,vue__WEBPACK_IMPORTED_MODULE_0__.renderList)(this.current, function (item, i) {
     return (0,vue__WEBPACK_IMPORTED_MODULE_0__.openBlock)(), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createBlock)(_component_Screen, {
       ref_for: true,
       ref: "screen",
@@ -27027,12 +27087,19 @@ function render(_ctx, _cache, $props, $setup, $data, $options) {
     , ["onScreenClose", "onScreenDown", "onScreenUp", "onSetTitle", "title", "screenNumber", "screens", "types", "screenItem", "id"]);
   }), 128
   /* KEYED_FRAGMENT */
-  )), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("div", _hoisted_11, [_hoisted_12, (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("div", {
+  )), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("div", _hoisted_12, [_hoisted_13, (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("div", {
     "class": "reports__add-btn",
-    onClick: _cache[2] || (_cache[2] = function ($event) {
+    onClick: _cache[3] || (_cache[3] = function ($event) {
       return $options.addSreen();
     })
-  }, _hoisted_14)]), _hoisted_15, _hoisted_16])]);
+  }, _hoisted_15)]), _hoisted_16, _hoisted_17])]), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("div", _hoisted_18, [(0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("div", {
+    "class": "closePdf",
+    onClick: _cache[4] || (_cache[4] = function () {
+      return $options.closePdf && $options.closePdf.apply($options, arguments);
+    })
+  }, _hoisted_20), _hoisted_21])], 64
+  /* STABLE_FRAGMENT */
+  );
 }
 
 /***/ }),
@@ -37531,7 +37598,7 @@ function isnan (val) {
  * Released under the MIT License.
  */
 (function (global, factory) {
-	 true ? module.exports = factory(__webpack_require__(/*! jspdf */ "./node_modules/jspdf/dist/jspdf.min.js"), __webpack_require__(/*! html2canvas */ "./node_modules/html2canvas/dist/html2canvas.js")) :
+	 true ? module.exports = factory(__webpack_require__(/*! jspdf */ "./node_modules/html2pdf.js/node_modules/jspdf/dist/jspdf.min.js"), __webpack_require__(/*! html2canvas */ "./node_modules/html2canvas/dist/html2canvas.js")) :
 	0;
 }(this, (function (jsPDF,html2canvas) { 'use strict';
 
@@ -39645,120 +39712,10 @@ return html2pdf;
 
 /***/ }),
 
-/***/ "./node_modules/ieee754/index.js":
-/*!***************************************!*\
-  !*** ./node_modules/ieee754/index.js ***!
-  \***************************************/
-/***/ (function(__unused_webpack_module, exports) {
-
-/*! ieee754. BSD-3-Clause License. Feross Aboukhadijeh <https://feross.org/opensource> */
-exports.read = function (buffer, offset, isLE, mLen, nBytes) {
-  var e, m
-  var eLen = (nBytes * 8) - mLen - 1
-  var eMax = (1 << eLen) - 1
-  var eBias = eMax >> 1
-  var nBits = -7
-  var i = isLE ? (nBytes - 1) : 0
-  var d = isLE ? -1 : 1
-  var s = buffer[offset + i]
-
-  i += d
-
-  e = s & ((1 << (-nBits)) - 1)
-  s >>= (-nBits)
-  nBits += eLen
-  for (; nBits > 0; e = (e * 256) + buffer[offset + i], i += d, nBits -= 8) {}
-
-  m = e & ((1 << (-nBits)) - 1)
-  e >>= (-nBits)
-  nBits += mLen
-  for (; nBits > 0; m = (m * 256) + buffer[offset + i], i += d, nBits -= 8) {}
-
-  if (e === 0) {
-    e = 1 - eBias
-  } else if (e === eMax) {
-    return m ? NaN : ((s ? -1 : 1) * Infinity)
-  } else {
-    m = m + Math.pow(2, mLen)
-    e = e - eBias
-  }
-  return (s ? -1 : 1) * m * Math.pow(2, e - mLen)
-}
-
-exports.write = function (buffer, value, offset, isLE, mLen, nBytes) {
-  var e, m, c
-  var eLen = (nBytes * 8) - mLen - 1
-  var eMax = (1 << eLen) - 1
-  var eBias = eMax >> 1
-  var rt = (mLen === 23 ? Math.pow(2, -24) - Math.pow(2, -77) : 0)
-  var i = isLE ? 0 : (nBytes - 1)
-  var d = isLE ? 1 : -1
-  var s = value < 0 || (value === 0 && 1 / value < 0) ? 1 : 0
-
-  value = Math.abs(value)
-
-  if (isNaN(value) || value === Infinity) {
-    m = isNaN(value) ? 1 : 0
-    e = eMax
-  } else {
-    e = Math.floor(Math.log(value) / Math.LN2)
-    if (value * (c = Math.pow(2, -e)) < 1) {
-      e--
-      c *= 2
-    }
-    if (e + eBias >= 1) {
-      value += rt / c
-    } else {
-      value += rt * Math.pow(2, 1 - eBias)
-    }
-    if (value * c >= 2) {
-      e++
-      c /= 2
-    }
-
-    if (e + eBias >= eMax) {
-      m = 0
-      e = eMax
-    } else if (e + eBias >= 1) {
-      m = ((value * c) - 1) * Math.pow(2, mLen)
-      e = e + eBias
-    } else {
-      m = value * Math.pow(2, eBias - 1) * Math.pow(2, mLen)
-      e = 0
-    }
-  }
-
-  for (; mLen >= 8; buffer[offset + i] = m & 0xff, i += d, m /= 256, mLen -= 8) {}
-
-  e = (e << mLen) | m
-  eLen += mLen
-  for (; eLen > 0; buffer[offset + i] = e & 0xff, i += d, e /= 256, eLen -= 8) {}
-
-  buffer[offset + i - d] |= s * 128
-}
-
-
-/***/ }),
-
-/***/ "./node_modules/isarray/index.js":
-/*!***************************************!*\
-  !*** ./node_modules/isarray/index.js ***!
-  \***************************************/
-/***/ (function(module) {
-
-var toString = {}.toString;
-
-module.exports = Array.isArray || function (arr) {
-  return toString.call(arr) == '[object Array]';
-};
-
-
-/***/ }),
-
-/***/ "./node_modules/jspdf/dist/jspdf.min.js":
-/*!**********************************************!*\
-  !*** ./node_modules/jspdf/dist/jspdf.min.js ***!
-  \**********************************************/
+/***/ "./node_modules/html2pdf.js/node_modules/jspdf/dist/jspdf.min.js":
+/*!***********************************************************************!*\
+  !*** ./node_modules/html2pdf.js/node_modules/jspdf/dist/jspdf.min.js ***!
+  \***********************************************************************/
 /***/ (function(module, exports, __webpack_require__) {
 
 /* provided dependency */ var process = __webpack_require__(/*! process/browser.js */ "./node_modules/process/browser.js");
@@ -40067,6 +40024,116 @@ pt="undefined"!=typeof self&&self||"undefined"!=typeof window&&window||"undefine
    * 
    */
 var St=function(){function t(){this.pos=0,this.bufferLength=0,this.eof=!1,this.buffer=null}return t.prototype={ensureBuffer:function(t){var e=this.buffer,n=e?e.byteLength:0;if(t<n)return e;for(var r=512;r<t;)r<<=1;for(var i=new Uint8Array(r),o=0;o<n;++o)i[o]=e[o];return this.buffer=i},getByte:function(){for(var t=this.pos;this.bufferLength<=t;){if(this.eof)return null;this.readBlock()}return this.buffer[this.pos++]},getBytes:function(t){var e=this.pos;if(t){this.ensureBuffer(e+t);for(var n=e+t;!this.eof&&this.bufferLength<n;)this.readBlock();var r=this.bufferLength;r<n&&(n=r)}else{for(;!this.eof;)this.readBlock();n=this.bufferLength}return this.pos=n,this.buffer.subarray(e,n)},lookChar:function(){for(var t=this.pos;this.bufferLength<=t;){if(this.eof)return null;this.readBlock()}return String.fromCharCode(this.buffer[this.pos])},getChar:function(){for(var t=this.pos;this.bufferLength<=t;){if(this.eof)return null;this.readBlock()}return String.fromCharCode(this.buffer[this.pos++])},makeSubStream:function(t,e,n){for(var r=t+e;this.bufferLength<=r&&!this.eof;)this.readBlock();return new Stream(this.buffer,t,e,n)},skip:function(t){t||(t=1),this.pos+=t},reset:function(){this.pos=0}},t}(),kt=function(){if("undefined"!=typeof Uint32Array){var F=new Uint32Array([16,17,18,0,8,7,9,6,10,5,11,4,12,3,13,2,14,1,15]),P=new Uint32Array([3,4,5,6,7,8,9,10,65547,65549,65551,65553,131091,131095,131099,131103,196643,196651,196659,196667,262211,262227,262243,262259,327811,327843,327875,327907,258,258,258]),E=new Uint32Array([1,2,3,4,65541,65543,131081,131085,196625,196633,262177,262193,327745,327777,393345,393409,459009,459137,524801,525057,590849,591361,657409,658433,724993,727041,794625,798721,868353,876545]),q=[new Uint32Array([459008,524368,524304,524568,459024,524400,524336,590016,459016,524384,524320,589984,524288,524416,524352,590048,459012,524376,524312,589968,459028,524408,524344,590032,459020,524392,524328,59e4,524296,524424,524360,590064,459010,524372,524308,524572,459026,524404,524340,590024,459018,524388,524324,589992,524292,524420,524356,590056,459014,524380,524316,589976,459030,524412,524348,590040,459022,524396,524332,590008,524300,524428,524364,590072,459009,524370,524306,524570,459025,524402,524338,590020,459017,524386,524322,589988,524290,524418,524354,590052,459013,524378,524314,589972,459029,524410,524346,590036,459021,524394,524330,590004,524298,524426,524362,590068,459011,524374,524310,524574,459027,524406,524342,590028,459019,524390,524326,589996,524294,524422,524358,590060,459015,524382,524318,589980,459031,524414,524350,590044,459023,524398,524334,590012,524302,524430,524366,590076,459008,524369,524305,524569,459024,524401,524337,590018,459016,524385,524321,589986,524289,524417,524353,590050,459012,524377,524313,589970,459028,524409,524345,590034,459020,524393,524329,590002,524297,524425,524361,590066,459010,524373,524309,524573,459026,524405,524341,590026,459018,524389,524325,589994,524293,524421,524357,590058,459014,524381,524317,589978,459030,524413,524349,590042,459022,524397,524333,590010,524301,524429,524365,590074,459009,524371,524307,524571,459025,524403,524339,590022,459017,524387,524323,589990,524291,524419,524355,590054,459013,524379,524315,589974,459029,524411,524347,590038,459021,524395,524331,590006,524299,524427,524363,590070,459011,524375,524311,524575,459027,524407,524343,590030,459019,524391,524327,589998,524295,524423,524359,590062,459015,524383,524319,589982,459031,524415,524351,590046,459023,524399,524335,590014,524303,524431,524367,590078,459008,524368,524304,524568,459024,524400,524336,590017,459016,524384,524320,589985,524288,524416,524352,590049,459012,524376,524312,589969,459028,524408,524344,590033,459020,524392,524328,590001,524296,524424,524360,590065,459010,524372,524308,524572,459026,524404,524340,590025,459018,524388,524324,589993,524292,524420,524356,590057,459014,524380,524316,589977,459030,524412,524348,590041,459022,524396,524332,590009,524300,524428,524364,590073,459009,524370,524306,524570,459025,524402,524338,590021,459017,524386,524322,589989,524290,524418,524354,590053,459013,524378,524314,589973,459029,524410,524346,590037,459021,524394,524330,590005,524298,524426,524362,590069,459011,524374,524310,524574,459027,524406,524342,590029,459019,524390,524326,589997,524294,524422,524358,590061,459015,524382,524318,589981,459031,524414,524350,590045,459023,524398,524334,590013,524302,524430,524366,590077,459008,524369,524305,524569,459024,524401,524337,590019,459016,524385,524321,589987,524289,524417,524353,590051,459012,524377,524313,589971,459028,524409,524345,590035,459020,524393,524329,590003,524297,524425,524361,590067,459010,524373,524309,524573,459026,524405,524341,590027,459018,524389,524325,589995,524293,524421,524357,590059,459014,524381,524317,589979,459030,524413,524349,590043,459022,524397,524333,590011,524301,524429,524365,590075,459009,524371,524307,524571,459025,524403,524339,590023,459017,524387,524323,589991,524291,524419,524355,590055,459013,524379,524315,589975,459029,524411,524347,590039,459021,524395,524331,590007,524299,524427,524363,590071,459011,524375,524311,524575,459027,524407,524343,590031,459019,524391,524327,589999,524295,524423,524359,590063,459015,524383,524319,589983,459031,524415,524351,590047,459023,524399,524335,590015,524303,524431,524367,590079]),9],O=[new Uint32Array([327680,327696,327688,327704,327684,327700,327692,327708,327682,327698,327690,327706,327686,327702,327694,0,327681,327697,327689,327705,327685,327701,327693,327709,327683,327699,327691,327707,327687,327703,327695,0]),5];return(t.prototype=Object.create(St.prototype)).getBits=function(t){for(var e,n=this.codeSize,r=this.codeBuf,i=this.bytes,o=this.bytesPos;n<t;)void 0===(e=i[o++])&&B("Bad encoding in flate stream"),r|=e<<n,n+=8;return e=r&(1<<t)-1,this.codeBuf=r>>t,this.codeSize=n-=t,this.bytesPos=o,e},t.prototype.getCode=function(t){for(var e=t[0],n=t[1],r=this.codeSize,i=this.codeBuf,o=this.bytes,a=this.bytesPos;r<n;){var s;void 0===(s=o[a++])&&B("Bad encoding in flate stream"),i|=s<<r,r+=8}var h=e[i&(1<<n)-1],c=h>>16,l=65535&h;return(0==r||r<c||0==c)&&B("Bad encoding in flate stream"),this.codeBuf=i>>c,this.codeSize=r-c,this.bytesPos=a,l},t.prototype.generateHuffmanTable=function(t){for(var e=t.length,n=0,r=0;r<e;++r)t[r]>n&&(n=t[r]);for(var i=1<<n,o=new Uint32Array(i),a=1,s=0,h=2;a<=n;++a,s<<=1,h<<=1)for(var c=0;c<e;++c)if(t[c]==a){var l=0,u=s;for(r=0;r<a;++r)l=l<<1|1&u,u>>=1;for(r=l;r<i;r+=h)o[r]=a<<16|c;++s}return[o,n]},t.prototype.readBlock=function(){function t(t,e,n,r,i){for(var o=t.getBits(n)+r;0<o--;)e[h++]=i}var e=this.getBits(3);if(1&e&&(this.eof=!0),0!=(e>>=1)){var n,r;if(1==e)n=q,r=O;else if(2==e){for(var i=this.getBits(5)+257,o=this.getBits(5)+1,a=this.getBits(4)+4,s=Array(F.length),h=0;h<a;)s[F[h++]]=this.getBits(3);for(var c=this.generateHuffmanTable(s),l=0,u=(h=0,i+o),f=new Array(u);h<u;){var d=this.getCode(c);16==d?t(this,f,2,3,l):17==d?t(this,f,3,3,l=0):18==d?t(this,f,7,11,l=0):f[h++]=l=d}n=this.generateHuffmanTable(f.slice(0,i)),r=this.generateHuffmanTable(f.slice(i,u))}else B("Unknown block type in flate stream");for(var p=(I=this.buffer)?I.length:0,g=this.bufferLength;;){var m=this.getCode(n);if(m<256)p<=g+1&&(p=(I=this.ensureBuffer(g+1)).length),I[g++]=m;else{if(256==m)return void(this.bufferLength=g);var w=(m=P[m-=257])>>16;0<w&&(w=this.getBits(w));l=(65535&m)+w;m=this.getCode(r),0<(w=(m=E[m])>>16)&&(w=this.getBits(w));var y=(65535&m)+w;p<=g+l&&(p=(I=this.ensureBuffer(g+l)).length);for(var v=0;v<l;++v,++g)I[g]=I[g-y]}}}else{var b,x=this.bytes,S=this.bytesPos;void 0===(b=x[S++])&&B("Bad block header in flate stream");var k=b;void 0===(b=x[S++])&&B("Bad block header in flate stream"),k|=b<<8,void 0===(b=x[S++])&&B("Bad block header in flate stream");var _=b;void 0===(b=x[S++])&&B("Bad block header in flate stream"),(_|=b<<8)!=(65535&~k)&&B("Bad uncompressed block length in flate stream"),this.codeBuf=0,this.codeSize=0;var A=this.bufferLength,I=this.ensureBuffer(A+k),C=A+k;this.bufferLength=C;for(var T=A;T<C;++T){if(void 0===(b=x[S++])){this.eof=!0;break}I[T]=b}this.bytesPos=S}},t}function B(t){throw new Error(t)}function t(t){var e=0,n=t[e++],r=t[e++];-1!=n&&-1!=r||B("Invalid header in flate stream"),8!=(15&n)&&B("Unknown compression method in flate stream"),((n<<8)+r)%31!=0&&B("Bad FCHECK in flate stream"),32&r&&B("FDICT bit set in flate stream"),this.bytes=t,this.bytesPos=2,this.codeSize=0,this.codeBuf=0,St.call(this)}}();return function(t){if("object"!=typeof t.console){t.console={};for(var e,n,r=t.console,i=function(){},o=["memory"],a="assert,clear,count,debug,dir,dirxml,error,exception,group,groupCollapsed,groupEnd,info,log,markTimeline,profile,profiles,profileEnd,show,table,time,timeEnd,timeline,timelineEnd,timeStamp,trace,warn".split(",");e=o.pop();)r[e]||(r[e]={});for(;n=a.pop();)r[n]||(r[n]=i)}var s,h,c,l,u="ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/=";void 0===t.btoa&&(t.btoa=function(t){var e,n,r,i,o,a=0,s=0,h="",c=[];if(!t)return t;for(;e=(o=t.charCodeAt(a++)<<16|t.charCodeAt(a++)<<8|t.charCodeAt(a++))>>18&63,n=o>>12&63,r=o>>6&63,i=63&o,c[s++]=u.charAt(e)+u.charAt(n)+u.charAt(r)+u.charAt(i),a<t.length;);h=c.join("");var l=t.length%3;return(l?h.slice(0,l-3):h)+"===".slice(l||3)}),void 0===t.atob&&(t.atob=function(t){var e,n,r,i,o,a,s=0,h=0,c=[];if(!t)return t;for(t+="";e=(a=u.indexOf(t.charAt(s++))<<18|u.indexOf(t.charAt(s++))<<12|(i=u.indexOf(t.charAt(s++)))<<6|(o=u.indexOf(t.charAt(s++))))>>16&255,n=a>>8&255,r=255&a,c[h++]=64==i?String.fromCharCode(e):64==o?String.fromCharCode(e,n):String.fromCharCode(e,n,r),s<t.length;);return c.join("")}),Array.prototype.map||(Array.prototype.map=function(t){if(null==this||"function"!=typeof t)throw new TypeError;for(var e=Object(this),n=e.length>>>0,r=new Array(n),i=1<arguments.length?arguments[1]:void 0,o=0;o<n;o++)o in e&&(r[o]=t.call(i,e[o],o,e));return r}),Array.isArray||(Array.isArray=function(t){return"[object Array]"===Object.prototype.toString.call(t)}),Array.prototype.forEach||(Array.prototype.forEach=function(t,e){if(null==this||"function"!=typeof t)throw new TypeError;for(var n=Object(this),r=n.length>>>0,i=0;i<r;i++)i in n&&t.call(e,n[i],i,n)}),Object.keys||(Object.keys=(s=Object.prototype.hasOwnProperty,h=!{toString:null}.propertyIsEnumerable("toString"),l=(c=["toString","toLocaleString","valueOf","hasOwnProperty","isPrototypeOf","propertyIsEnumerable","constructor"]).length,function(t){if("object"!=typeof t&&("function"!=typeof t||null===t))throw new TypeError;var e,n,r=[];for(e in t)s.call(t,e)&&r.push(e);if(h)for(n=0;n<l;n++)s.call(t,c[n])&&r.push(c[n]);return r})),"function"!=typeof Object.assign&&(Object.assign=function(t){if(null==t)throw new TypeError("Cannot convert undefined or null to object");t=Object(t);for(var e=1;e<arguments.length;e++){var n=arguments[e];if(null!=n)for(var r in n)Object.prototype.hasOwnProperty.call(n,r)&&(t[r]=n[r])}return t}),String.prototype.trim||(String.prototype.trim=function(){return this.replace(/^\s+|\s+$/g,"")}),String.prototype.trimLeft||(String.prototype.trimLeft=function(){return this.replace(/^\s+/g,"")}),String.prototype.trimRight||(String.prototype.trimRight=function(){return this.replace(/\s+$/g,"")})}("undefined"!=typeof self&&self||"undefined"!=typeof window&&window||"undefined"!=typeof __webpack_require__.g&&__webpack_require__.g||Function('return typeof this === "object" && this.content')()||Function("return this")()),$});
+
+/***/ }),
+
+/***/ "./node_modules/ieee754/index.js":
+/*!***************************************!*\
+  !*** ./node_modules/ieee754/index.js ***!
+  \***************************************/
+/***/ (function(__unused_webpack_module, exports) {
+
+/*! ieee754. BSD-3-Clause License. Feross Aboukhadijeh <https://feross.org/opensource> */
+exports.read = function (buffer, offset, isLE, mLen, nBytes) {
+  var e, m
+  var eLen = (nBytes * 8) - mLen - 1
+  var eMax = (1 << eLen) - 1
+  var eBias = eMax >> 1
+  var nBits = -7
+  var i = isLE ? (nBytes - 1) : 0
+  var d = isLE ? -1 : 1
+  var s = buffer[offset + i]
+
+  i += d
+
+  e = s & ((1 << (-nBits)) - 1)
+  s >>= (-nBits)
+  nBits += eLen
+  for (; nBits > 0; e = (e * 256) + buffer[offset + i], i += d, nBits -= 8) {}
+
+  m = e & ((1 << (-nBits)) - 1)
+  e >>= (-nBits)
+  nBits += mLen
+  for (; nBits > 0; m = (m * 256) + buffer[offset + i], i += d, nBits -= 8) {}
+
+  if (e === 0) {
+    e = 1 - eBias
+  } else if (e === eMax) {
+    return m ? NaN : ((s ? -1 : 1) * Infinity)
+  } else {
+    m = m + Math.pow(2, mLen)
+    e = e - eBias
+  }
+  return (s ? -1 : 1) * m * Math.pow(2, e - mLen)
+}
+
+exports.write = function (buffer, value, offset, isLE, mLen, nBytes) {
+  var e, m, c
+  var eLen = (nBytes * 8) - mLen - 1
+  var eMax = (1 << eLen) - 1
+  var eBias = eMax >> 1
+  var rt = (mLen === 23 ? Math.pow(2, -24) - Math.pow(2, -77) : 0)
+  var i = isLE ? 0 : (nBytes - 1)
+  var d = isLE ? 1 : -1
+  var s = value < 0 || (value === 0 && 1 / value < 0) ? 1 : 0
+
+  value = Math.abs(value)
+
+  if (isNaN(value) || value === Infinity) {
+    m = isNaN(value) ? 1 : 0
+    e = eMax
+  } else {
+    e = Math.floor(Math.log(value) / Math.LN2)
+    if (value * (c = Math.pow(2, -e)) < 1) {
+      e--
+      c *= 2
+    }
+    if (e + eBias >= 1) {
+      value += rt / c
+    } else {
+      value += rt * Math.pow(2, 1 - eBias)
+    }
+    if (value * c >= 2) {
+      e++
+      c /= 2
+    }
+
+    if (e + eBias >= eMax) {
+      m = 0
+      e = eMax
+    } else if (e + eBias >= 1) {
+      m = ((value * c) - 1) * Math.pow(2, mLen)
+      e = e + eBias
+    } else {
+      m = value * Math.pow(2, eBias - 1) * Math.pow(2, mLen)
+      e = 0
+    }
+  }
+
+  for (; mLen >= 8; buffer[offset + i] = m & 0xff, i += d, m /= 256, mLen -= 8) {}
+
+  e = (e << mLen) | m
+  eLen += mLen
+  for (; eLen > 0; buffer[offset + i] = e & 0xff, i += d, e /= 256, eLen -= 8) {}
+
+  buffer[offset + i - d] |= s * 128
+}
+
+
+/***/ }),
+
+/***/ "./node_modules/isarray/index.js":
+/*!***************************************!*\
+  !*** ./node_modules/isarray/index.js ***!
+  \***************************************/
+/***/ (function(module) {
+
+var toString = {}.toString;
+
+module.exports = Array.isArray || function (arr) {
+  return toString.call(arr) == '[object Array]';
+};
+
 
 /***/ }),
 
@@ -40669,7 +40736,7 @@ __webpack_require__.r(__webpack_exports__);
 
 var ___CSS_LOADER_EXPORT___ = _node_modules_laravel_mix_node_modules_css_loader_dist_runtime_api_js__WEBPACK_IMPORTED_MODULE_0___default()(function(i){return i[1]});
 // Module
-___CSS_LOADER_EXPORT___.push([module.id, ".reports h2[data-v-0d7aee70] {\n  margin-bottom: 0;\n}\n.reports__title[data-v-0d7aee70] {\n  display: flex;\n  align-items: center;\n  justify-content: space-between;\n}\n.reports__icons[data-v-0d7aee70] {\n  display: flex;\n  align-items: center;\n}\n.reports__icon[data-v-0d7aee70] {\n  display: flex;\n  align-items: center;\n  justify-content: center;\n  width: 44px;\n  height: 44px;\n  border: 1px solid #030087;\n  border-radius: 5px;\n  transition: ease-in-out 0.25s;\n  margin-right: 15px;\n}\n.reports__icon[data-v-0d7aee70]:last-of-type {\n  margin-right: 0;\n}\n.reports__icon[data-v-0d7aee70]:hover {\n  background: #030087;\n}\n.reports__icon:hover svg[data-v-0d7aee70] {\n  fill: #fff;\n}\n.reports__icon svg[data-v-0d7aee70] {\n  fill: #030087;\n  transition: ease-in-out 0.25s;\n}\n.reports__add[data-v-0d7aee70] {\n  margin-top: 25px;\n  cursor: pointer;\n}\n.reports__add-title[data-v-0d7aee70] {\n  font-size: 14px;\n  line-height: 18px;\n  color: #222222;\n  font-weight: 600;\n}\n.reports__add-btn[data-v-0d7aee70] {\n  width: 100%;\n  height: 80px;\n  display: flex;\n  justify-content: center;\n  align-items: center;\n  border: 1px dashed #030087;\n  border-radius: 7px;\n  margin-top: 10px;\n}\n@media (max-width: 1170px) {\n.page-glob[data-v-0d7aee70] {\n    padding-left: 0;\n}\n.wrap-glob[data-v-0d7aee70] {\n    width: calc(100% - 100px);\n}\n.reports__title[data-v-0d7aee70] {\n    flex-direction: column;\n}\n.reports__title h2[data-v-0d7aee70] {\n    font-size: 24px;\n    line-height: 31px;\n}\n.reports__title .reports__icons[data-v-0d7aee70] {\n    width: 100%;\n    margin-top: 30px;\n}\n.reports__title .reports__icon[data-v-0d7aee70] {\n    width: 33.33333%;\n}\n}\n", ""]);
+___CSS_LOADER_EXPORT___.push([module.id, ".reports h2[data-v-0d7aee70] {\n  margin-bottom: 0;\n}\n.reports__title[data-v-0d7aee70] {\n  display: flex;\n  align-items: center;\n  justify-content: space-between;\n}\n.reports__icons[data-v-0d7aee70] {\n  display: flex;\n  align-items: center;\n}\n.reports__icon[data-v-0d7aee70] {\n  display: flex;\n  align-items: center;\n  justify-content: center;\n  width: 44px;\n  height: 44px;\n  border: 1px solid #030087;\n  border-radius: 5px;\n  transition: ease-in-out 0.25s;\n  margin-right: 15px;\n}\n.reports__icon[data-v-0d7aee70]:last-of-type {\n  margin-right: 0;\n}\n.reports__icon[data-v-0d7aee70]:hover {\n  background: #030087;\n}\n.reports__icon:hover svg[data-v-0d7aee70] {\n  fill: #fff;\n}\n.reports__icon svg[data-v-0d7aee70] {\n  fill: #030087;\n  transition: ease-in-out 0.25s;\n}\n.reports__add[data-v-0d7aee70] {\n  margin-top: 25px;\n  cursor: pointer;\n}\n.reports__add-title[data-v-0d7aee70] {\n  font-size: 14px;\n  line-height: 18px;\n  color: #222222;\n  font-weight: 600;\n}\n.reports__add-btn[data-v-0d7aee70] {\n  width: 100%;\n  height: 80px;\n  display: flex;\n  justify-content: center;\n  align-items: center;\n  border: 1px dashed #030087;\n  border-radius: 7px;\n  margin-top: 10px;\n}\n@media (max-width: 1170px) {\n.page-glob[data-v-0d7aee70] {\n    padding-left: 0;\n}\n.wrap-glob[data-v-0d7aee70] {\n    width: calc(100% - 100px);\n}\n.reports__title[data-v-0d7aee70] {\n    flex-direction: column;\n}\n.reports__title h2[data-v-0d7aee70] {\n    font-size: 24px;\n    line-height: 31px;\n}\n.reports__title .reports__icons[data-v-0d7aee70] {\n    width: 100%;\n    margin-top: 30px;\n}\n.reports__title .reports__icon[data-v-0d7aee70] {\n    width: 33.33333%;\n}\n}\n.pdf-view[data-v-0d7aee70] {\n  position: fixed;\n  top: 0;\n  left: 0;\n  overflow: auto;\n  display: none;\n  z-index: 100000;\n  width: 100%;\n  height: 100%;\n}\n.pdf-view iframe[data-v-0d7aee70] {\n  width: 100%;\n  height: 100%;\n}\n.pdf-view.active[data-v-0d7aee70] {\n  display: block;\n}\n.closePdf[data-v-0d7aee70] {\n  position: fixed;\n  top: 100px;\n  right: 100px;\n  cursor: pointer;\n}\n", ""]);
 // Exports
 /* harmony default export */ __webpack_exports__["default"] = (___CSS_LOADER_EXPORT___);
 

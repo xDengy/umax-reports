@@ -94,7 +94,7 @@ section {
   width: 100%;
   display: flex;
   flex-direction: column;
-  height: 50%;
+  height: 100%;
 }
 
 section.contacts {
@@ -422,6 +422,10 @@ tr {
   width: 206px;
   min-height: 206px;
   min-width: 206px;
+  color: transparent;
+  background-position: center;
+  background-repeat: no-repeat;
+  background-size: cover;
 }
 
 .user__image img {
