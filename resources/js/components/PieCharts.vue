@@ -11,11 +11,26 @@
       <p>x</p>
       <div class="table-label__size__columns">
         <label>столбцы</label>
-        <input readonly type="text" value="4" id="td">
+        <input readonly type="text" value="3" id="td">
       </div>
     </div>
   </div>
+  <div class="table-label__size__columns graph-name">
+    <label>Название диаграммы</label>
+    <input type="text" :value="name" placeholder="Название диаграммы">
+  </div>
   <div class="table-pieCharts">
+    <div class="table-pieCharts__titles">
+      <div class="table-pieCharts__elements table-pieCharts__elements--col">
+        Название элемента
+      </div>
+      <div class="table-pieCharts__elements table-pieCharts__elements--col">
+        Значение элемента
+      </div>
+      <div class="table-pieCharts__elements table-pieCharts__elements--col">
+        Цвет элемента
+      </div>
+    </div>
     <div class="table-pieCharts__titles" v-for="i in tr" :key="i">
       <div v-for="index in td" :key="index" :class="'table-pieCharts__elements table-pieCharts__elements--col' + index">
         <input type="text" :value="values ? tables[i - 1][index - 1] : null">
@@ -30,7 +45,8 @@ export default {
   props: ["values"],
   data: () => ({
     tr: 3,
-    td: 4,
+    td: 3,
+    name: null,
     tables: [
     ],
   }),
@@ -39,13 +55,16 @@ export default {
       let curTable = []
       let tr = this.values[0]
       let td = this.values[1]
+      let name = this.values[2]
       delete this.values[0]
       delete this.values[1]
+      delete this.values[2]
       let curValues = array_values(this.values)
       curTable = split(curValues, td)
       this.tables = curTable
       this.tr = this.tables.length
       this.td = this.tables[0].length
+      this.name = name
     }
   },
   methods: {
@@ -204,5 +223,15 @@ function array_values( input ) {
   top: 12px;
   right: -25px;
   position: absolute;
+}
+.graph-name {
+  margin-bottom: 15px;
+}
+.graph-name label {
+  text-align: center;
+}
+.graph-name input {
+  width: fit-content;
+  padding: 0 10px;
 }
 </style>

@@ -121,12 +121,8 @@
           </svg>
         </div>
       </div>
-      <div id="save">
-        Сохранено
-      </div>
-      <div id="report-error">
-        Ошибка
-      </div>
+      <div id="save">Сохранено</div>
+      <div id="report-error">Ошибка</div>
     </div>
   </section>
 </template>
@@ -151,20 +147,21 @@ export default {
       .getAttribute("content"),
   }),
   beforeMount() {
-    document.querySelector('title').textContent = 'Отчёт по SEO продвижению'
-    let id = this.id[this.id.length - 1]
-    axios.post('/api/getReportElements',
-    {
-      id: id,
-      user: this.user
-    }).then(result => {
-      if(result.data) {
-        if(result.data.values) {
-          this.current = JSON.parse(result.data.values);
+    document.querySelector("title").textContent = "Отчёт по SEO продвижению";
+    let id = this.id[this.id.length - 1];
+    axios
+      .post("/api/getReportElements", {
+        id: id,
+        user: this.user,
+      })
+      .then((result) => {
+        if (result.data) {
+          if (result.data.values) {
+            this.current = JSON.parse(result.data.values);
+          }
         }
-      }
-      this.$refs.menuList.updateAr(this.current);
-    })
+        this.$refs.menuList.updateAr(this.current);
+      });
   },
   methods: {
     screenDelete(i, current = this.current) {
@@ -184,10 +181,12 @@ export default {
       this.current[el.id].title = el.title;
     },
     addSreen() {
-      this.current.push([{
-        id: this.current.length,
-        title: this.current.length + 1 + " экран",
-      }]);
+      this.current.push([
+        {
+          id: this.current.length,
+          title: this.current.length + 1 + " экран",
+        },
+      ]);
       this.$refs.menuList.updateAr(this.current);
     },
     screenDown(res) {
@@ -197,9 +196,9 @@ export default {
           res.newIndex,
           res.oldIndex
         );
-        
+
         this.$refs.menuList.updateAr(this.current);
-        this.changeWrap(res, 'screenDown');
+        this.changeWrap(res, "screenDown");
       }
     },
     screenUp(res) {
@@ -209,14 +208,17 @@ export default {
           res.newIndex,
           res.oldIndex
         );
-        
+
         this.$refs.menuList.updateAr(this.current);
-        this.changeWrap(res, 'screenUp');
+        this.changeWrap(res, "screenUp");
       }
     },
     changeWrap(res, method) {
       let screens = document.querySelectorAll(".screen");
-      screens[res.newIndex].parentNode.insertBefore(screens[res.newIndex], screens[res.oldIndex])
+      screens[res.newIndex].parentNode.insertBefore(
+        screens[res.newIndex],
+        screens[res.oldIndex]
+      );
     },
     array_move(arr, old_index, new_index) {
       while (old_index < 0) {
@@ -243,30 +245,88 @@ export default {
       for (let i = 0; i < arLength; i++) {
         arr[arr.length - 1].sort.push(arr[i].title);
       }
-      axios.post("/api/reportElements", arr, {
-        headers: {
-          "Content-Type": "multipart/form-data",
-        },
-      }).then(res => {
-        let save = document.querySelector('#save')
-        save.classList.add('active')
-        setTimeout(() => {
-          save.classList.remove('active')
-        }, 1000);
-      })
-      .catch(res => {
-        let error = document.querySelector('#report-error')
-        error.classList.add('active')
-        setTimeout(() => {
-          error.classList.remove('active')
-        }, 1000);
-      });
+      axios
+        .post("/api/reportElements", arr, {
+          headers: {
+            "Content-Type": "multipart/form-data",
+          },
+        })
+        .then((res) => {
+          let save = document.querySelector("#save");
+          save.classList.add("active");
+          setTimeout(() => {
+            save.classList.remove("active");
+          }, 1000);
+        })
+        .catch((res) => {
+          let error = document.querySelector("#report-error");
+          error.classList.add("active");
+          setTimeout(() => {
+            error.classList.remove("active");
+          }, 1000);
+        });
     },
     generateReport() {
       let arr = this.generateArray();
       let id = this.id[this.id.length - 1];
-      axios.get("/api/getPdf/" + id)
-      // html2Pdf(res)
+      axios.get("/api/getPdf/" + id).then((res) => {
+        let dom = new DOMParser()
+          .parseFromString(res.data, "text/xml")
+          .querySelector("html");
+        let html = document.createElement("html");
+        html.innerHTML = dom.innerHTML;
+        html.style.width = "1920px";
+
+        // html2Pdf(html, {
+        //   margin: 10,
+        //   filename: 'test.pdf',
+        //   image: { type: 'jpeg', quality: 1.00 },
+        //   jsPDF: { unit: 'pt', format: 'a3', orientation: 'portrait' },
+        //   enableLinks: true
+        // });
+
+        // const options = {
+        //   html2canvas: {
+        //     width: 1920,
+        //     scale: 1,
+        //     letterRendering: true,
+        //     height: 1080 * html.querySelectorAll('section').length
+        //   },
+        //   margin: [0, 15, 15, 15],
+        //   filename: "pdfFileName.pdf",
+        //   image: { type: "jpeg", quality: 0.98 },
+        //   jsPDF: { unit: "pt", format: "letter", orientation: "portrait" },
+        //   pagebreak: { after: "section", mode: ["avoid-all", "css", "legacy"] },
+        //   enableLinks: true,
+        // };
+
+        // const options = {
+        //   html2canvas: {
+        //     width: 1920,
+        //     enableLinks: true,
+        //     height: html.querySelectorAll('section').length * 1080
+        //   },
+        //   pagebreak: { mode: mode },
+        //   enableLinks: true,
+        // };
+        let mode = 'legacy'
+        var pagebreak = (mode === 'specify') ?
+            { mode: '', before: '.before', after: '.after', avoid: '.avoid' } :
+        { mode: mode };
+
+        console.log(html);
+
+        // html2pdf().from(html).set(options).toPdf().get('pdf').save()
+        html2pdf().from(html).set({
+          filename: 'mypdf.pdf',
+          html2canvas: {
+            width: 1920,
+            enableLinks: true,
+            height: html.querySelectorAll('page').length * 2480
+          },
+          jsPDF: {orientation: 'portrait', unit: 'in', format: 'letter', compressPDF: true}
+        }).save();
+      });
     },
     generateArray() {
       let screens = document.querySelectorAll(".screen");
@@ -283,17 +343,14 @@ export default {
           if (!elementRow[j].innerHTML) {
             continue;
           }
-          let screenImg = elementRow[j].parentNode.querySelector(
-            ".image__wrapper"
-          );
-          let imgInput = screenImg.querySelector('.input__file')
-          let screenImgFile
-          if(typeof imgInput.files[0] == 'undefined') {
-            let img = imgInput.parentNode.querySelector('img')
-            screenImgFile = img.getAttribute('src');
-          }
-          else
-            screenImgFile = imgInput.files[0];
+          let screenImg =
+            elementRow[j].parentNode.querySelector(".image__wrapper");
+          let imgInput = screenImg.querySelector(".input__file");
+          let screenImgFile;
+          if (typeof imgInput.files[0] == "undefined") {
+            let img = imgInput.parentNode.querySelector("img");
+            screenImgFile = img.getAttribute("src");
+          } else screenImgFile = imgInput.files[0];
 
           let elementItem = elementRow[j].querySelectorAll(".elements-item");
           arr[i][j] = {
@@ -315,12 +372,10 @@ export default {
             };
             for (let v = 0; v < inputValue.length; v++) {
               if (inputValue[v].getAttribute("type") == "file") {
-                if(typeof inputValue[v].files[0] == 'undefined') {
-                  let img = inputValue[v].parentNode.querySelector('img')
-                  arr[i][j].elements[z].value.push(img.getAttribute('src'));
-                }
-                else
-                  arr[i][j].elements[z].value.push(inputValue[v].files[0]);
+                if (typeof inputValue[v].files[0] == "undefined") {
+                  let img = inputValue[v].parentNode.querySelector("img");
+                  arr[i][j].elements[z].value.push(img.getAttribute("src"));
+                } else arr[i][j].elements[z].value.push(inputValue[v].files[0]);
               } else {
                 arr[i][j].elements[z].value.push(inputValue[v].value);
               }

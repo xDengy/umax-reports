@@ -20653,7 +20653,8 @@ function _arrayWithHoles(arr) { if (Array.isArray(arr)) return arr; }
   data: function data() {
     return {
       tr: 3,
-      td: 4,
+      td: 3,
+      name: null,
       tables: []
     };
   },
@@ -20662,13 +20663,16 @@ function _arrayWithHoles(arr) { if (Array.isArray(arr)) return arr; }
       var curTable = [];
       var tr = this.values[0];
       var td = this.values[1];
+      var name = this.values[2];
       delete this.values[0];
       delete this.values[1];
+      delete this.values[2];
       var curValues = array_values(this.values);
       curTable = split(curValues, td);
       this.tables = curTable;
       this.tr = this.tables.length;
       this.td = this.tables[0].length;
+      this.name = name;
     }
   },
   methods: {
@@ -21700,9 +21704,9 @@ __webpack_require__.r(__webpack_exports__);
   beforeMount: function beforeMount() {
     var _this = this;
 
-    document.querySelector('title').textContent = 'Отчёт по SEO продвижению';
+    document.querySelector("title").textContent = "Отчёт по SEO продвижению";
     var id = this.id[this.id.length - 1];
-    axios.post('/api/getReportElements', {
+    axios.post("/api/getReportElements", {
       id: id,
       user: this.user
     }).then(function (result) {
@@ -21744,14 +21748,14 @@ __webpack_require__.r(__webpack_exports__);
       if (res) {
         this.current = this.array_move(this.current, res.newIndex, res.oldIndex);
         this.$refs.menuList.updateAr(this.current);
-        this.changeWrap(res, 'screenDown');
+        this.changeWrap(res, "screenDown");
       }
     },
     screenUp: function screenUp(res) {
       if (res) {
         this.current = this.array_move(this.current, res.newIndex, res.oldIndex);
         this.$refs.menuList.updateAr(this.current);
-        this.changeWrap(res, 'screenUp');
+        this.changeWrap(res, "screenUp");
       }
     },
     changeWrap: function changeWrap(res, method) {
@@ -21798,23 +21802,83 @@ __webpack_require__.r(__webpack_exports__);
           "Content-Type": "multipart/form-data"
         }
       }).then(function (res) {
-        var save = document.querySelector('#save');
-        save.classList.add('active');
+        var save = document.querySelector("#save");
+        save.classList.add("active");
         setTimeout(function () {
-          save.classList.remove('active');
+          save.classList.remove("active");
         }, 1000);
       })["catch"](function (res) {
-        var error = document.querySelector('#report-error');
-        error.classList.add('active');
+        var error = document.querySelector("#report-error");
+        error.classList.add("active");
         setTimeout(function () {
-          error.classList.remove('active');
+          error.classList.remove("active");
         }, 1000);
       });
     },
     generateReport: function generateReport() {
       var arr = this.generateArray();
       var id = this.id[this.id.length - 1];
-      axios.get("/api/getPdf/" + id); // html2Pdf(res)
+      axios.get("/api/getPdf/" + id).then(function (res) {
+        var dom = new DOMParser().parseFromString(res.data, "text/xml").querySelector("html");
+        var html = document.createElement("html");
+        html.innerHTML = dom.innerHTML;
+        html.style.width = "1920px"; // html2Pdf(html, {
+        //   margin: 10,
+        //   filename: 'test.pdf',
+        //   image: { type: 'jpeg', quality: 1.00 },
+        //   jsPDF: { unit: 'pt', format: 'a3', orientation: 'portrait' },
+        //   enableLinks: true
+        // });
+        // const options = {
+        //   html2canvas: {
+        //     width: 1920,
+        //     scale: 1,
+        //     letterRendering: true,
+        //     height: 1080 * html.querySelectorAll('section').length
+        //   },
+        //   margin: [0, 15, 15, 15],
+        //   filename: "pdfFileName.pdf",
+        //   image: { type: "jpeg", quality: 0.98 },
+        //   jsPDF: { unit: "pt", format: "letter", orientation: "portrait" },
+        //   pagebreak: { after: "section", mode: ["avoid-all", "css", "legacy"] },
+        //   enableLinks: true,
+        // };
+        // const options = {
+        //   html2canvas: {
+        //     width: 1920,
+        //     enableLinks: true,
+        //     height: html.querySelectorAll('section').length * 1080
+        //   },
+        //   pagebreak: { mode: mode },
+        //   enableLinks: true,
+        // };
+
+        var mode = 'legacy';
+        var pagebreak = mode === 'specify' ? {
+          mode: '',
+          before: '.before',
+          after: '.after',
+          avoid: '.avoid'
+        } : {
+          mode: mode
+        };
+        console.log(html); // html2pdf().from(html).set(options).toPdf().get('pdf').save()
+
+        html2pdf().from(html).set({
+          filename: 'mypdf.pdf',
+          html2canvas: {
+            width: 1920,
+            enableLinks: true,
+            height: html.querySelectorAll('page').length * 2480
+          },
+          jsPDF: {
+            orientation: 'portrait',
+            unit: 'in',
+            format: 'letter',
+            compressPDF: true
+          }
+        }).save();
+      });
     },
     generateArray: function generateArray() {
       var screens = document.querySelectorAll(".screen");
@@ -21833,12 +21897,12 @@ __webpack_require__.r(__webpack_exports__);
           }
 
           var screenImg = elementRow[j].parentNode.querySelector(".image__wrapper");
-          var imgInput = screenImg.querySelector('.input__file');
+          var imgInput = screenImg.querySelector(".input__file");
           var screenImgFile = void 0;
 
-          if (typeof imgInput.files[0] == 'undefined') {
-            var img = imgInput.parentNode.querySelector('img');
-            screenImgFile = img.getAttribute('src');
+          if (typeof imgInput.files[0] == "undefined") {
+            var img = imgInput.parentNode.querySelector("img");
+            screenImgFile = img.getAttribute("src");
           } else screenImgFile = imgInput.files[0];
 
           var elementItem = elementRow[j].querySelectorAll(".elements-item");
@@ -21865,10 +21929,10 @@ __webpack_require__.r(__webpack_exports__);
 
             for (var v = 0; v < inputValue.length; v++) {
               if (inputValue[v].getAttribute("type") == "file") {
-                if (typeof inputValue[v].files[0] == 'undefined') {
-                  var _img = inputValue[v].parentNode.querySelector('img');
+                if (typeof inputValue[v].files[0] == "undefined") {
+                  var _img = inputValue[v].parentNode.querySelector("img");
 
-                  arr[i][j].elements[z].value.push(_img.getAttribute('src'));
+                  arr[i][j].elements[z].value.push(_img.getAttribute("src"));
                 } else arr[i][j].elements[z].value.push(inputValue[v].files[0]);
               } else {
                 arr[i][j].elements[z].value.push(inputValue[v].value);
@@ -23698,7 +23762,7 @@ var _hoisted_8 = /*#__PURE__*/_withScopeId(function () {
   }, [/*#__PURE__*/(0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("label", null, "столбцы"), /*#__PURE__*/(0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("input", {
     readonly: "",
     type: "text",
-    value: "4",
+    value: "3",
     id: "td"
   })], -1
   /* HOISTED */
@@ -23706,9 +23770,35 @@ var _hoisted_8 = /*#__PURE__*/_withScopeId(function () {
 });
 
 var _hoisted_9 = {
+  "class": "table-label__size__columns graph-name"
+};
+
+var _hoisted_10 = /*#__PURE__*/_withScopeId(function () {
+  return /*#__PURE__*/(0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("label", null, "Название диаграммы", -1
+  /* HOISTED */
+  );
+});
+
+var _hoisted_11 = ["value"];
+var _hoisted_12 = {
   "class": "table-pieCharts"
 };
-var _hoisted_10 = ["value"];
+
+var _hoisted_13 = /*#__PURE__*/_withScopeId(function () {
+  return /*#__PURE__*/(0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("div", {
+    "class": "table-pieCharts__titles"
+  }, [/*#__PURE__*/(0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("div", {
+    "class": "table-pieCharts__elements table-pieCharts__elements--col"
+  }, " Название элемента "), /*#__PURE__*/(0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("div", {
+    "class": "table-pieCharts__elements table-pieCharts__elements--col"
+  }, " Значение элемента "), /*#__PURE__*/(0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("div", {
+    "class": "table-pieCharts__elements table-pieCharts__elements--col"
+  }, " Цвет элемента ")], -1
+  /* HOISTED */
+  );
+});
+
+var _hoisted_14 = ["value"];
 function render(_ctx, _cache, $props, $setup, $data, $options) {
   return (0,vue__WEBPACK_IMPORTED_MODULE_0__.openBlock)(), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementBlock)(vue__WEBPACK_IMPORTED_MODULE_0__.Fragment, null, [(0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("div", _hoisted_1, [_hoisted_2, (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("div", _hoisted_3, [(0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("div", _hoisted_4, [_hoisted_5, (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("input", {
     maxlength: "3",
@@ -23720,7 +23810,13 @@ function render(_ctx, _cache, $props, $setup, $data, $options) {
     })
   }, null, 40
   /* PROPS, HYDRATE_EVENTS */
-  , _hoisted_6)]), _hoisted_7, _hoisted_8])]), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("div", _hoisted_9, [((0,vue__WEBPACK_IMPORTED_MODULE_0__.openBlock)(true), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementBlock)(vue__WEBPACK_IMPORTED_MODULE_0__.Fragment, null, (0,vue__WEBPACK_IMPORTED_MODULE_0__.renderList)(_ctx.tr, function (i) {
+  , _hoisted_6)]), _hoisted_7, _hoisted_8])]), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("div", _hoisted_9, [_hoisted_10, (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("input", {
+    type: "text",
+    value: _ctx.name,
+    placeholder: "Название диаграммы"
+  }, null, 8
+  /* PROPS */
+  , _hoisted_11)]), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("div", _hoisted_12, [_hoisted_13, ((0,vue__WEBPACK_IMPORTED_MODULE_0__.openBlock)(true), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementBlock)(vue__WEBPACK_IMPORTED_MODULE_0__.Fragment, null, (0,vue__WEBPACK_IMPORTED_MODULE_0__.renderList)(_ctx.tr, function (i) {
     return (0,vue__WEBPACK_IMPORTED_MODULE_0__.openBlock)(), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementBlock)("div", {
       "class": "table-pieCharts__titles",
       key: i
@@ -23733,7 +23829,7 @@ function render(_ctx, _cache, $props, $setup, $data, $options) {
         value: $props.values ? _ctx.tables[i - 1][index - 1] : null
       }, null, 8
       /* PROPS */
-      , _hoisted_10)], 2
+      , _hoisted_14)], 2
       /* CLASS */
       );
     }), 128
@@ -26875,7 +26971,7 @@ var _hoisted_14 = [_hoisted_13];
 var _hoisted_15 = /*#__PURE__*/_withScopeId(function () {
   return /*#__PURE__*/(0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("div", {
     id: "save"
-  }, " Сохранено ", -1
+  }, "Сохранено", -1
   /* HOISTED */
   );
 });
@@ -26883,7 +26979,7 @@ var _hoisted_15 = /*#__PURE__*/_withScopeId(function () {
 var _hoisted_16 = /*#__PURE__*/_withScopeId(function () {
   return /*#__PURE__*/(0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("div", {
     id: "report-error"
-  }, " Ошибка ", -1
+  }, "Ошибка", -1
   /* HOISTED */
   );
 });
@@ -40228,7 +40324,7 @@ __webpack_require__.r(__webpack_exports__);
 
 var ___CSS_LOADER_EXPORT___ = _node_modules_laravel_mix_node_modules_css_loader_dist_runtime_api_js__WEBPACK_IMPORTED_MODULE_0___default()(function(i){return i[1]});
 // Module
-___CSS_LOADER_EXPORT___.push([module.id, ".table-label[data-v-4f71aaa6] {\n  display: flex;\n  align-items: flex-end;\n  margin-bottom: 15px;\n}\n.table-label__title[data-v-4f71aaa6] {\n  font-weight: 600;\n  font-size: 18px;\n  line-height: 20px;\n}\n.table-label__size[data-v-4f71aaa6] {\n  display: flex;\n  align-items: flex-end;\n  margin-left: 10px;\n}\n.table-label__size__columns[data-v-4f71aaa6] {\n  display: flex;\n  flex-direction: column;\n  align-items: center;\n}\n.table-label__size__columns label[data-v-4f71aaa6] {\n  font-weight: 700;\n  font-size: 8px;\n  line-height: 10px;\n}\n.table-label__size__columns input[data-v-4f71aaa6] {\n  width: 51px;\n  height: 20px;\n  border: 1px solid rgba(3, 0, 135, 0.3);\n  border-radius: 5px;\n  padding: 11px 11px;\n}\n.table-label__size p[data-v-4f71aaa6] {\n  font-weight: 600;\n  font-size: 16px;\n  line-height: 20px;\n  margin: 0 5px;\n}\n.table-pieCharts[data-v-4f71aaa6] {\n  margin: 0 auto;\n}\n.table-pieCharts__titles[data-v-4f71aaa6] {\n  border: 1px solid #030087;\n  border-right: none;\n  border-top: none;\n  display: flex;\n}\n.table-pieCharts__titles[data-v-4f71aaa6]:nth-child(1) {\n  border-radius: 5px 5px 0px 0px;\n  border-top: 1px solid #030087;\n}\n.table-pieCharts__titles[data-v-4f71aaa6]:nth-child(2n) {\n  background: #DAE5FF;\n}\n.table-pieCharts__titles[data-v-4f71aaa6]:last-child {\n  border-radius: 0px 0px 5px 5px;\n}\n.table-pieCharts__elements[data-v-4f71aaa6] {\n  width: 125px;\n  display: flex;\n  justify-content: center;\n  text-align: center;\n  border-right: 1px solid #030087;\n}\n.table-pieCharts__elements--col1[data-v-4f71aaa6] {\n  padding: 12px;\n}\n.table-pieCharts__elements--col2[data-v-4f71aaa6] {\n  padding: 12px;\n}\n.table-pieCharts__elements--col3[data-v-4f71aaa6] {\n  padding: 12px;\n}\n.table-pieCharts__elements input[data-v-4f71aaa6] {\n  color: #222222;\n  height: auto;\n  border: none;\n  margin-top: 0;\n  background: transparent;\n  font-weight: 600;\n  font-size: 16px;\n  line-height: 20px;\n  width: 100%;\n}\n.table-label__size[data-v-4f71aaa6] {\n  position: relative;\n}\n.table-label .close[data-v-4f71aaa6] {\n  top: 12px;\n  right: -25px;\n  position: absolute;\n}\n", ""]);
+___CSS_LOADER_EXPORT___.push([module.id, ".table-label[data-v-4f71aaa6] {\n  display: flex;\n  align-items: flex-end;\n  margin-bottom: 15px;\n}\n.table-label__title[data-v-4f71aaa6] {\n  font-weight: 600;\n  font-size: 18px;\n  line-height: 20px;\n}\n.table-label__size[data-v-4f71aaa6] {\n  display: flex;\n  align-items: flex-end;\n  margin-left: 10px;\n}\n.table-label__size__columns[data-v-4f71aaa6] {\n  display: flex;\n  flex-direction: column;\n  align-items: center;\n}\n.table-label__size__columns label[data-v-4f71aaa6] {\n  font-weight: 700;\n  font-size: 8px;\n  line-height: 10px;\n}\n.table-label__size__columns input[data-v-4f71aaa6] {\n  width: 51px;\n  height: 20px;\n  border: 1px solid rgba(3, 0, 135, 0.3);\n  border-radius: 5px;\n  padding: 11px 11px;\n}\n.table-label__size p[data-v-4f71aaa6] {\n  font-weight: 600;\n  font-size: 16px;\n  line-height: 20px;\n  margin: 0 5px;\n}\n.table-pieCharts[data-v-4f71aaa6] {\n  margin: 0 auto;\n}\n.table-pieCharts__titles[data-v-4f71aaa6] {\n  border: 1px solid #030087;\n  border-right: none;\n  border-top: none;\n  display: flex;\n}\n.table-pieCharts__titles[data-v-4f71aaa6]:nth-child(1) {\n  border-radius: 5px 5px 0px 0px;\n  border-top: 1px solid #030087;\n}\n.table-pieCharts__titles[data-v-4f71aaa6]:nth-child(2n) {\n  background: #DAE5FF;\n}\n.table-pieCharts__titles[data-v-4f71aaa6]:last-child {\n  border-radius: 0px 0px 5px 5px;\n}\n.table-pieCharts__elements[data-v-4f71aaa6] {\n  width: 125px;\n  display: flex;\n  justify-content: center;\n  text-align: center;\n  border-right: 1px solid #030087;\n}\n.table-pieCharts__elements--col1[data-v-4f71aaa6] {\n  padding: 12px;\n}\n.table-pieCharts__elements--col2[data-v-4f71aaa6] {\n  padding: 12px;\n}\n.table-pieCharts__elements--col3[data-v-4f71aaa6] {\n  padding: 12px;\n}\n.table-pieCharts__elements input[data-v-4f71aaa6] {\n  color: #222222;\n  height: auto;\n  border: none;\n  margin-top: 0;\n  background: transparent;\n  font-weight: 600;\n  font-size: 16px;\n  line-height: 20px;\n  width: 100%;\n}\n.table-label__size[data-v-4f71aaa6] {\n  position: relative;\n}\n.table-label .close[data-v-4f71aaa6] {\n  top: 12px;\n  right: -25px;\n  position: absolute;\n}\n.graph-name[data-v-4f71aaa6] {\n  margin-bottom: 15px;\n}\n.graph-name label[data-v-4f71aaa6] {\n  text-align: center;\n}\n.graph-name input[data-v-4f71aaa6] {\n  width: -moz-fit-content;\n  width: fit-content;\n  padding: 0 10px;\n}\n", ""]);
 // Exports
 /* harmony default export */ __webpack_exports__["default"] = (___CSS_LOADER_EXPORT___);
 

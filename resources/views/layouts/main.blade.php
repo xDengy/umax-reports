@@ -18,5 +18,6 @@
     <div id="app">
         @yield('content')
     </div>
+    <script src="https://raw.githack.com/eKoopmans/html2pdf/master/dist/html2pdf.bundle.js"></script>
 </body>
 </html>
