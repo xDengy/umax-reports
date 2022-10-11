@@ -430,7 +430,7 @@ class IndexController extends Controller
             <body class="' . $curReport['report']->color . '">
         ';
         $html .= '
-        <page>
+        
             <section class="report">
                 <div class="report__item">
                 <svg width="254" height="93" viewBox="0 0 254 93" fill="none" xmlns="http://www.w3.org/2000/svg">
@@ -504,7 +504,7 @@ class IndexController extends Controller
                 <p>' . $dateStart . ' - ' . $dateEnd . '</p>
                 </div>
             </section>
-        </page>
+        
         ';
         $elementHtml = '';
         $pageCount = 3;
@@ -522,7 +522,7 @@ class IndexController extends Controller
             ';
         }
         $html .= '
-        <page>
+        
             <section class="before content">
                 <h1>Содержание</h1>
                 <div class="list content__list">
@@ -532,7 +532,7 @@ class IndexController extends Controller
                 </div>
                 ' . $footer . '
             </section>
-        </page>
+        
         ';
         $elementPageCount = 3;
         $elements = '';
@@ -546,7 +546,7 @@ class IndexController extends Controller
                     else
                         $style = '';
                     $elements .= '
-                    <page>
+                    
                         <section ' . $style . ' name="' . $elementPageCount . '" class="before">
                         <div class="page-number">' . $elementPageCount . '</div>
                     ';
@@ -800,7 +800,7 @@ class IndexController extends Controller
                     }
                     $elements .= $footer . '
                         </section>
-                    </page>
+                    
                     ';
                 }
             }
@@ -808,7 +808,7 @@ class IndexController extends Controller
 
         $html .= $elements;
         $html .= '
-        <page>
+        
             <section class="contacts">
                 <h1>контакты</h1>
                 <div class="quote">
@@ -852,7 +852,7 @@ class IndexController extends Controller
                     </div>
                 </div>
             </section>
-        </page>
+        
         ';
 
         $html .= '

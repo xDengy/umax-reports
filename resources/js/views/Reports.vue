@@ -355,7 +355,7 @@ export default {
           html2canvas: {
             width: 1920,
             enableLinks: true,
-            height: html.querySelectorAll('page').length * 2480
+            height: html.querySelectorAll('section').length * 2480
           },
           jsPDF: {orientation: 'portrait', unit: 'in', format: 'letter', compressPDF: true}
         }).save();
