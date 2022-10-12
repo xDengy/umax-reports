@@ -215,7 +215,7 @@ export default {
       {
         id: "color1",
         color: "#37BEFF",
-        value: 'lightBlue'
+        value: 'lightblue'
       },
       {
         id: "color2",
@@ -239,7 +239,7 @@ export default {
       },
       {
         id: "color6",
-        color: "#FFD337",
+        color: "#FF6D04",
         value: 'orange'
       },
       {
@@ -251,6 +251,11 @@ export default {
         id: "color9",
         color: "#6BFF37",
         value: 'green'
+      },
+      {
+        id: "color10",
+        color: "#FFD000",
+        value: 'yellow'
       },
     ],
   }),

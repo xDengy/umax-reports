@@ -549,6 +549,7 @@ class IndexController extends Controller
                     
                         <section ' . $style . ' name="' . $elementPageCount . '" class="before">
                         <div class="page-number">' . $elementPageCount . '</div>
+                        <div class="section__content">
                     ';
                     $elementPageCount += 1;
                     foreach ($elementValue['elements'] as $elementBlock) {
@@ -589,7 +590,7 @@ class IndexController extends Controller
 
                                 $elements .= '<span>' . $elementBlock['value'][2] . '</span>';
 
-                                $elements .= '<canvas></canvas>';
+                                $elements .= '<canvas>0</canvas>';
                                 $graphArray = $elementBlock['value'];
                                 unset($graphArray[0]);
                                 unset($graphArray[1]);
@@ -600,16 +601,14 @@ class IndexController extends Controller
 
                                 foreach ($graph as $graphValue) {
                                     $elements .= '
-                                        <div value="' . $graphValue[1] . '" class="legend__element">
-                                            <div color="' . $graphValue[2] . '" class="circle"></div>
-                                            ' . $graphValue[0] . '
+                                        <div value="' . intval($graphValue[1]) . '" class="legend__element">
+                                            <div color="' . $graphValue[2] . '" class="circle">0</div>
+                                            <span>' . $graphValue[0] . '</span>
                                         </div>
                                     ';
                                 }
 
-                                $elements .= '</legend>';
-
-                                $elements .= '</div>';
+                                $elements .= '</legend></div>';
                                 break;
 
                             case 'listMarc':
@@ -799,6 +798,7 @@ class IndexController extends Controller
                         }
                     }
                     $elements .= $footer . '
+                            </div>
                         </section>
                     
                     ';
@@ -817,22 +817,21 @@ class IndexController extends Controller
                         xmlns="http://www.w3.org/2000/svg">
                         <path
                             d="M22.602 60.72C32.178 60.72 39.108 56.058 42.258 48.372C45.66 56.058 53.094 60.72 61.914 60.72C74.766 60.72 83.082 51.9 83.082 39.804C83.082 28.968 75.396 20.148 64.434 20.148C59.016 20.148 53.724 21.912 52.338 23.676C52.338 21.282 53.976 18.258 57.126 14.604C63.3 7.422 76.404 3.76799 82.83 3.76799L80.31 0.239994C60.906 0.239994 44.274 11.706 40.494 28.464C36.966 22.92 31.8 20.148 25.122 20.148C19.704 20.148 14.412 21.912 13.026 23.676C13.026 21.282 14.664 18.258 17.814 14.604C23.988 7.422 37.092 3.76799 43.518 3.76799L40.998 0.239994C33.942 0.239994 27.012 1.878 20.586 5.02799C7.608 11.454 0.426 22.542 0.426 35.52C0.426 51.774 10.002 60.72 22.602 60.72Z"
-                            fill="#36A9E1" fill-opacity="0.17" />
+                            fill-opacity="0.17" />
                         </svg>
                         ' . $curReport['report']->quote . '
                         <svg class="quote__right" width="84" height="61" viewBox="0 0 84 61" fill="none"
                         xmlns="http://www.w3.org/2000/svg">
                         <path
                             d="M61.398 0.279998C51.822 0.279997 44.892 4.942 41.742 12.628C38.34 4.942 30.906 0.279995 22.086 0.279994C9.234 0.279993 0.918004 9.1 0.918002 21.196C0.918002 32.032 8.604 40.852 19.566 40.852C24.984 40.852 30.276 39.088 31.662 37.324C31.662 39.718 30.024 42.742 26.874 46.396C20.7 53.578 7.596 57.232 1.17 57.232L3.68999 60.76C23.094 60.76 39.726 49.294 43.506 32.536C47.034 38.08 52.2 40.852 58.878 40.852C64.296 40.852 69.588 39.088 70.974 37.324C70.974 39.718 69.336 42.742 66.186 46.396C60.012 53.578 46.908 57.232 40.482 57.232L43.002 60.76C50.058 60.76 56.988 59.122 63.414 55.972C76.392 49.546 83.574 38.458 83.574 25.48C83.574 9.226 73.998 0.279999 61.398 0.279998Z"
-                            fill="#36A9E1" fill-opacity="0.17" />
+                            fill-opacity="0.17" />
                         </svg>
                     </div>
                 </div>
                 <div class="user-block">
-                    0
                     <div class="user">
-                        <div class="user__image" style="background-image: url(\'http://reports.umax.agency' . $curReport['report']->photo . '\')">
-                        0
+                        <div class="user__image" style="widht:206px;height:206px;">
+                            <img src="' . $curReport['report']->photo . '" style="widht:206px;height:206px;" />
                         </div>
                         <div class="user__info">
                             <div class="user__info__name">' . $curReport['report']->name . '</div>

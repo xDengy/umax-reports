@@ -93,7 +93,7 @@ export default {
   align-items: center;
   justify-content: center;
   width: fit-content;
-  margin: 20px auto 0;
+  margin: 0 auto;
   padding: 35px;
 }
 
@@ -147,6 +147,7 @@ export default {
   justify-content: center;
   cursor: pointer;
   margin: 0 auto;
+  margin-bottom: 30px;
 }
 
 .elements__del {

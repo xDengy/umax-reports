@@ -48,6 +48,11 @@ export default {
     td: 3,
     name: null,
     tables: [
+      [
+        null,
+        null,
+        null,
+      ]
     ],
   }),
   beforeMount() {
@@ -61,7 +66,8 @@ export default {
       delete this.values[2]
       let curValues = array_values(this.values)
       curTable = split(curValues, td)
-      this.tables = curTable
+      if(curTable.length > 0)
+        this.tables = curTable
       this.tr = this.tables.length
       this.td = this.tables[0].length
       this.name = name
@@ -77,15 +83,19 @@ export default {
               this[name] = parseInt(value)
               if(this.tables[parseInt(value) - 1]) {
               } else {
-                this.tables[parseInt(value) - 1] = [
-                  null,
-                  null,
-                  null,
-                  null
-                ]
+                for (let index = 0; index < parseInt(value); index++) {
+                  if(!this.tables[index]) {
+                    this.tables.push([
+                      null,
+                      null,
+                      null
+                    ])
+                  }
+                }
               }
             }
         }
+        console.log(this.tables);
     }
   }
 }

@@ -1,7 +1,7 @@
 <template>
   <div class="screen" :id="'screen-' + screenNumber">
     <div class="screen__top">
-      <div class="screen__top-title">
+      <div class="screen__top-title" @mouseleave="leaveTitle(screenNumber)">
         <input
           type="text"
           :value="curScreenItem[0].title"
@@ -301,6 +301,17 @@ export default {
       document
         .querySelector("#screenElement-" + (id - 1) + " .screen__top-title")
         .classList.toggle("active");
+    },
+    leaveTitle(id) {
+      if (
+        document
+        .querySelector("#screenElement-" + (id - 1) + " .screen__top-title")
+          .classList.contains("active")
+      ) {
+        document
+        .querySelector("#screenElement-" + (id - 1) + " .screen__top-title")
+          .classList.remove("active");
+      }
     },
     testcur(e) {
       if (e.id !== "") {

@@ -126,6 +126,7 @@
             v-for="(item, index) in currentAr"
             :id="'element-' + index"
             :key="index"
+            @mouseleave="leaveTitle(index)"
           >
             <div class="elements__text">
               <svg
@@ -296,20 +297,30 @@ export default {
       });
     },
     hideMenu() {
-      let menureports = document.querySelector(".menureports")
+      let menureports = document.querySelector(".menureports");
       menureports.classList.toggle("hiddenWidth");
       document.querySelector(".page-glob").classList.toggle("hidden");
       setTimeout(() => {
-        if(menureports.classList.contains('hidden'))
+        if (menureports.classList.contains("hidden"))
           menureports.classList.toggle("hidden");
-        else 
-          menureports.classList.toggle("hidden");
+        else menureports.classList.toggle("hidden");
       }, 250);
     },
     editTitle(id) {
       document
         .querySelector("#element-" + id + " .elements__text")
         .classList.toggle("active");
+    },
+    leaveTitle(id) {
+      if (
+        document
+          .querySelector("#element-" + id + " .elements__text")
+          .classList.contains("active")
+      ) {
+        document
+          .querySelector("#element-" + id + " .elements__text")
+          .classList.remove("active");
+      }
     },
     updateAr(ar) {
       this.currentAr = ar;
@@ -331,11 +342,11 @@ export default {
     },
     burger() {
       document.querySelector("aside").classList.add("active");
-      document.body.style.overflow = 'hidden'
+      document.body.style.overflow = "hidden";
     },
     burgerHide() {
       document.querySelector("aside").classList.remove("active");
-      document.body.style.overflow = 'auto'
+      document.body.style.overflow = "auto";
     },
   },
   components: {
@@ -755,7 +766,8 @@ export default {
   justify-content: flex-end;
 }
 
-.hidden .menureports-buttons, .hidden .menureports-user {
+.hidden .menureports-buttons,
+.hidden .menureports-user {
   display: none;
 }
 

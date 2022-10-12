@@ -202,7 +202,7 @@ export default {
       {
         id: "color1",
         color: "#37BEFF",
-        value: 'lightBlue'
+        value: 'lightblue'
       },
       {
         id: "color2",
@@ -226,7 +226,7 @@ export default {
       },
       {
         id: "color6",
-        color: "#FFD337",
+        color: "#FF6D04",
         value: 'orange'
       },
       {
@@ -239,6 +239,11 @@ export default {
         color: "#6BFF37",
         value: 'green'
       },
+      {
+        id: "color10",
+        color: "#FFD000",
+        value: 'yellow'
+      },
     ],
     report: [],
   }),
@@ -246,10 +251,14 @@ export default {
     changeUserAvatar() {
       document.querySelector(".input-file__text").textContent =
         document.querySelector(".input-file input").files[0].name;
+
+      document.querySelector('.input-group .input-file.input-file > img').remove()
     },
     changeUserAvatar2() {
       document.querySelector(".input-file__text2").textContent =
         document.querySelector(".input-file2 input").files[0].name;
+
+      document.querySelector('.input-group .input-file.input-file2 > img').remove()
     },
   },
   beforeMount() {
