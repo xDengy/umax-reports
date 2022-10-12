@@ -21897,7 +21897,7 @@ __webpack_require__.r(__webpack_exports__);
           "Content-Type": "multipart/form-data"
         }
       }).then(function (res) {
-        var dom = new DOMParser().parseFromString(res.data, "text/xml").querySelector("html");
+        var dom = new DOMParser().parseFromString(res.data, "text/xml").querySelector("div");
         document.body.style.overflow = "hidden";
         var frame = document.querySelector(".pdf-view iframe").contentDocument.querySelector("html");
         frame.innerHTML = dom.innerHTML;
@@ -21934,27 +21934,45 @@ __webpack_require__.r(__webpack_exports__);
 
       var id = this.id[this.id.length - 1];
       axios.get("/api/getPdf/" + id).then(function (res) {
-        var dom = new DOMParser().parseFromString(res.data, "text/xml").querySelector("html");
-        var html = document.createElement("html");
-        html.innerHTML = dom.innerHTML;
-        html.style.width = "1920px";
+        var dom = new DOMParser().parseFromString(res.data, "text/xml").querySelector("div");
+        var html = document.createElement("div");
 
         _this3.makeCanvas(html);
 
-        html2pdf().from(html).set({
-          filename: "mypdf.pdf",
-          html2canvas: {
-            width: 1920,
-            enableLinks: true,
-            height: html.querySelectorAll("section").length * 2480
-          },
-          jsPDF: {
-            orientation: "portrait",
-            unit: "in",
-            format: "letter",
-            compressPDF: true
-          }
-        }).save(); // let printPreview = window.open("", "print_preview");
+        html.innerHTML = dom.innerHTML; // let frame = document
+        //   .querySelector(".pdf-view iframe")
+        //   .contentDocument.querySelector("html");
+        // frame.innerHTML = html.innerHTML;
+        // frame.style.width = "1920px";
+
+        axios.post('/api/downloadPdf', {
+          html: html.innerHTML,
+          user: _this3.user,
+          height: html.querySelectorAll("section").length * 2480
+        }).then(function (res) {
+          var a = document.createElement('a');
+          console.log(res.data);
+          a.setAttribute('download', res.data.name);
+          a.href = res.data.href;
+          a.click();
+        }); // html2pdf()
+        //   .from(html)
+        //   .set({
+        //     filename: "mypdf.pdf",
+        //     html2canvas: {
+        //       width: 1920,
+        //       enableLinks: true,
+        //       height: html.querySelectorAll("section").length * 2480,
+        //     },
+        //     jsPDF: {
+        //       orientation: "portrait",
+        //       unit: "in",
+        //       format: "letter",
+        //       compressPDF: true,
+        //     },
+        //   })
+        //   .save();
+        // let printPreview = window.open("", "print_preview");
         // let printDocument = printPreview.document;
         // printDocument.open();
         // printDocument.write(html.innerHTML);

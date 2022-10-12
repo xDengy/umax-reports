@@ -11,12 +11,28 @@ use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Str;
+use Spatie\Browsershot\Browsershot;
+use Spatie\Image\Manipulations;
 
 class IndexController extends Controller
 {
     public function renderMain()
     {
         return view('main.index');
+    }
+
+    public function downloadPdf(Request $request)
+    {
+        $html = $request->all()['html'];
+        $user = $request->all()['user'];
+        $height = $request->all()['height'];
+        
+        Browsershot::html($html)->format('A2')->showBackground()->fit(Manipulations::FIT_CONTAIN, 200, 200)->save('pdf/Отчет '.$user.'.pdf');
+
+        return [
+            'href' => '/pdf/Отчет '.$user.'.pdf',
+            'name' => 'Отчет '.$user.'.pdf'
+        ];
     }
 
     public function userExist(Request $request)
@@ -418,16 +434,9 @@ class IndexController extends Controller
         </div>
         ';
         $html = '
-        <!DOCTYPE html>
-        <html lang="ru">
-            <head>
-                <meta charset="UTF-8" />
-                <meta http-equiv="X-UA-Compatible" content="IE=edge" />
-                <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-                <title>Отчет</title>
-                <link rel="stylesheet" href="http://reports.umax.agency/pdf.css" />
-            </head>
-            <body class="' . $curReport['report']->color . '">
+            <div>
+            <div class="' . $curReport['report']->color . '">
+            <link rel="stylesheet" href="http://reports.umax.agency/pdf.css" />
         ';
         $html .= '
         
@@ -532,7 +541,6 @@ class IndexController extends Controller
                 </div>
                 ' . $footer . '
             </section>
-        
         ';
         $elementPageCount = 3;
         $elements = '';
@@ -542,12 +550,12 @@ class IndexController extends Controller
                 if ($elementKey !== 'title') {
                     $style = '';
                     if ($elementValue['img'])
-                        $style = 'style="background-image: url(\'' . $elementValue['img'] . '\'), radial-gradient(26.44% 37.5% at 21.35% 100%, var(--main-lightColorOpacity) 0%, rgba(122, 175, 255, 0) 100%), radial-gradient(36.03% 59.54% at 79.95% -3.94%, rgba(251, 251, 251, 0.08) 0%, rgba(121, 175, 255, 0) 100%);"';
+                        $style = 'style="background-image: url(\'http://reports.umax.agency' . str_replace(' ', '%20', $elementValue['img']) . '\'), radial-gradient(26.44% 37.5% at 21.35% 100%, var(--main-lightColorOpacity) 0%, rgba(122, 175, 255, 0) 100%), radial-gradient(36.03% 59.54% at 79.95% -3.94%, rgba(251, 251, 251, 0.08) 0%, rgba(121, 175, 255, 0) 100%);"';
                     else
                         $style = '';
                     $elements .= '
                     
-                        <section ' . $style . ' name="' . $elementPageCount . '" class="before">
+                        <section ' . $style . ' name="' . $elementPageCount . '" id="' . $elementPageCount . '" class="before">
                         <div class="page-number">' . $elementPageCount . '</div>
                         <div class="section__content">
                     ';
@@ -577,7 +585,7 @@ class IndexController extends Controller
                                     $span = $elementBlock['value'][0];
                                 }
                                 if ($img) {
-                                    $elements .= '<img src="' . $elementBlock['value'][0] . '" />';
+                                    $elements .= '<img src="http://reports.umax.agency' . str_replace(' ', '%20', $elementBlock['value'][0]) . '" />';
                                 }
                                 if ($span) {
                                     $elements .= '<span>' . $elementBlock['value'][1] . '</span>';
@@ -667,27 +675,27 @@ class IndexController extends Controller
                                         <tbody>
                                             <tr class="trHead">
                                                 <td class="table__element tdHead">
-                                                    <img src="/img/visitors.svg" />
+                                                    <img src="http://reports.umax.agency/img/visitors.svg" />
                                                     Посетители
                                                 </td>
                                                 <td class="table__element tdHead">
-                                                    <img src="/img/new_visitors.svg" />
+                                                    <img src="http://reports.umax.agency/img/new_visitors.svg" />
                                                     Новые посетители
                                                 </td>
                                                 <td class="table__element tdHead">
-                                                    <img src="/img/deep.svg" />
+                                                    <img src="http://reports.umax.agency/img/deep.svg" />
                                                     Глубина
                                                 </td>
                                                 <td class="table__element tdHead">
-                                                    <img src="/img/views.svg" />
+                                                    <img src="http://reports.umax.agency/img/views.svg" />
                                                     Просмотры
                                                 </td>
                                                 <td class="table__element tdHead">
-                                                    <img src="/img/cancels.svg" />
+                                                    <img src="http://reports.umax.agency/img/cancels.svg" />
                                                     Отказы
                                                 </td>
                                                 <td class="table__element tdHead">
-                                                    <img src="/img/time.svg" />
+                                                    <img src="http://reports.umax.agency/img/time.svg" />
                                                     Время на сайте
                                                 </td>
                                                 </tr>
@@ -800,7 +808,6 @@ class IndexController extends Controller
                     $elements .= $footer . '
                             </div>
                         </section>
-                    
                     ';
                 }
             }
@@ -808,7 +815,6 @@ class IndexController extends Controller
 
         $html .= $elements;
         $html .= '
-        
             <section class="contacts">
                 <h1>контакты</h1>
                 <div class="quote">
@@ -831,7 +837,7 @@ class IndexController extends Controller
                 <div class="user-block">
                     <div class="user">
                         <div class="user__image" style="widht:206px;height:206px;">
-                            <img src="' . $curReport['report']->photo . '" style="widht:206px;height:206px;" />
+                            <img src="http://reports.umax.agency' . str_replace(' ', '%20', $curReport['report']->photo) . '" style="widht:206px;height:206px;" />
                         </div>
                         <div class="user__info">
                             <div class="user__info__name">' . $curReport['report']->name . '</div>
@@ -851,14 +857,12 @@ class IndexController extends Controller
                     </div>
                 </div>
             </section>
-        
         ';
 
         $html .= '
-            </body>
-        </html>
+            </div>
+            </div>
         ';
-
         return $html;
     }
 

@@ -27,3 +27,4 @@ Route::post('getReportElements', [IndexController::class, 'getReportElements'])-
 Route::get('getUserByToken/{token}', [IndexController::class, 'getUserByToken'])->name('getUserByToken');
 Route::get('getPdf/{report}', [IndexController::class, 'getPdf'])->name('getPdf');
 Route::post('getPdf/{report}', [IndexController::class, 'getPdfpreview'])->name('getPdfpreview');
+Route::post('downloadPdf', [IndexController::class, 'downloadPdf'])->name('downloadPdf');

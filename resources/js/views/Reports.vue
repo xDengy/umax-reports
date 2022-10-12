@@ -321,11 +321,10 @@ export default {
         .then((res) => {
           let dom = new DOMParser()
             .parseFromString(res.data, "text/xml")
-            .querySelector("html");
+            .querySelector("div");
 
           document.body.style.overflow = "hidden";
           
-
           let frame = document
             .querySelector(".pdf-view iframe")
             .contentDocument.querySelector("html");
@@ -355,30 +354,48 @@ export default {
       axios.get("/api/getPdf/" + id).then((res) => {
         let dom = new DOMParser()
           .parseFromString(res.data, "text/xml")
-          .querySelector("html");
-        let html = document.createElement("html");
-        html.innerHTML = dom.innerHTML;
-        html.style.width = "1920px";
+          .querySelector("div");
+
+        let html = document.createElement("div");
 
         this.makeCanvas(html)
 
-        html2pdf()
-          .from(html)
-          .set({
-            filename: "mypdf.pdf",
-            html2canvas: {
-              width: 1920,
-              enableLinks: true,
-              height: html.querySelectorAll("section").length * 2480,
-            },
-            jsPDF: {
-              orientation: "portrait",
-              unit: "in",
-              format: "letter",
-              compressPDF: true,
-            },
-          })
-          .save();
+        html.innerHTML = dom.innerHTML
+
+        // let frame = document
+        //   .querySelector(".pdf-view iframe")
+        //   .contentDocument.querySelector("html");
+        // frame.innerHTML = html.innerHTML;
+        // frame.style.width = "1920px";
+
+        axios.post('/api/downloadPdf', {
+          html: html.innerHTML,
+          user: this.user,
+          height: html.querySelectorAll("section").length * 2480,
+        }).then(res => {
+          let a = document.createElement('a')
+          console.log(res.data);
+          a.setAttribute('download', res.data.name)
+          a.href = res.data.href
+          a.click()
+        })
+        // html2pdf()
+        //   .from(html)
+        //   .set({
+        //     filename: "mypdf.pdf",
+        //     html2canvas: {
+        //       width: 1920,
+        //       enableLinks: true,
+        //       height: html.querySelectorAll("section").length * 2480,
+        //     },
+        //     jsPDF: {
+        //       orientation: "portrait",
+        //       unit: "in",
+        //       format: "letter",
+        //       compressPDF: true,
+        //     },
+        //   })
+        //   .save();
 
         // let printPreview = window.open("", "print_preview");
         // let printDocument = printPreview.document;

@@ -94,7 +94,7 @@ section {
   width: auto;
   display: flex;
   flex-direction: column;
-  height: 2485px;
+  height: calc(100vh - 200px);
 }
 
 section.contacts {
@@ -393,6 +393,7 @@ tr {
 
 .quote .textArea {
   max-width: 40%;
+  width: 100%;
   position: relative;
 }
 
@@ -404,6 +405,11 @@ tr {
 .quote__left {
   left: 35px;
   top: 20px;
+}
+
+.quote__right {
+  right: 35px;
+  bottom: 20px;
 }
 
 .user,
