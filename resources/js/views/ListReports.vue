@@ -185,7 +185,7 @@
             <div class="listreports-card__name">{{ card.title }}</div>
           </div>
           <div class="listreports-card__navblock">
-            <div class="listreports-card__button">
+            <div class="listreports-card__button" @click="downloadReport(card.id)">
               <svg
                 width="30"
                 height="30"
@@ -355,6 +355,26 @@ export default {
     },
   },
   methods: {
+    downloadReport(id) {
+      axios.get("/api/getPdf/" + id).then((res) => {
+        let dom = new DOMParser()
+          .parseFromString(res.data, "text/xml")
+          .querySelector("html");
+        let html = document.createElement("html");
+        html.innerHTML = dom.innerHTML;
+        html.style.width = "1920px";
+
+        html2pdf().from(html).set({
+          filename: 'mypdf.pdf',
+          html2canvas: {
+            width: 1920,
+            enableLinks: true,
+            height: html.querySelectorAll('section').length * 2480
+          },
+          jsPDF: {orientation: 'portrait', unit: 'in', format: 'letter', compressPDF: true}
+        }).save();
+      });
+    },
     deleteReport(id, index) {
       axios.post('/api/deleteReport/' + id).then(result => {
         delete this.listcards[index]

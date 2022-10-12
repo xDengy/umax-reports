@@ -392,6 +392,7 @@ export default {
     &__cancel {
       width: 157px;
       padding: 12px 0;
+      cursor: pointer;
 
       text-align: center;
       font-weight: 700;
@@ -508,6 +509,7 @@ export default {
       border: 1.5px solid #030087;
       border-radius: 7px;
       transition: ease-in-out 0.25s;
+      cursor: pointer;
 
       margin-right: 30px;
       & svg {

@@ -228,7 +228,7 @@ export default {
         );
 
         this.$refs.menuList.updateAr(this.current);
-        this.changeWrap(res, "screenDown");
+        this.changeWrap(res);
       }
     },
     screenUp(res) {
@@ -240,15 +240,22 @@ export default {
         );
 
         this.$refs.menuList.updateAr(this.current);
-        this.changeWrap(res, "screenUp");
+        this.changeWrap(res);
       }
     },
-    changeWrap(res, method) {
+    changeWrap(res) {
       let screens = document.querySelectorAll(".screen");
-      screens[res.newIndex].parentNode.insertBefore(
-        screens[res.newIndex],
-        screens[res.oldIndex]
-      );
+      if(res.newIndex > res.oldIndex) {
+        screens[res.newIndex].parentNode.insertBefore(
+          screens[res.newIndex],
+          screens[res.oldIndex]
+        );
+      } else {
+        screens[res.newIndex].parentNode.insertBefore(
+          screens[res.oldIndex],
+          screens[res.newIndex]
+        );
+      }
     },
     array_move(arr, old_index, new_index) {
       while (old_index < 0) {
@@ -349,7 +356,7 @@ export default {
         let html = document.createElement("html");
         html.innerHTML = dom.innerHTML;
         html.style.width = "1920px";
-        console.log(html);
+
         html2pdf().from(html).set({
           filename: 'mypdf.pdf',
           html2canvas: {

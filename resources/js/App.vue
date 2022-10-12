@@ -333,7 +333,7 @@ h2 {
   transition: ease-in-out 0.25s;
 }
 .page-glob.hidden {
-  padding-left: 0;
+  padding-left: 150px;
 }
 
 .input-file {
