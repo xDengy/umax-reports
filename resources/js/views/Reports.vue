@@ -362,12 +362,6 @@ export default {
 
         html.innerHTML = dom.innerHTML
 
-        // let frame = document
-        //   .querySelector(".pdf-view iframe")
-        //   .contentDocument.querySelector("html");
-        // frame.innerHTML = html.innerHTML;
-        // frame.style.width = "1920px";
-
         axios.post('/api/downloadPdf', {
           html: html.innerHTML,
           user: this.user,
@@ -379,30 +373,6 @@ export default {
           a.href = res.data.href
           a.click()
         })
-        // html2pdf()
-        //   .from(html)
-        //   .set({
-        //     filename: "mypdf.pdf",
-        //     html2canvas: {
-        //       width: 1920,
-        //       enableLinks: true,
-        //       height: html.querySelectorAll("section").length * 2480,
-        //     },
-        //     jsPDF: {
-        //       orientation: "portrait",
-        //       unit: "in",
-        //       format: "letter",
-        //       compressPDF: true,
-        //     },
-        //   })
-        //   .save();
-
-        // let printPreview = window.open("", "print_preview");
-        // let printDocument = printPreview.document;
-        // printDocument.open();
-        // printDocument.write(html.innerHTML);
-        // printPreview.print();
-        // printPreview.close();
       });
     },
     makeCanvas(html) {
@@ -420,8 +390,6 @@ export default {
 
         myCanvas.width = 300;
         myCanvas.height = 300;
-
-        // var ctx = myCanvas.getContext("2d");
 
         function drawLine(ctx, startX, startY, endX, endY) {
           ctx.beginPath();
