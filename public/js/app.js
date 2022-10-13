@@ -21244,32 +21244,185 @@ __webpack_require__.r(__webpack_exports__);
   },
   methods: {
     downloadReport: function downloadReport(id) {
-      axios.get("/api/getPdf/" + id).then(function (res) {
-        var dom = new DOMParser().parseFromString(res.data, "text/xml").querySelector("html");
-        var html = document.createElement("html");
-        html.innerHTML = dom.innerHTML;
-        html.style.width = "1920px";
-        html2pdf().from(html).set({
-          filename: 'mypdf.pdf',
-          html2canvas: {
-            width: 1920,
-            enableLinks: true,
-            height: html.querySelectorAll('section').length * 2480
-          },
-          jsPDF: {
-            orientation: 'portrait',
-            unit: 'in',
-            format: 'letter',
-            compressPDF: true
-          }
-        }).save();
-      });
-    },
-    deleteReport: function deleteReport(id, index) {
       var _this2 = this;
 
+      document.querySelector('.shadow').classList.add('active');
+      axios.get("/api/getPdf/" + id).then(function (res) {
+        var dom = new DOMParser().parseFromString(res.data, "text/xml").querySelector("div");
+        var html = document.createElement("div");
+        html.innerHTML = dom.innerHTML;
+
+        _this2.makeCanvas(html);
+
+        axios.post('/api/downloadPdf', {
+          html: html.innerHTML,
+          user: _this2.user,
+          height: html.querySelectorAll("section").length * 2480
+        }).then(function (res) {
+          document.querySelector('.shadow').classList.remove('active');
+          var a = document.createElement('a');
+          a.setAttribute('download', res.data.name);
+          a.href = res.data.href;
+          a.click();
+        });
+      });
+    },
+    makeCanvas: function makeCanvas(html) {
+      var _this3 = this;
+
+      var images = html.querySelectorAll('img');
+
+      var _loop = function _loop(i) {
+        _this3.toDataURL(images[i].getAttribute('src'), function (dataUrl) {
+          images[i].setAttribute('src', dataUrl);
+        });
+      };
+
+      for (var i = 0; i < images.length; i++) {
+        _loop(i);
+      }
+
+      var canvases = html.querySelectorAll('canvas');
+
+      var _loop2 = function _loop2(_i) {
+        var myCanvas = canvases[_i];
+        myCanvas.textContent = null;
+        myCanvas.width = 300;
+        myCanvas.height = 300;
+
+        function drawLine(ctx, startX, startY, endX, endY) {
+          ctx.beginPath();
+          ctx.moveTo(startX, startY);
+          ctx.lineTo(endX, endY);
+          ctx.stroke();
+        }
+
+        function drawArc(ctx, centerX, centerY, radius, startAngle, endAngle) {
+          ctx.beginPath();
+          ctx.arc(centerX, centerY, radius, startAngle, endAngle);
+          ctx.stroke();
+        }
+
+        function drawPieSlice(ctx, centerX, centerY, radius, startAngle, endAngle, color) {
+          ctx.fillStyle = color;
+          ctx.beginPath();
+          ctx.moveTo(centerX, centerY);
+          ctx.arc(centerX, centerY, radius, startAngle, endAngle);
+          ctx.closePath();
+          ctx.fill();
+        }
+
+        myVinyls = {};
+        colors = [];
+        var legends = myCanvas.parentNode.querySelectorAll('legend > div');
+
+        for (var k = 0; k < legends.length; k++) {
+          var element = legends[k];
+          myVinyls[element.querySelector('span').textContent] = parseFloat(element.getAttribute('value'));
+          colors.push(element.querySelector('div').getAttribute('color'));
+        }
+
+        Piechart = function Piechart(options) {
+          this.options = options;
+          this.canvas = options.canvas;
+          this.ctx = this.canvas.getContext("2d");
+          this.colors = options.colors;
+
+          this.draw = function () {
+            var total_value = 0;
+            var color_index = 0;
+
+            for (var categ in this.options.data) {
+              var val = this.options.data[categ];
+              total_value += val;
+            }
+
+            var start_angle = 0;
+
+            for (categ in this.options.data) {
+              val = this.options.data[categ];
+              var slice_angle = 2 * Math.PI * val / total_value;
+              drawPieSlice(this.ctx, this.canvas.width / 2, this.canvas.height / 2, Math.min(this.canvas.width / 2, this.canvas.height / 2), start_angle, start_angle + slice_angle, this.colors[color_index % this.colors.length]);
+              start_angle += slice_angle;
+              color_index++;
+            }
+
+            if (this.options.doughnutHoleSize) {
+              drawPieSlice(this.ctx, this.canvas.width / 2, this.canvas.height / 2, this.options.doughnutHoleSize * Math.min(this.canvas.width / 2, this.canvas.height / 2), 0, 2 * Math.PI, "#ffffff");
+            }
+
+            start_angle = 0;
+
+            for (categ in this.options.data) {
+              val = this.options.data[categ];
+              slice_angle = 2 * Math.PI * val / total_value;
+              var pieRadius = Math.min(this.canvas.width / 2, this.canvas.height / 2);
+              var labelX = this.canvas.width / 2 + pieRadius / 2 * Math.cos(start_angle + slice_angle / 2);
+              var labelY = this.canvas.height / 2 + pieRadius / 2 * Math.sin(start_angle + slice_angle / 2);
+
+              if (this.options.doughnutHoleSize) {
+                var offset = pieRadius * this.options.doughnutHoleSize / 2;
+                labelX = this.canvas.width / 2 + (offset + pieRadius / 2) * Math.cos(start_angle + slice_angle / 2);
+                labelY = this.canvas.height / 2 + (offset + pieRadius / 2) * Math.sin(start_angle + slice_angle / 2);
+              }
+
+              var labelText = Math.round(100 * val / total_value);
+              this.ctx.fillStyle = "white";
+              this.ctx.font = "bold 20px Arial";
+              if (labelText > 5) this.ctx.fillText(labelText + "%", labelX, labelY);
+              start_angle += slice_angle;
+            }
+
+            color_index = 0;
+            var legendIndex = 0;
+
+            for (categ in this.options.data) {
+              this.canvas.parentNode.querySelectorAll('legend > div .circle')[legendIndex].style = "border-radius: 50%;width:20px;height:20px;background-color:" + this.colors[color_index++] + ";";
+              legendIndex++;
+            }
+          };
+        };
+
+        myPiechart = new Piechart({
+          canvas: myCanvas,
+          data: myVinyls,
+          colors: colors,
+          doughnutHoleSize: 0.4
+        });
+        myPiechart.draw();
+      };
+
+      for (var _i = 0; _i < canvases.length; _i++) {
+        var myVinyls;
+        var colors;
+        var Piechart;
+        var myPiechart;
+
+        _loop2(_i);
+      }
+    },
+    toDataURL: function toDataURL(url, callback) {
+      var xhr = new XMLHttpRequest();
+
+      xhr.onload = function () {
+        var reader = new FileReader();
+
+        reader.onloadend = function () {
+          callback(reader.result);
+        };
+
+        reader.readAsDataURL(xhr.response);
+      };
+
+      xhr.open('GET', url);
+      xhr.responseType = 'blob';
+      xhr.send();
+    },
+    deleteReport: function deleteReport(id, index) {
+      var _this4 = this;
+
       axios.post('/api/deleteReport/' + id).then(function (result) {
-        delete _this2.listcards[index];
+        delete _this4.listcards[index];
       });
     },
     points: function points() {
@@ -21932,21 +22085,22 @@ __webpack_require__.r(__webpack_exports__);
     downloadReport: function downloadReport() {
       var _this3 = this;
 
+      document.querySelector('.shadow').classList.add('active');
       var id = this.id[this.id.length - 1];
       axios.get("/api/getPdf/" + id).then(function (res) {
         var dom = new DOMParser().parseFromString(res.data, "text/xml").querySelector("div");
         var html = document.createElement("div");
+        html.innerHTML = dom.innerHTML;
 
         _this3.makeCanvas(html);
 
-        html.innerHTML = dom.innerHTML;
         axios.post('/api/downloadPdf', {
           html: html.innerHTML,
           user: _this3.user,
           height: html.querySelectorAll("section").length * 2480
         }).then(function (res) {
+          document.querySelector('.shadow').classList.remove('active');
           var a = document.createElement('a');
-          console.log(res.data);
           a.setAttribute('download', res.data.name);
           a.href = res.data.href;
           a.click();
@@ -25289,12 +25443,20 @@ var _hoisted_31 = /*#__PURE__*/_withScopeId(function () {
   );
 });
 
+var _hoisted_32 = /*#__PURE__*/_withScopeId(function () {
+  return /*#__PURE__*/(0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("div", {
+    "class": "shadow"
+  }, null, -1
+  /* HOISTED */
+  );
+});
+
 function render(_ctx, _cache, $props, $setup, $data, $options) {
   var _component_MenuReports = (0,vue__WEBPACK_IMPORTED_MODULE_0__.resolveComponent)("MenuReports");
 
   var _component_router_link = (0,vue__WEBPACK_IMPORTED_MODULE_0__.resolveComponent)("router-link");
 
-  return (0,vue__WEBPACK_IMPORTED_MODULE_0__.openBlock)(), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementBlock)("section", _hoisted_1, [(0,vue__WEBPACK_IMPORTED_MODULE_0__.createVNode)(_component_MenuReports), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("div", _hoisted_2, [_hoisted_3, (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("div", _hoisted_4, [(0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("div", _hoisted_5, [_hoisted_6, (0,vue__WEBPACK_IMPORTED_MODULE_0__.withDirectives)((0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("input", {
+  return (0,vue__WEBPACK_IMPORTED_MODULE_0__.openBlock)(), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementBlock)(vue__WEBPACK_IMPORTED_MODULE_0__.Fragment, null, [(0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("section", _hoisted_1, [(0,vue__WEBPACK_IMPORTED_MODULE_0__.createVNode)(_component_MenuReports), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("div", _hoisted_2, [_hoisted_3, (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("div", _hoisted_4, [(0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("div", _hoisted_5, [_hoisted_6, (0,vue__WEBPACK_IMPORTED_MODULE_0__.withDirectives)((0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("input", {
     type: "text",
     placeholder: "поиск",
     "onUpdate:modelValue": _cache[0] || (_cache[0] = function ($event) {
@@ -25390,7 +25552,9 @@ function render(_ctx, _cache, $props, $setup, $data, $options) {
 
   }, 8
   /* PROPS */
-  , ["class"])])])]);
+  , ["class"])])])]), _hoisted_32], 64
+  /* STABLE_FRAGMENT */
+  );
 }
 
 /***/ }),
@@ -27287,6 +27451,14 @@ var _hoisted_21 = /*#__PURE__*/_withScopeId(function () {
   );
 });
 
+var _hoisted_22 = /*#__PURE__*/_withScopeId(function () {
+  return /*#__PURE__*/(0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("div", {
+    "class": "shadow"
+  }, null, -1
+  /* HOISTED */
+  );
+});
+
 function render(_ctx, _cache, $props, $setup, $data, $options) {
   var _component_MenuReports = (0,vue__WEBPACK_IMPORTED_MODULE_0__.resolveComponent)("MenuReports");
 
@@ -27346,7 +27518,7 @@ function render(_ctx, _cache, $props, $setup, $data, $options) {
     onClick: _cache[4] || (_cache[4] = function () {
       return $options.closePdf && $options.closePdf.apply($options, arguments);
     })
-  }, _hoisted_20), _hoisted_21])], 64
+  }, _hoisted_20), _hoisted_21]), _hoisted_22], 64
   /* STABLE_FRAGMENT */
   );
 }
@@ -40814,7 +40986,7 @@ __webpack_require__.r(__webpack_exports__);
 
 var ___CSS_LOADER_EXPORT___ = _node_modules_laravel_mix_node_modules_css_loader_dist_runtime_api_js__WEBPACK_IMPORTED_MODULE_0___default()(function(i){return i[1]});
 // Module
-___CSS_LOADER_EXPORT___.push([module.id, ".select[data-v-20db8272] {\n  width: 100%;\n  height: 45px;\n  border-radius: 5px;\n  z-index: 2;\n  position: relative;\n}\n.select__wrap[data-v-20db8272] {\n  position: absolute;\n  width: 100%;\n  height: auto;\n  max-height: 45px;\n  border-radius: 5px;\n  top: 0;\n  left: 0;\n  font-weight: 700;\n  font-size: 14px;\n  line-height: 18px;\n  color: #222222;\n  overflow: hidden;\n  transition: ease-in-out 0.25s;\n  cursor: pointer;\n}\n.select__wrap.open[data-v-20db8272] {\n  max-height: 1000px;\n}\n.select__wrap.open .top svg[data-v-20db8272] {\n  transform: rotate(-180deg);\n}\n.select__wrap .top[data-v-20db8272] {\n  padding: 5px 5px;\n  height: 45px;\n  display: flex;\n  align-items: center;\n  justify-content: space-between;\n}\n.select__wrap .top svg[data-v-20db8272] {\n  width: 8px;\n  height: 5px;\n  transition: ease-in-out 0.25s;\n}\n.select__wrap .bottom[data-v-20db8272] {\n  background-color: #f3f6fd;\n}\n.select__wrap .select__item[data-v-20db8272] {\n  border-top: 1px solid #6682a291;\n  padding: 5px;\n  cursor: pointer;\n  transition: ease-in-out 0.25s;\n}\n.select__wrap .select__item[data-v-20db8272]:hover {\n  color: #030087;\n}\n.listreports[data-v-20db8272] {\n  background-color: #f3f6fd;\n}\n.listreports__search[data-v-20db8272] {\n  position: relative;\n  max-width: 768px;\n  width: 100%;\n  height: 35px;\n  margin-right: 15%;\n}\n.listreports__search svg[data-v-20db8272] {\n  position: absolute;\n  left: 15px;\n  top: 0;\n  bottom: 0;\n  margin-bottom: auto;\n  margin-top: auto;\n  height: 13px;\n}\n.listreports__search input[data-v-20db8272] {\n  width: 100%;\n  height: 100%;\n  background: #ffffff;\n  border: 1px solid rgba(3, 0, 135, 0.3);\n  border-radius: 5px;\n  padding: 10px 10px 10px 40px;\n}\n.listreports__search input[data-v-20db8272]::-moz-placeholder {\n  font-weight: 700;\n  font-size: 14px;\n  line-height: 18px;\n  color: #666666;\n}\n.listreports__search input[data-v-20db8272]::placeholder {\n  font-weight: 700;\n  font-size: 14px;\n  line-height: 18px;\n  color: #666666;\n}\n.listreports__select[data-v-20db8272] {\n  display: flex;\n  align-items: center;\n  justify-content: space-between;\n  width: 100%;\n  max-width: 265px;\n  margin-right: 15px;\n}\n.listreports__select p[data-v-20db8272] {\n  font-weight: 700;\n  font-size: 14px;\n  line-height: 18px;\n  color: #666666;\n}\n.listreports-buttons[data-v-20db8272] {\n  display: flex;\n  justify-content: space-between;\n  align-items: center;\n}\n.listreports-buttons__button[data-v-20db8272] {\n  width: 21px;\n  height: 21px;\n  cursor: pointer;\n  transition: ease-in-out 0.25s;\n}\n.listreports-buttons__button.active svg rect[data-v-20db8272] {\n  fill: #030087;\n}\n.listreports-buttons__button.active svg .svg-btn[data-v-20db8272] {\n  fill: rgba(255, 0, 0, 0);\n  stroke: #030087;\n}\n.listreports-buttons__button svg[data-v-20db8272] {\n  transition: ease-in-out 0.25s;\n}\n.listreports-buttons__button svg rect[data-v-20db8272] {\n  transition: ease-in-out 0.25s;\n}\n.listreports-buttons__button:hover svg[data-v-20db8272] {\n  transform: scale(1.1);\n}\n.listreports-buttons__button[data-v-20db8272]:last-child {\n  margin-left: 10px;\n}\n.listreports-nav[data-v-20db8272] {\n  display: flex;\n  justify-content: space-between;\n  align-items: center;\n  width: 100%;\n  margin-bottom: 30px;\n}\n.listreports-cards[data-v-20db8272] {\n  width: calc(100% + 30px);\n  display: flex;\n  justify-content: flex-start;\n  flex-wrap: wrap;\n  margin: 0 -30px;\n}\n.listreports-card[data-v-20db8272] {\n  margin: 0 0 30px 30px;\n  padding: 20px;\n  background: #ffffff;\n  border: 1px solid rgba(3, 0, 135, 0.3);\n  border-radius: 5px;\n  display: flex;\n  justify-content: space-between;\n}\n.listreports-card.points[data-v-20db8272] {\n  width: calc(25% - 30px);\n}\n.listreports-card.list[data-v-20db8272] {\n  width: calc(100% - 30px);\n}\n.listreports-card__textblock[data-v-20db8272] {\n  display: flex;\n  flex-direction: column;\n  justify-content: space-between;\n}\n.listreports-card__data[data-v-20db8272] {\n  font-weight: 700;\n  font-size: 14px;\n  line-height: 18px;\n  color: #666666;\n}\n.listreports-card__name[data-v-20db8272] {\n  font-weight: 700;\n  font-size: 16px;\n  line-height: 20px;\n  color: #222222;\n}\n.listreports-card__button[data-v-20db8272] {\n  cursor: pointer;\n  transition: ease-in-out 0.25s;\n}\n.listreports-card__button[data-v-20db8272]:hover {\n  opacity: 0.7;\n}\n.listreports-card--lost[data-v-20db8272] {\n  display: flex;\n  align-items: center;\n  justify-content: center;\n  cursor: pointer;\n}\n.listreports-card--lost svg[data-v-20db8272] {\n  transition: ease-in-out 0.25s;\n}\n.listreports-card--lost:hover svg[data-v-20db8272] {\n  transform: scale(1.1);\n}\n.select[data-v-20db8272] {\n  width: 100%;\n  height: 45px;\n  border-radius: 5px;\n  z-index: 2;\n  position: relative;\n}\n.select__wrap[data-v-20db8272] {\n  position: absolute;\n  width: 100%;\n  height: auto;\n  max-height: 45px;\n  border-radius: 5px;\n  top: 0;\n  left: 0;\n  font-weight: 700;\n  font-size: 14px;\n  line-height: 18px;\n  color: #222222;\n  overflow: hidden;\n  transition: ease-in-out 0.25s;\n  cursor: pointer;\n}\n.select__wrap.open[data-v-20db8272] {\n  max-height: 1000px;\n}\n.select__wrap.open .top svg[data-v-20db8272] {\n  transform: rotate(-180deg);\n}\n.select__wrap .top[data-v-20db8272] {\n  padding: 5px 5px;\n  height: 45px;\n  display: flex;\n  align-items: center;\n  justify-content: space-between;\n}\n.select__wrap .top svg[data-v-20db8272] {\n  width: 8px;\n  height: 5px;\n  transition: ease-in-out 0.25s;\n}\n.select__wrap .bottom[data-v-20db8272] {\n  background-color: #f3f6fd;\n}\n.select__wrap .select__item[data-v-20db8272] {\n  border-top: 1px solid #6682a291;\n  padding: 5px;\n  cursor: pointer;\n  transition: ease-in-out 0.25s;\n}\n.select__wrap .select__item[data-v-20db8272]:hover {\n  color: #030087;\n}\n.listreports[data-v-20db8272] {\n  background-color: #f3f6fd;\n}\n.listreports__search[data-v-20db8272] {\n  position: relative;\n  max-width: 768px;\n  width: 100%;\n  height: 35px;\n  margin-right: 15%;\n}\n.listreports__search svg[data-v-20db8272] {\n  position: absolute;\n  left: 15px;\n  top: 0;\n  bottom: 0;\n  margin-bottom: auto;\n  margin-top: auto;\n  height: 13px;\n}\n.listreports__search input[data-v-20db8272] {\n  width: 100%;\n  height: 100%;\n  background: #ffffff;\n  border: 1px solid rgba(3, 0, 135, 0.3);\n  border-radius: 5px;\n  padding: 10px 10px 10px 40px;\n}\n.listreports__search input[data-v-20db8272]::-moz-placeholder {\n  font-weight: 700;\n  font-size: 14px;\n  line-height: 18px;\n  color: #666666;\n}\n.listreports__search input[data-v-20db8272]::placeholder {\n  font-weight: 700;\n  font-size: 14px;\n  line-height: 18px;\n  color: #666666;\n}\n.listreports__select[data-v-20db8272] {\n  display: flex;\n  align-items: center;\n  justify-content: space-between;\n  width: 100%;\n  max-width: 265px;\n  margin-right: 15px;\n}\n.listreports__select p[data-v-20db8272] {\n  font-weight: 700;\n  font-size: 14px;\n  line-height: 18px;\n  color: #666666;\n}\n.listreports-buttons[data-v-20db8272] {\n  display: flex;\n  justify-content: space-between;\n  align-items: center;\n}\n.listreports-buttons__button[data-v-20db8272] {\n  width: 21px;\n  height: 21px;\n  cursor: pointer;\n  transition: ease-in-out 0.25s;\n}\n.listreports-buttons__button.active svg rect[data-v-20db8272] {\n  fill: #030087;\n}\n.listreports-buttons__button.active svg .svg-btn[data-v-20db8272] {\n  fill: rgba(255, 0, 0, 0);\n  stroke: #030087;\n}\n.listreports-buttons__button svg[data-v-20db8272] {\n  transition: ease-in-out 0.25s;\n}\n.listreports-buttons__button svg rect[data-v-20db8272] {\n  transition: ease-in-out 0.25s;\n}\n.listreports-buttons__button:hover svg[data-v-20db8272] {\n  transform: scale(1.1);\n}\n.listreports-buttons__button[data-v-20db8272]:last-child {\n  margin-left: 10px;\n}\n.listreports-nav[data-v-20db8272] {\n  display: flex;\n  justify-content: space-between;\n  align-items: center;\n  width: 100%;\n  margin-bottom: 30px;\n}\n.listreports-cards[data-v-20db8272] {\n  width: calc(100% + 30px);\n  display: flex;\n  justify-content: flex-start;\n  flex-wrap: wrap;\n  margin: 0 -30px;\n}\n.listreports-card[data-v-20db8272] {\n  margin: 0 0 30px 30px;\n  padding: 20px;\n  background: #ffffff;\n  border: 1px solid rgba(3, 0, 135, 0.3);\n  border-radius: 5px;\n  display: flex;\n  justify-content: space-between;\n}\n.listreports-card.points[data-v-20db8272] {\n  width: calc(25% - 30px);\n}\n.listreports-card.list[data-v-20db8272] {\n  width: calc(100% - 30px);\n}\n.listreports-card__textblock[data-v-20db8272] {\n  display: flex;\n  flex-direction: column;\n  justify-content: space-between;\n  margin-right: 10px;\n}\n.listreports-card__data[data-v-20db8272] {\n  font-weight: 700;\n  font-size: 14px;\n  line-height: 18px;\n  color: #666666;\n}\n.listreports-card__name[data-v-20db8272] {\n  font-weight: 700;\n  font-size: 16px;\n  line-height: 20px;\n  color: #222222;\n  word-break: break-all;\n}\n.listreports-card__button[data-v-20db8272] {\n  cursor: pointer;\n  transition: ease-in-out 0.25s;\n}\n.listreports-card__button[data-v-20db8272]:hover {\n  opacity: 0.7;\n}\n.listreports-card--lost[data-v-20db8272] {\n  display: flex;\n  align-items: center;\n  justify-content: center;\n  cursor: pointer;\n}\n.listreports-card--lost svg[data-v-20db8272] {\n  transition: ease-in-out 0.25s;\n}\n.listreports-card--lost:hover svg[data-v-20db8272] {\n  transform: scale(1.1);\n}\n@media (max-width: 830px) {\n.listreports[data-v-20db8272] {\n    padding: 100px 20px 20px 20px;\n}\n.listreports-buttons[data-v-20db8272] {\n    display: none;\n}\n.listreports-card.points[data-v-20db8272] {\n    width: 100%;\n}\n}\n@media (max-width: 670px) {\n.listreports-nav[data-v-20db8272] {\n    display: flex;\n    flex-direction: column;\n    margin-bottom: 10px;\n}\n.listreports__search[data-v-20db8272] {\n    margin-right: 0;\n}\n}\n@media (max-width: 380px) {\n.listreports h2[data-v-20db8272] {\n    font-size: 34px;\n    margin-bottom: 20px;\n}\n}\n", ""]);
+___CSS_LOADER_EXPORT___.push([module.id, ".select[data-v-20db8272] {\n  width: 100%;\n  height: 45px;\n  border-radius: 5px;\n  z-index: 2;\n  position: relative;\n}\n.select__wrap[data-v-20db8272] {\n  position: absolute;\n  width: 100%;\n  height: auto;\n  max-height: 45px;\n  border-radius: 5px;\n  top: 0;\n  left: 0;\n  font-weight: 700;\n  font-size: 14px;\n  line-height: 18px;\n  color: #222222;\n  overflow: hidden;\n  transition: ease-in-out 0.25s;\n  cursor: pointer;\n}\n.select__wrap.open[data-v-20db8272] {\n  max-height: 1000px;\n}\n.select__wrap.open .top svg[data-v-20db8272] {\n  transform: rotate(-180deg);\n}\n.select__wrap .top[data-v-20db8272] {\n  padding: 5px 5px;\n  height: 45px;\n  display: flex;\n  align-items: center;\n  justify-content: space-between;\n}\n.select__wrap .top svg[data-v-20db8272] {\n  width: 8px;\n  height: 5px;\n  transition: ease-in-out 0.25s;\n}\n.select__wrap .bottom[data-v-20db8272] {\n  background-color: #f3f6fd;\n}\n.select__wrap .select__item[data-v-20db8272] {\n  border-top: 1px solid #6682a291;\n  padding: 5px;\n  cursor: pointer;\n  transition: ease-in-out 0.25s;\n}\n.select__wrap .select__item[data-v-20db8272]:hover {\n  color: #030087;\n}\n.listreports[data-v-20db8272] {\n  background-color: #f3f6fd;\n}\n.listreports__search[data-v-20db8272] {\n  position: relative;\n  max-width: 768px;\n  width: 100%;\n  height: 35px;\n  margin-right: 15%;\n}\n.listreports__search svg[data-v-20db8272] {\n  position: absolute;\n  left: 15px;\n  top: 0;\n  bottom: 0;\n  margin-bottom: auto;\n  margin-top: auto;\n  height: 13px;\n}\n.listreports__search input[data-v-20db8272] {\n  width: 100%;\n  height: 100%;\n  background: #ffffff;\n  border: 1px solid rgba(3, 0, 135, 0.3);\n  border-radius: 5px;\n  padding: 10px 10px 10px 40px;\n}\n.listreports__search input[data-v-20db8272]::-moz-placeholder {\n  font-weight: 700;\n  font-size: 14px;\n  line-height: 18px;\n  color: #666666;\n}\n.listreports__search input[data-v-20db8272]::placeholder {\n  font-weight: 700;\n  font-size: 14px;\n  line-height: 18px;\n  color: #666666;\n}\n.listreports__select[data-v-20db8272] {\n  display: flex;\n  align-items: center;\n  justify-content: space-between;\n  width: 100%;\n  max-width: 265px;\n  margin-right: 15px;\n}\n.listreports__select p[data-v-20db8272] {\n  font-weight: 700;\n  font-size: 14px;\n  line-height: 18px;\n  color: #666666;\n}\n.listreports-buttons[data-v-20db8272] {\n  display: flex;\n  justify-content: space-between;\n  align-items: center;\n}\n.listreports-buttons__button[data-v-20db8272] {\n  width: 21px;\n  height: 21px;\n  cursor: pointer;\n  transition: ease-in-out 0.25s;\n}\n.listreports-buttons__button.active svg rect[data-v-20db8272] {\n  fill: #030087;\n}\n.listreports-buttons__button.active svg .svg-btn[data-v-20db8272] {\n  fill: rgba(255, 0, 0, 0);\n  stroke: #030087;\n}\n.listreports-buttons__button svg[data-v-20db8272] {\n  transition: ease-in-out 0.25s;\n}\n.listreports-buttons__button svg rect[data-v-20db8272] {\n  transition: ease-in-out 0.25s;\n}\n.listreports-buttons__button:hover svg[data-v-20db8272] {\n  transform: scale(1.1);\n}\n.listreports-buttons__button[data-v-20db8272]:last-child {\n  margin-left: 10px;\n}\n.listreports-nav[data-v-20db8272] {\n  display: flex;\n  justify-content: space-between;\n  align-items: center;\n  width: 100%;\n  margin-bottom: 30px;\n}\n.listreports-cards[data-v-20db8272] {\n  width: calc(100% + 30px);\n  display: flex;\n  justify-content: flex-start;\n  flex-wrap: wrap;\n  margin: 0 -30px;\n}\n.listreports-card[data-v-20db8272] {\n  margin: 0 0 30px 30px;\n  padding: 20px;\n  background: #ffffff;\n  border: 1px solid rgba(3, 0, 135, 0.3);\n  border-radius: 5px;\n  display: flex;\n  justify-content: space-between;\n}\n.listreports-card.points[data-v-20db8272] {\n  width: calc(25% - 30px);\n}\n.listreports-card.list[data-v-20db8272] {\n  width: calc(100% - 30px);\n}\n.listreports-card__textblock[data-v-20db8272] {\n  display: flex;\n  flex-direction: column;\n  justify-content: space-between;\n}\n.listreports-card__data[data-v-20db8272] {\n  font-weight: 700;\n  font-size: 14px;\n  line-height: 18px;\n  color: #666666;\n}\n.listreports-card__name[data-v-20db8272] {\n  font-weight: 700;\n  font-size: 16px;\n  line-height: 20px;\n  color: #222222;\n}\n.listreports-card__button[data-v-20db8272] {\n  cursor: pointer;\n  transition: ease-in-out 0.25s;\n}\n.listreports-card__button[data-v-20db8272]:hover {\n  opacity: 0.7;\n}\n.listreports-card--lost[data-v-20db8272] {\n  display: flex;\n  align-items: center;\n  justify-content: center;\n  cursor: pointer;\n}\n.listreports-card--lost svg[data-v-20db8272] {\n  transition: ease-in-out 0.25s;\n}\n.listreports-card--lost:hover svg[data-v-20db8272] {\n  transform: scale(1.1);\n}\n.select[data-v-20db8272] {\n  width: 100%;\n  height: 45px;\n  border-radius: 5px;\n  z-index: 2;\n  position: relative;\n}\n.select__wrap[data-v-20db8272] {\n  position: absolute;\n  width: 100%;\n  height: auto;\n  max-height: 45px;\n  border-radius: 5px;\n  top: 0;\n  left: 0;\n  font-weight: 700;\n  font-size: 14px;\n  line-height: 18px;\n  color: #222222;\n  overflow: hidden;\n  transition: ease-in-out 0.25s;\n  cursor: pointer;\n}\n.select__wrap.open[data-v-20db8272] {\n  max-height: 1000px;\n}\n.select__wrap.open .top svg[data-v-20db8272] {\n  transform: rotate(-180deg);\n}\n.select__wrap .top[data-v-20db8272] {\n  padding: 5px 5px;\n  height: 45px;\n  display: flex;\n  align-items: center;\n  justify-content: space-between;\n}\n.select__wrap .top svg[data-v-20db8272] {\n  width: 8px;\n  height: 5px;\n  transition: ease-in-out 0.25s;\n}\n.select__wrap .bottom[data-v-20db8272] {\n  background-color: #f3f6fd;\n}\n.select__wrap .select__item[data-v-20db8272] {\n  border-top: 1px solid #6682a291;\n  padding: 5px;\n  cursor: pointer;\n  transition: ease-in-out 0.25s;\n}\n.select__wrap .select__item[data-v-20db8272]:hover {\n  color: #030087;\n}\n.listreports[data-v-20db8272] {\n  background-color: #f3f6fd;\n}\n.listreports__search[data-v-20db8272] {\n  position: relative;\n  max-width: 768px;\n  width: 100%;\n  height: 35px;\n  margin-right: 15%;\n}\n.listreports__search svg[data-v-20db8272] {\n  position: absolute;\n  left: 15px;\n  top: 0;\n  bottom: 0;\n  margin-bottom: auto;\n  margin-top: auto;\n  height: 13px;\n}\n.listreports__search input[data-v-20db8272] {\n  width: 100%;\n  height: 100%;\n  background: #ffffff;\n  border: 1px solid rgba(3, 0, 135, 0.3);\n  border-radius: 5px;\n  padding: 10px 10px 10px 40px;\n}\n.listreports__search input[data-v-20db8272]::-moz-placeholder {\n  font-weight: 700;\n  font-size: 14px;\n  line-height: 18px;\n  color: #666666;\n}\n.listreports__search input[data-v-20db8272]::placeholder {\n  font-weight: 700;\n  font-size: 14px;\n  line-height: 18px;\n  color: #666666;\n}\n.listreports__select[data-v-20db8272] {\n  display: flex;\n  align-items: center;\n  justify-content: space-between;\n  width: 100%;\n  max-width: 265px;\n  margin-right: 15px;\n}\n.listreports__select p[data-v-20db8272] {\n  font-weight: 700;\n  font-size: 14px;\n  line-height: 18px;\n  color: #666666;\n}\n.listreports-buttons[data-v-20db8272] {\n  display: flex;\n  justify-content: space-between;\n  align-items: center;\n}\n.listreports-buttons__button[data-v-20db8272] {\n  width: 21px;\n  height: 21px;\n  cursor: pointer;\n  transition: ease-in-out 0.25s;\n}\n.listreports-buttons__button.active svg rect[data-v-20db8272] {\n  fill: #030087;\n}\n.listreports-buttons__button.active svg .svg-btn[data-v-20db8272] {\n  fill: rgba(255, 0, 0, 0);\n  stroke: #030087;\n}\n.listreports-buttons__button svg[data-v-20db8272] {\n  transition: ease-in-out 0.25s;\n}\n.listreports-buttons__button svg rect[data-v-20db8272] {\n  transition: ease-in-out 0.25s;\n}\n.listreports-buttons__button:hover svg[data-v-20db8272] {\n  transform: scale(1.1);\n}\n.listreports-buttons__button[data-v-20db8272]:last-child {\n  margin-left: 10px;\n}\n.listreports-nav[data-v-20db8272] {\n  display: flex;\n  justify-content: space-between;\n  align-items: center;\n  width: 100%;\n  margin-bottom: 30px;\n}\n.listreports-cards[data-v-20db8272] {\n  width: calc(100% + 30px);\n  display: flex;\n  justify-content: flex-start;\n  flex-wrap: wrap;\n  margin: 0 -30px;\n}\n.listreports-card[data-v-20db8272] {\n  margin: 0 0 30px 30px;\n  padding: 20px;\n  background: #ffffff;\n  border: 1px solid rgba(3, 0, 135, 0.3);\n  border-radius: 5px;\n  display: flex;\n  justify-content: space-between;\n}\n.listreports-card.points[data-v-20db8272] {\n  width: calc(25% - 30px);\n}\n.listreports-card.list[data-v-20db8272] {\n  width: calc(100% - 30px);\n}\n.listreports-card__textblock[data-v-20db8272] {\n  display: flex;\n  flex-direction: column;\n  justify-content: space-between;\n  margin-right: 10px;\n}\n.listreports-card__data[data-v-20db8272] {\n  font-weight: 700;\n  font-size: 14px;\n  line-height: 18px;\n  color: #666666;\n}\n.listreports-card__name[data-v-20db8272] {\n  font-weight: 700;\n  font-size: 16px;\n  line-height: 20px;\n  color: #222222;\n  word-break: break-all;\n}\n.listreports-card__button[data-v-20db8272] {\n  cursor: pointer;\n  transition: ease-in-out 0.25s;\n}\n.listreports-card__button[data-v-20db8272]:hover {\n  opacity: 0.7;\n}\n.listreports-card--lost[data-v-20db8272] {\n  display: flex;\n  align-items: center;\n  justify-content: center;\n  cursor: pointer;\n}\n.listreports-card--lost svg[data-v-20db8272] {\n  transition: ease-in-out 0.25s;\n}\n.listreports-card--lost:hover svg[data-v-20db8272] {\n  transform: scale(1.1);\n}\n@media (max-width: 830px) {\n.listreports[data-v-20db8272] {\n    padding: 100px 20px 20px 20px;\n}\n.listreports-buttons[data-v-20db8272] {\n    display: none;\n}\n.listreports-card.points[data-v-20db8272] {\n    width: 100%;\n}\n}\n@media (max-width: 670px) {\n.listreports-nav[data-v-20db8272] {\n    display: flex;\n    flex-direction: column;\n    margin-bottom: 10px;\n}\n.listreports__search[data-v-20db8272] {\n    margin-right: 0;\n}\n}\n@media (max-width: 380px) {\n.listreports h2[data-v-20db8272] {\n    font-size: 34px;\n    margin-bottom: 20px;\n}\n}\n.shadow[data-v-20db8272] {\n  display: none;\n  background: rgba(0, 0, 0, 0.5);\n  position: fixed;\n  top: 0;\n  left: 0;\n  width: 100%;\n  height: 100%;\n  z-index: 1000;\n}\n.shadow.active[data-v-20db8272] {\n  display: block;\n}\n", ""]);
 // Exports
 /* harmony default export */ __webpack_exports__["default"] = (___CSS_LOADER_EXPORT___);
 
@@ -40985,7 +41157,7 @@ __webpack_require__.r(__webpack_exports__);
 
 var ___CSS_LOADER_EXPORT___ = _node_modules_laravel_mix_node_modules_css_loader_dist_runtime_api_js__WEBPACK_IMPORTED_MODULE_0___default()(function(i){return i[1]});
 // Module
-___CSS_LOADER_EXPORT___.push([module.id, ".reports h2[data-v-0d7aee70] {\n  margin-bottom: 0;\n}\n.reports__title[data-v-0d7aee70] {\n  display: flex;\n  align-items: center;\n  justify-content: space-between;\n}\n.reports__icons[data-v-0d7aee70] {\n  display: flex;\n  align-items: center;\n}\n.reports__icon[data-v-0d7aee70] {\n  display: flex;\n  align-items: center;\n  justify-content: center;\n  width: 44px;\n  height: 44px;\n  border: 1px solid #030087;\n  border-radius: 5px;\n  transition: ease-in-out 0.25s;\n  margin-right: 15px;\n}\n.reports__icon[data-v-0d7aee70]:last-of-type {\n  margin-right: 0;\n}\n.reports__icon[data-v-0d7aee70]:hover {\n  background: #030087;\n}\n.reports__icon:hover svg[data-v-0d7aee70] {\n  fill: #fff;\n}\n.reports__icon svg[data-v-0d7aee70] {\n  fill: #030087;\n  transition: ease-in-out 0.25s;\n}\n.reports__add[data-v-0d7aee70] {\n  margin-top: 25px;\n  cursor: pointer;\n}\n.reports__add-title[data-v-0d7aee70] {\n  font-size: 14px;\n  line-height: 18px;\n  color: #222222;\n  font-weight: 600;\n}\n.reports__add-btn[data-v-0d7aee70] {\n  width: 100%;\n  height: 80px;\n  display: flex;\n  justify-content: center;\n  align-items: center;\n  border: 1px dashed #030087;\n  border-radius: 7px;\n  margin-top: 10px;\n}\n@media (max-width: 1170px) {\n.page-glob[data-v-0d7aee70] {\n    padding-left: 0;\n}\n.wrap-glob[data-v-0d7aee70] {\n    width: calc(100% - 100px);\n}\n.reports__title[data-v-0d7aee70] {\n    flex-direction: column;\n}\n.reports__title h2[data-v-0d7aee70] {\n    font-size: 24px;\n    line-height: 31px;\n}\n.reports__title .reports__icons[data-v-0d7aee70] {\n    width: 100%;\n    margin-top: 30px;\n}\n.reports__title .reports__icon[data-v-0d7aee70] {\n    width: 33.33333%;\n}\n}\n.pdf-view[data-v-0d7aee70] {\n  position: fixed;\n  top: 0;\n  left: 0;\n  overflow: auto;\n  display: none;\n  z-index: 100000;\n  width: 100%;\n  height: 100%;\n}\n.pdf-view iframe[data-v-0d7aee70] {\n  width: 100%;\n  height: 100%;\n}\n.pdf-view.active[data-v-0d7aee70] {\n  display: block;\n}\n.closePdf[data-v-0d7aee70] {\n  position: fixed;\n  top: 100px;\n  right: 100px;\n  cursor: pointer;\n}\n", ""]);
+___CSS_LOADER_EXPORT___.push([module.id, ".reports h2[data-v-0d7aee70] {\n  margin-bottom: 0;\n}\n.reports__title[data-v-0d7aee70] {\n  display: flex;\n  align-items: center;\n  justify-content: space-between;\n}\n.reports__icons[data-v-0d7aee70] {\n  display: flex;\n  align-items: center;\n}\n.reports__icon[data-v-0d7aee70] {\n  display: flex;\n  align-items: center;\n  justify-content: center;\n  width: 44px;\n  height: 44px;\n  border: 1px solid #030087;\n  border-radius: 5px;\n  transition: ease-in-out 0.25s;\n  margin-right: 15px;\n}\n.reports__icon[data-v-0d7aee70]:last-of-type {\n  margin-right: 0;\n}\n.reports__icon[data-v-0d7aee70]:hover {\n  background: #030087;\n}\n.reports__icon:hover svg[data-v-0d7aee70] {\n  fill: #fff;\n}\n.reports__icon svg[data-v-0d7aee70] {\n  fill: #030087;\n  transition: ease-in-out 0.25s;\n}\n.reports__add[data-v-0d7aee70] {\n  margin-top: 25px;\n  cursor: pointer;\n}\n.reports__add-title[data-v-0d7aee70] {\n  font-size: 14px;\n  line-height: 18px;\n  color: #222222;\n  font-weight: 600;\n}\n.reports__add-btn[data-v-0d7aee70] {\n  width: 100%;\n  height: 80px;\n  display: flex;\n  justify-content: center;\n  align-items: center;\n  border: 1px dashed #030087;\n  border-radius: 7px;\n  margin-top: 10px;\n}\n@media (max-width: 1170px) {\n.page-glob[data-v-0d7aee70] {\n    padding-left: 0;\n}\n.wrap-glob[data-v-0d7aee70] {\n    width: calc(100% - 100px);\n}\n.reports__title[data-v-0d7aee70] {\n    flex-direction: column;\n}\n.reports__title h2[data-v-0d7aee70] {\n    font-size: 24px;\n    line-height: 31px;\n}\n.reports__title .reports__icons[data-v-0d7aee70] {\n    width: 100%;\n    margin-top: 30px;\n}\n.reports__title .reports__icon[data-v-0d7aee70] {\n    width: 33.33333%;\n}\n}\n.pdf-view[data-v-0d7aee70] {\n  position: fixed;\n  top: 0;\n  left: 0;\n  overflow: auto;\n  display: none;\n  z-index: 100000;\n  width: 100%;\n  height: 100%;\n}\n.pdf-view iframe[data-v-0d7aee70] {\n  width: 100%;\n  height: 100%;\n}\n.pdf-view.active[data-v-0d7aee70] {\n  display: block;\n}\n.closePdf[data-v-0d7aee70] {\n  position: fixed;\n  top: 100px;\n  right: 100px;\n  cursor: pointer;\n}\n.shadow[data-v-0d7aee70] {\n  display: none;\n  background: rgba(0, 0, 0, 0.5);\n  position: fixed;\n  top: 0;\n  left: 0;\n  width: 100%;\n  height: 100%;\n  z-index: 1000;\n}\n.shadow.active[data-v-0d7aee70] {\n  display: block;\n}\n", ""]);
 // Exports
 /* harmony default export */ __webpack_exports__["default"] = (___CSS_LOADER_EXPORT___);
 

@@ -153,6 +153,7 @@
     </div>
     <iframe src="" frameborder="0"></iframe>
   </div>
+  <div class="shadow"></div>
 </template>
 
 <script>
@@ -350,6 +351,7 @@ export default {
       document.querySelector(".pdf-view").classList.remove("active");
     },
     downloadReport() {
+      document.querySelector('.shadow').classList.add('active')
       let id = this.id[this.id.length - 1];
       axios.get("/api/getPdf/" + id).then((res) => {
         let dom = new DOMParser()
@@ -358,17 +360,17 @@ export default {
 
         let html = document.createElement("div");
 
-        this.makeCanvas(html)
-
         html.innerHTML = dom.innerHTML
+
+        this.makeCanvas(html)
 
         axios.post('/api/downloadPdf', {
           html: html.innerHTML,
           user: this.user,
           height: html.querySelectorAll("section").length * 2480,
         }).then(res => {
+          document.querySelector('.shadow').classList.remove('active')
           let a = document.createElement('a')
-          console.log(res.data);
           a.setAttribute('download', res.data.name)
           a.href = res.data.href
           a.click()
@@ -724,5 +726,19 @@ export default {
   top: 100px;
   right: 100px;
   cursor: pointer;
+}
+
+.shadow {
+  display: none;
+  background: rgba(0,0,0,0.5);
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  z-index: 1000;
+}
+.shadow.active {
+  display: block;
 }
 </style>
