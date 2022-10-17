@@ -301,7 +301,9 @@ h2 {
 .input-file {
   margin-bottom: 30px;
   & input {
-    display: none;
+    display: block;
+    opacity: 0;
+    position: absolute;
   }
   & label {
     display: flex;

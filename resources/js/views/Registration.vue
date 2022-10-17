@@ -210,10 +210,10 @@ export default {
         axios.post('/api/userExist', {
           formResult
         }).then(result => {
-          if(!result.data) {
+          if(result.data) {
             document.querySelector('.autorization__form').submit();
           } else {
-
+            document.querySelector('.error').classList.add('active')
           }
         })
       }

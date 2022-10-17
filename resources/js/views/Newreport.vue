@@ -158,6 +158,7 @@
             <input
               type="file" name="photo"
               id="photo-menedger"
+              :required="settings.photo ? false : true"
               @change="changeUserAvatar2()"
             />
             <label for="photo-menedger">

@@ -91,6 +91,7 @@
             id="companyPhone"
             name="company_phone"
             placeholder="+7 (928) 132-45-67"
+            required
           />
         </div>
         <div class="input-group settings__field--companyMail">
@@ -103,6 +104,7 @@
             id="companyMail" :value="settings.company_email ?? null"
             name="company_email"
             placeholder="seo@umax.agency"
+            required
           />
         </div>
         <div class="input-group settings__field--name">
@@ -113,6 +115,7 @@
             id="name" :value="settings.name ?? null"
             name="name"
             placeholder="Имя Фамилия"
+            required
           />
         </div>
         <div class="input-group settings__field--mail">
@@ -124,6 +127,7 @@
             :value="settings.email ?? null"
             name="email"
             placeholder="seo@umax.agency"
+            required
           />
         </div>
         <div class="input-group settings__field--phone">
@@ -136,6 +140,7 @@
             id="phone"
             name="phone"
             placeholder="+7 (928) 132-45-67"
+            required
           />
         </div>
         <div class="input-group settings__field--slogan">
@@ -147,6 +152,7 @@
             id="slogan"
             name="quote"
             placeholder="Текст"
+            required
           />
         </div>
         <div class="input-group">
@@ -263,14 +269,6 @@ export default {
   max-width: 200px;
   margin-top: 20px;
 }
-
-.input-file input {
-  height: 0;
-  border: none;
-  position: absolute;
-  display: block;
-}
-
 
 .settings {
   &-top {

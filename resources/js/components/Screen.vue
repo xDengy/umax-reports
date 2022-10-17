@@ -4,10 +4,10 @@
       <div class="screen__top-title" @mouseleave="leaveTitle(screenNumber)">
         <input
           type="text"
-          :value="curScreenItem[0].title"
+          :value="curtitle"
           @input="setTitle(screenNumber - 1, $event.target.value)"
         />
-        <span>{{ curScreenItem[0].title }}</span>
+        <span>{{ curtitle }}</span>
         <svg
           width="14"
           height="16"
@@ -89,7 +89,7 @@
       </div>
       <div
         class="screen__wrap__elements"
-        v-for="(items, i) in curScreenItem[0]"
+        v-for="(items, i) in curScreenItem"
         :key="i" :id="'item-'+i"
       >
         <div class="screen__elements">
@@ -212,19 +212,26 @@ export default {
     elements: [],
     test: 0,
     curScreenItem: [],
+    curtitle: null
   }),
   beforeMount() {
-    this.curScreenItem = this.screenItem;
+    for (const key in this.screenItem[0]) {
+      if (typeof this.screenItem[0][key] == 'object') {
+        this.curScreenItem[key] = this.screenItem[0][key]
+      } else {
+        this['cur'+key] = this.screenItem[0][key]
+      }
+    }
   },
   mounted() {
-    for (const i in this.curScreenItem[0]) {
-      if(typeof this.curScreenItem[0][i] !== 'object')
+    for (const i in this.curScreenItem) {
+      if(typeof this.curScreenItem[i] !== 'object')
         this.$el.querySelector('#item-'+i).remove()
     }
   },
   methods: {
     setTitle(id, title) {
-      this.curScreenItem[0].title = title;
+      this.curtitle = title;
       this.$emit("setTitle", { id, title });
     },
     setImg(el) {
@@ -324,13 +331,15 @@ export default {
         arr.push(index);
       }
       this.elements[this.current - 1] = [];
-      this.curScreenItem[0][Object.values(this.curScreenItem[0]).length - 2] = {
+      this.curScreenItem.push({
         count: this.current,
         elements: [],
-      };
+        img: null
+      });
+      console.log(this.curScreenItem);
       for (let i = 0; i < arr.length; i++) {
-        this.curScreenItem[0][
-          Object.values(this.curScreenItem[0]).length - 3
+        this.curScreenItem[
+          Object.values(this.curScreenItem).length - 1
         ].elements.push(this.elements[this.current - 1]);
       }
     },

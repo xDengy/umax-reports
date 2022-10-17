@@ -209,7 +209,7 @@ export default {
       document.querySelector("#screenElement-" + i).remove();
     },
     setTitle(el) {
-      this.current[el.id].title = el.title;
+      this.current[0][el.id].title = el.title;
     },
     addSreen() {
       this.current.push([

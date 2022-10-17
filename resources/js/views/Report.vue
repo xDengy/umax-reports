@@ -15,6 +15,7 @@
             name="title"
             placeholder="Заголовок"
             :value="report.title"
+            required
           />
         </div>
         <div class="input-group newreport__field--Link">
@@ -26,6 +27,7 @@
             name="link"
             placeholder="https://ssylka.ru"
             :value="report.link"
+            required
           />
         </div>
         <div class="input-group newreport__field--dates">
@@ -41,6 +43,7 @@
               min="2000-01-01"
               max="2099-12-31"
               :value="report.dateStart"
+              required
             />
             <div class=""></div>
             <input
@@ -51,6 +54,7 @@
               min="2000-01-01"
               max="2099-12-31"
               :value="report.dateEnd"
+              required
             />
           </div>
         </div>
@@ -85,7 +89,9 @@
             >Логотип клиента</label
           >
           <div class="input-file">
-            <input type="file" id="logo-client" name="logo" @change="changeUserAvatar()" />
+            <input type="file" id="logo-client" 
+              :required="report.logo ? false : true"
+              name="logo" @change="changeUserAvatar()" />
             <label for="logo-client">
               <div class="input-file__image input-file__image--newreport">
                 <img
@@ -108,6 +114,7 @@
             name="name"
             :value="report.name"
             placeholder="Имя Фамилия"
+            required
           />
         </div>
         <div class="input-group newreport__field--mail">
@@ -119,6 +126,7 @@
             :value="report.email"
             id="mail"
             placeholder="seo@umax.agency"
+            required
           />
         </div>
         <div class="input-group newreport__field--phone">
@@ -131,6 +139,7 @@
             name="phone"
             v-maska="'+7 (###) ###-##-##'"
             placeholder="+7 (928) 132-45-67"
+            required
           />
         </div>
         <div class="input-group newreport__field--slogan">
@@ -141,6 +150,7 @@
             id="slogan"
             :value="report.quote"
             name="quote"
+            required
             placeholder="Текст"
           />
         </div>
@@ -152,6 +162,7 @@
             <input
               type="file" name="photo"
               id="photo-menedger"
+              :required="report.photo ? false : true"
               @change="changeUserAvatar2()"
             />
             <label for="photo-menedger">
