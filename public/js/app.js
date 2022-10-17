@@ -20352,7 +20352,6 @@ __webpack_require__.r(__webpack_exports__);
   methods: {
     elementDel: function elementDel() {
       this.clickChecker++;
-      this.curElement.value = [];
 
       if (this.clickChecker == 1) {
         this.elementClose();
@@ -20902,7 +20901,6 @@ function _typeof(obj) { "@babel/helpers - typeof"; return _typeof = "function" =
         elements: [],
         img: null
       });
-      console.log(this.curScreenItem);
 
       for (var i = 0; i < arr.length; i++) {
         this.curScreenItem[Object.values(this.curScreenItem).length - 1].elements.push(this.elements[this.current - 1]);

@@ -645,7 +645,6 @@ export default {
   methods: {
     elementDel() {
       this.clickChecker++;
-      this.curElement.value = []
       if (this.clickChecker == 1) {
         this.elementClose();
       } else if (this.clickChecker == 2) {

@@ -336,7 +336,6 @@ export default {
         elements: [],
         img: null
       });
-      console.log(this.curScreenItem);
       for (let i = 0; i < arr.length; i++) {
         this.curScreenItem[
           Object.values(this.curScreenItem).length - 1
