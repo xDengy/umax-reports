@@ -24583,11 +24583,12 @@ function render(_ctx, _cache, $props, $setup, $data, $options) {
       onClick: _cache[7] || (_cache[7] = function ($event) {
         return $options.delImg($event.target);
       })
-    }, _hoisted_21))]), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("img", {
+    }, _hoisted_21))]), (typeof items !== 'undefined' ? items.img !== null ? true : false : false) ? ((0,vue__WEBPACK_IMPORTED_MODULE_0__.openBlock)(), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementBlock)("img", {
+      key: 0,
       src: items.img
     }, null, 8
     /* PROPS */
-    , _hoisted_22)], 2
+    , _hoisted_22)) : (0,vue__WEBPACK_IMPORTED_MODULE_0__.createCommentVNode)("v-if", true)], 2
     /* CLASS */
     )], 2
     /* CLASS */

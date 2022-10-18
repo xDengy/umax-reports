@@ -169,7 +169,7 @@
                 ></path>
               </svg>
             </div>
-            <img :src="items.img" />
+            <img v-if="typeof items !== 'undefined' ? (items.img !== null ? true : false) : false" :src="items.img" />
           </div>
         </div>
       </div>
