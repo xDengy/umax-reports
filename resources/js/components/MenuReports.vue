@@ -767,6 +767,7 @@ export default {
 }
 
 .hidden .menureports-buttons,
+.hidden .menureports-cont-list,
 .hidden .menureports-user {
   display: none;
 }

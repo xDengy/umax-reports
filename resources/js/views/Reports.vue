@@ -741,4 +741,10 @@ export default {
 .shadow.active {
   display: block;
 }
+
+@media(max-width: 768px) {
+  .wrap-glob {
+    width: calc(100% - 20px);
+  }
+}
 </style>
