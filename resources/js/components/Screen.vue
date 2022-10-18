@@ -132,7 +132,6 @@
     <div
       class="image__wrapper"
       :class="curimg !== 'null' ? 'loaded' : ''"
-      v-if="curimg"
     >
       <input
         name="file_screen"
