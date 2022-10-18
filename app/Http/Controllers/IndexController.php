@@ -23,11 +23,17 @@ class IndexController extends Controller
 
     public function downloadPdf(Request $request)
     {
-        $html = $request->all()['html'];
+        $html = $request->all()['html'];    
         $user = $request->all()['user'];
         $height = $request->all()['height'];
-        
-        Browsershot::html($html)->format('A2')->showBackground()->fit(Manipulations::FIT_CONTAIN, 200, 200)->save('pdf/Отчет '.$user.'.pdf');
+
+        $html = str_replace('\n', '', $html);
+
+        $res = Browsershot::html($html)
+            ->format('A2')
+            ->showBackground()
+            ->fit(Manipulations::FIT_CONTAIN, 200, 200)
+            ->save('pdf/Отчет '.$user.'.pdf');
 
         return [
             'href' => '/pdf/Отчет '.$user.'.pdf',
@@ -35,14 +41,32 @@ class IndexController extends Controller
         ];
     }
 
+    public function previewPdf(Request $request)
+    {
+        $html = $request->all()['html'];    
+        $user = $request->all()['user'];
+
+        $html = str_replace('\n', '', $html);
+
+        $file = fopen('pdf/Отчет '.$user.'.html', 'w');
+        fwrite($file, $html);
+        fclose($file);
+
+        return [
+            'href' => '/pdf/Отчет '.$user.'.html',
+        ];
+    }
+
     public function userExist(Request $request)
     {
         $data = $request->all()['formResult'];
-        $user = User::where([
-            ['login', $data['login']],
-            ['email', $data['email']]
-        ])->first();
-        return boolval($user);
+        $user = User::where('login', $data['login'])->first();
+        $email = User::where('email', $data['email'])->first();
+
+        if($user || $email)
+            return false;
+        else
+            return true;
     }
 
     public function emailExist(Request $request)
@@ -57,10 +81,14 @@ class IndexController extends Controller
     public function register(Request $request)
     {
         $data = $request->all();
-        $fileName = time() . '_' . $request->file('image')->getClientOriginalName();
-        $fileStore = $request->file('image')
-            ->storeAs('uploads', $fileName, 'public');
-        $filePath = '/storage/' . $fileStore;
+        if($request->file('image')) {
+            $fileName = time() . '_' . $request->file('image')->getClientOriginalName();
+            $fileStore = $request->file('image')
+                ->storeAs('uploads', $fileName, 'public');
+            $filePath = '/storage/' . $fileStore;
+        } else {
+            $filePath = '/storage/uploads/user-avatar.jpg';
+        }
         $data['image'] = $filePath;
         if ($filePath) {
             $data['password'] = Hash::make($data['password']);
@@ -188,12 +216,14 @@ class IndexController extends Controller
         } else {
             $data['0_title'] = $data['title'];
             unset($data['title']);
+            $data['0_img'] = $data['img'];
+            unset($data['img']);
             $fullAr = [];
 
             $sort = [];
             foreach ($data as $key => $value) {
                 $splited = explode('_', $key);
-                if ($splited[1] !== strval(intval($splited[1])) && $splited[1] !== 'title') {
+                if ($splited[1] !== strval(intval($splited[1])) && $splited[1] !== 'title' && $splited[1] !== 'img') {
                     $data['0_' . $key] = $value;
                     unset($data[$key]);
                 }
@@ -215,7 +245,7 @@ class IndexController extends Controller
                         $filePath = '/storage/' . $fileStore;
                         $value = $filePath;
                     }
-                    $fullAr[$splited[0]][$splited[1]]['img'] = $value;
+                    $fullAr[$splited[0]]['img'] = $value;
                 }
 
                 if (str_contains($key, 'count')) {
@@ -298,6 +328,7 @@ class IndexController extends Controller
 
     public function deleteReport($id)
     {
+        Element::where('report_id', $id)->first()->delete();
         Report::where('id', $id)->first()->delete();
     }
 
@@ -403,7 +434,7 @@ class IndexController extends Controller
                 </svg>            
               ' . $curReport['report']->phone . '
             </a>
-            <a href="' . $curReport['report']->link . '">
+            <a href="' . $curReport['report']->link . '" target="blank">
               <svg width="14" height="14" viewBox="0 0 14 14" fill="none" xmlns="http://www.w3.org/2000/svg">
                 <path fill-rule="evenodd" clip-rule="evenodd" d="M6.49125 0.00685904C6.43861 0.0130387 6.27865 0.0307575 6.13578 0.0462614C5.23363 0.144152 4.2346 0.482668 3.42845 0.963671C2.40246 1.57582 1.56855 2.40972 0.956409 3.43571C0.479343 4.23527 0.162483 5.16444 0.0332021 6.14304C-0.0110674 6.47809 -0.0110674 7.50331 0.0332021 7.83835C0.162483 8.81696 0.479343 9.74613 0.956409 10.5457C1.56855 11.5717 2.40246 12.4056 3.42845 13.0177C4.22801 13.4948 5.15718 13.8117 6.13578 13.9409C6.47082 13.9852 7.49605 13.9852 7.83109 13.9409C9.53373 13.716 10.977 12.9682 12.1548 11.7006C12.8065 10.9993 13.3162 10.1271 13.6291 9.1782C13.8757 8.43021 13.968 7.83461 13.968 6.9907C13.968 6.36639 13.9417 6.09057 13.8296 5.54148C13.4454 3.65884 12.2358 1.9764 10.5384 0.963671C9.74701 0.491472 8.80327 0.167914 7.85844 0.0448122C7.61863 0.0135856 6.66078 -0.0130199 6.49125 0.00685904ZM6.5662 3.67095C6.54241 3.69477 4.48646 3.56108 4.44818 3.53325C4.43084 3.52064 4.67921 2.93043 4.82033 2.64895C5.27289 1.74611 5.87035 1.1125 6.4624 0.907507L6.55961 0.873847L6.56669 2.26862C6.5706 3.03573 6.57038 3.66679 6.5662 3.67095ZM7.72437 1.00307C8.22911 1.25764 8.75307 1.86399 9.14655 2.64895C9.3166 2.98815 9.53398 3.51957 9.51178 3.54178C9.49031 3.56324 8.36834 3.64697 7.86527 3.66466L7.39359 3.68126V2.27469V0.868132L7.49878 0.905238C7.55664 0.925664 7.65817 0.969687 7.72437 1.00307ZM4.69758 1.28269C4.68684 1.3015 4.62023 1.39685 4.54954 1.4946C4.25021 1.90862 3.93863 2.51961 3.71641 3.12839C3.65701 3.29103 3.59891 3.40867 3.57791 3.40867C3.46282 3.40867 2.23965 3.13102 2.20585 3.09722C2.18595 3.07734 2.47538 2.75316 2.72295 2.518C3.18378 2.08034 3.67665 1.73835 4.26202 1.45012C4.6838 1.24244 4.73097 1.22428 4.69758 1.28269ZM9.70485 1.45012C10.2901 1.73827 10.7791 2.07757 11.2466 2.51975C11.5058 2.76494 11.8034 3.11191 11.776 3.13703C11.7311 3.17835 10.3853 3.45988 10.3635 3.43251C10.3591 3.42693 10.3088 3.29314 10.2518 3.13523C10.0327 2.52836 9.71951 1.91255 9.41733 1.4946C9.26073 1.27802 9.24337 1.24851 9.27257 1.24851C9.28515 1.24851 9.47968 1.33924 9.70485 1.45012ZM1.94519 3.8851C2.20495 3.96284 2.92366 4.13068 3.19264 4.17643L3.38035 4.20834L3.36602 4.30754C3.35812 4.36209 3.32058 4.57283 3.2826 4.77586C3.19906 5.22235 3.1353 5.76214 3.1106 6.23191L3.09228 6.58054H1.9617H0.831093V6.4815C0.831093 6.1737 0.986597 5.42959 1.14995 4.95578C1.28872 4.55328 1.64561 3.81882 1.70243 3.81882C1.71419 3.81882 1.82342 3.84866 1.94519 3.8851ZM12.5476 4.31757C12.7453 4.72762 12.8799 5.09988 12.9813 5.51632C13.0561 5.82359 13.1358 6.32138 13.1358 6.4815V6.58054H12.0052H10.8746L10.8563 6.23191C10.8317 5.76384 10.768 5.22372 10.6846 4.77586C10.6468 4.57283 10.6093 4.36808 10.6013 4.32083L10.5866 4.23497L10.788 4.20218C11.0569 4.15835 11.7805 3.99803 12.0694 3.91827C12.3466 3.84168 12.2992 3.80209 12.5476 4.31757ZM4.63611 4.37825C4.97312 4.41511 5.44048 4.44765 6.25199 4.49074L6.57328 4.5078V5.54419V6.58054H5.24711H3.92094V6.43455C3.92094 5.87559 4.15306 4.33836 4.23747 4.33836C4.25601 4.33836 4.43541 4.35632 4.63611 4.37825ZM9.7725 4.37636C9.7725 4.38221 9.79659 4.50409 9.82604 4.64718C9.93905 5.19648 10.0459 6.06522 10.0459 6.43455V6.58054H8.71976H7.39359V5.54498V4.50942L7.83793 4.49107C8.36506 4.4693 9.48055 4.39241 9.49679 4.37672C9.51142 4.36255 9.7725 4.36223 9.7725 4.37636ZM3.12291 7.87325C3.15928 8.39062 3.23529 8.96194 3.32301 9.37699C3.38404 9.66568 3.37885 9.72507 3.29263 9.72507C3.1943 9.72507 2.29366 9.91539 1.9946 9.99936C1.83559 10.044 1.68662 10.0805 1.66352 10.0805C1.60344 10.0805 1.2725 9.38965 1.13647 8.98023C0.969999 8.47932 0.831093 7.80595 0.831093 7.49989V7.40085H1.96042H3.08971L3.12291 7.87325ZM6.57328 8.42625V9.45164L6.25199 9.45177C5.85901 9.45191 5.16647 9.49303 4.62132 9.54857C4.39746 9.57137 4.21111 9.58658 4.20725 9.58237C4.20337 9.57813 4.16815 9.41839 4.12897 9.22736C4.04327 8.80958 3.9587 8.16131 3.93261 7.72214L3.9135 7.40085H5.24339H6.57328V8.42625ZM10.0343 7.72214C10.0082 8.16107 9.92218 8.82128 9.8375 9.23289C9.79883 9.42087 9.76282 9.58179 9.75749 9.59046C9.75213 9.59913 9.66414 9.59612 9.5619 9.58376C9.12894 9.53142 8.41051 9.47769 7.91996 9.46093L7.39359 9.44297V8.42193V7.40085H8.72348H10.0534L10.0343 7.72214ZM13.1358 7.49989C13.1358 7.80737 12.9968 8.4794 12.8286 8.98559C12.6841 9.42035 12.3294 10.1464 12.2722 10.1245C12.0783 10.0501 10.7025 9.72507 10.5814 9.72507C10.5756 9.72507 10.5947 9.61742 10.6239 9.48582C10.7112 9.09171 10.8083 8.3808 10.8438 7.87568L10.8772 7.40085H12.0065H13.1358V7.49989ZM6.57328 11.6665C6.57328 12.4335 6.56863 13.061 6.56294 13.061C6.53762 13.061 6.32872 12.9698 6.20414 12.9044C5.70575 12.6425 5.17574 12.0194 4.80769 11.2624C4.66605 10.9712 4.43226 10.4069 4.44752 10.3931C4.45581 10.3856 5.48978 10.3017 5.71195 10.2905C5.80219 10.286 6.03291 10.28 6.22465 10.2771L6.57328 10.2719V11.6665ZM8.85648 10.3413C9.09711 10.3628 9.34512 10.3873 9.40762 10.3958L9.52127 10.4112L9.41667 10.6796C8.99801 11.754 8.38628 12.5768 7.76273 12.9044C7.63816 12.9698 7.42925 13.061 7.40393 13.061C7.39824 13.061 7.39359 12.4318 7.39359 11.6628V10.2647L7.90629 10.2835C8.18828 10.2939 8.61586 10.3199 8.85648 10.3413ZM3.66347 10.6619C3.89168 11.3503 4.23446 12.003 4.73857 12.709C4.77639 12.762 4.77499 12.762 4.63742 12.7077C3.99928 12.4562 3.26903 11.9802 2.71899 11.4572C2.46844 11.2189 2.12309 10.8277 2.14668 10.8087C2.19027 10.7737 3.56128 10.4907 3.59757 10.5093C3.60769 10.5145 3.63735 10.5831 3.66347 10.6619ZM10.7022 10.587C11.0284 10.6482 11.7507 10.8214 11.776 10.8445C11.8057 10.8716 11.4956 11.2276 11.209 11.4955C10.674 11.9956 9.94777 12.464 9.32945 12.7077C9.19188 12.762 9.19049 12.762 9.2283 12.709C9.7325 12.0029 10.0752 11.3503 10.3035 10.6616C10.3443 10.5385 10.3595 10.5199 10.4104 10.5308C10.4431 10.5377 10.5744 10.563 10.7022 10.587Z" fill="#505050"/>
                 </svg>            
@@ -436,7 +467,7 @@ class IndexController extends Controller
         $html = '
             <div>
             <div class="' . $curReport['report']->color . '">
-            <link rel="stylesheet" href="http://reports.umax.agency/pdf.css" />
+            <link rel="stylesheet" href="https://reports.umax.agency/pdf.css" />
         ';
         $html .= '
         
@@ -506,7 +537,7 @@ class IndexController extends Controller
                 <p>сайта</p>
                 </div>
                 <div class="report__item report__item--site">
-                <a href="' . $curReport['report']->link . '" target="_blank" class="report__item__text">' . $curReport['report']->link . '</a>
+                <a href="' . $curReport['report']->link . '" target="blank" class="report__item__text">' . $curReport['report']->link . '</a>
                 </div>
                 <div class="report__item report__item--date">
                 <p>Отчетный период:</p>
@@ -522,9 +553,17 @@ class IndexController extends Controller
             if ($key > 0) {
                 $pageCount += (count(array_column($element, 'count')) - 1);
             }
+            $curTitle = $element['title'];
+            foreach(array_column($element, 'elements') as $elementElement) {
+                $elementElementKey = array_search('h1', array_column($elementElement, 'type'));
+                if(isset($elementElement[$elementElementKey])) {
+                    $curTitle = $elementElement[$elementElementKey]['value'][0];
+                    break;
+                }
+            }
             $elementHtml .= '
             <li>
-                <a sub-id="'.$pageCount.'" href="#' . $pageCount . '">' . ($key + 1) . '. ' . $element['title'] . '</a>
+                <a sub-id="'.$pageCount.'" href="#' . $pageCount . '">' . ($key + 1) . '. ' . $curTitle . '</a>
                 <span class="content__list__border">0</span>
                 <span class="content__list__number">/' . $pageCount . '</span>
             </li>
@@ -546,19 +585,20 @@ class IndexController extends Controller
         $elements = '';
         foreach ($curReport['elements']->values as $key => $element) {
             $element = $element[0];
+
+            $style = '';
+            if ($element['img'])
+                $style = 'style="background-image: url(\'https://reports.umax.agency' . str_replace(' ', '%20', $element['img']) . '\'), radial-gradient(26.44% 37.5% at 21.35% 100%, var(--main-lightColorOpacity) 0%, rgba(122, 175, 255, 0) 100%), radial-gradient(36.03% 59.54% at 79.95% -3.94%, rgba(251, 251, 251, 0.08) 0%, rgba(121, 175, 255, 0) 100%);"';
+            else
+                $style = '';
+
+            $elements .= '
+                <section '.$style.' name="' . $elementPageCount . '" id="' . $elementPageCount . '" class="before">
+                <div class="page-number">' . $elementPageCount . '</div>
+                <div class="section__content">
+            ';
             foreach ($element as $elementKey => $elementValue) {
-                if ($elementKey !== 'title') {
-                    $style = '';
-                    if ($elementValue['img'])
-                        $style = 'style="background-image: url(\'http://reports.umax.agency' . str_replace(' ', '%20', $elementValue['img']) . '\'), radial-gradient(26.44% 37.5% at 21.35% 100%, var(--main-lightColorOpacity) 0%, rgba(122, 175, 255, 0) 100%), radial-gradient(36.03% 59.54% at 79.95% -3.94%, rgba(251, 251, 251, 0.08) 0%, rgba(121, 175, 255, 0) 100%);"';
-                    else
-                        $style = '';
-                    $elements .= '
-                    
-                        <section ' . $style . ' name="' . $elementPageCount . '" id="' . $elementPageCount . '" class="before">
-                        <div class="page-number">' . $elementPageCount . '</div>
-                        <div class="section__content">
-                    ';
+                if ($elementKey !== 'title' && $elementKey !== 'img') {
                     $elementPageCount += 1;
                     foreach ($elementValue['elements'] as $elementBlock) {
                         switch ($elementBlock['type']) {
@@ -585,7 +625,7 @@ class IndexController extends Controller
                                     $span = $elementBlock['value'][0];
                                 }
                                 if ($img) {
-                                    $elements .= '<img src="http://reports.umax.agency' . str_replace(' ', '%20', $elementBlock['value'][0]) . '" />';
+                                    $elements .= '<img src="https://reports.umax.agency' . str_replace(' ', '%20', $elementBlock['value'][0]) . '" />';
                                 }
                                 if ($span) {
                                     $elements .= '<span>' . $elementBlock['value'][1] . '</span>';
@@ -662,7 +702,7 @@ class IndexController extends Controller
                                 }
 
                                 $elements .= '
-                                    <a href="' . $elementBlock['value'][1] . '" class="button" style="' . $btnStyle . '">
+                                    <a href="' . $elementBlock['value'][1] . '" target="blank" class="button" style="' . $btnStyle . '">
                                         ' . $elementBlock['value'][0] . '
                                     </a>
                                 ';
@@ -675,27 +715,27 @@ class IndexController extends Controller
                                         <tbody>
                                             <tr class="trHead">
                                                 <td class="table__element tdHead">
-                                                    <img src="http://reports.umax.agency/img/visitors.svg" />
+                                                    <img src="https://reports.umax.agency/img/visitors.svg" />
                                                     Посетители
                                                 </td>
                                                 <td class="table__element tdHead">
-                                                    <img src="http://reports.umax.agency/img/new_visitors.svg" />
+                                                    <img src="https://reports.umax.agency/img/new_visitors.svg" />
                                                     Новые посетители
                                                 </td>
                                                 <td class="table__element tdHead">
-                                                    <img src="http://reports.umax.agency/img/deep.svg" />
+                                                    <img src="https://reports.umax.agency/img/deep.svg" />
                                                     Глубина
                                                 </td>
                                                 <td class="table__element tdHead">
-                                                    <img src="http://reports.umax.agency/img/views.svg" />
+                                                    <img src="https://reports.umax.agency/img/views.svg" />
                                                     Просмотры
                                                 </td>
                                                 <td class="table__element tdHead">
-                                                    <img src="http://reports.umax.agency/img/cancels.svg" />
+                                                    <img src="https://reports.umax.agency/img/cancels.svg" />
                                                     Отказы
                                                 </td>
                                                 <td class="table__element tdHead">
-                                                    <img src="http://reports.umax.agency/img/time.svg" />
+                                                    <img src="https://reports.umax.agency/img/time.svg" />
                                                     Время на сайте
                                                 </td>
                                                 </tr>
@@ -743,10 +783,10 @@ class IndexController extends Controller
                                         </tbody>
                                     </table>
                                 </div>
-                                <div class="table-graph__link">
+                                <a href="' . $elementBlock['value'][6] . '" target="blank" class="table-graph__link">
                                     Сравнение трафика <br />
                                     с предыдущим месяцем
-                                </div>
+                                </a>
                                 ';
                                 break;
 
@@ -805,12 +845,12 @@ class IndexController extends Controller
                                 break;
                         }
                     }
-                    $elements .= $footer . '
-                            </div>
-                        </section>
-                    ';
                 }
             }
+            $elements .= $footer . '
+                    </div>
+                </section>
+            ';
         }
 
         $html .= $elements;
@@ -836,8 +876,8 @@ class IndexController extends Controller
                 </div>
                 <div class="user-block">
                     <div class="user">
-                        <div class="user__image" style="widht:206px;height:206px;">
-                            <img src="http://reports.umax.agency' . str_replace(' ', '%20', $curReport['report']->photo) . '" style="widht:206px;height:206px;" />
+                        <div class="user__image" style="width:206px;height:206px;">
+                            <img src="https://reports.umax.agency' . str_replace(' ', '%20', $curReport['report']->photo) . '" style="widht:206px;height:206px;" />
                         </div>
                         <div class="user__info">
                             <div class="user__info__name">' . $curReport['report']->name . '</div>

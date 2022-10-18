@@ -193,6 +193,7 @@ export default {
     changeUserAvatar(el) {
       el.closest('.input-file').querySelector(".input-file__text").textContent =
         el.files[0].name;
+      el.closest('.input-file').parentNode.querySelector('.input-file > img').remove()
     },
   },
   beforeMount() {

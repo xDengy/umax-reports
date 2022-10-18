@@ -2,13 +2,42 @@
   <div class="numbered-list">
     <p class="numbered-list__title">Cписок c иконками</p>
     <ul class="numbered-list__ul">
-      <li v-for="(liCount, i) in ul" :key="i"><input type="text" :placeholder="liCount" :value="values ? liCount : null"></li>
+      <li v-for="(liCount, i) in ul" :key="i">
+        <input
+          type="text"
+          :placeholder="liCount"
+          :value="typeof liElem[i] !== 'undefined' ? liCount : null"
+          @input="input(i, $event.target.value)"
+        />
+      </li>
     </ul>
     <div class="numbered-list__button" @click="addLi()">
-      <svg width="19" height="19" viewBox="0 0 50 50" fill="none" xmlns="http://www.w3.org/2000/svg">
+      <svg
+        width="19"
+        height="19"
+        viewBox="0 0 50 50"
+        fill="none"
+        xmlns="http://www.w3.org/2000/svg"
+      >
         <circle cx="25" cy="25" r="24" stroke="#030087" stroke-width="2" />
-        <line x1="25" y1="15" x2="25" y2="35" stroke="#030087" stroke-width="2" stroke-linecap="round" />
-        <line x1="15" y1="25" x2="35" y2="25" stroke="#030087" stroke-width="2" stroke-linecap="round" />
+        <line
+          x1="25"
+          y1="15"
+          x2="25"
+          y2="35"
+          stroke="#030087"
+          stroke-width="2"
+          stroke-linecap="round"
+        />
+        <line
+          x1="15"
+          y1="25"
+          x2="35"
+          y2="25"
+          stroke="#030087"
+          stroke-width="2"
+          stroke-linecap="round"
+        />
       </svg>
       Добавить пункт
     </div>
@@ -18,27 +47,30 @@
 <script>
 export default {
   name: "BulletList",
-  props: ["values", 'elementId'],
+  props: ["values", "elementId"],
   data: () => ({
-    ul: [
-      "Значение 1",
-      "Значение 2",
-      "Значение 3"
-    ],
+    ul: ["Значение 1", "Значение 2", "Значение 3"],
+    liElem: [],
+    subValues: [],
   }),
   beforeMount() {
-    if(this.values)
-      this.ul = this.values
+    if (this.values) {
+      this.ul = this.values;
+    }
+    this.liElem = this.ul;
   },
   methods: {
-    close(){
+    input(i, value) {
+      this.liElem[i] = value;
+    },
+    close() {
       this.$emit("close", {});
     },
     addLi() {
-      this.ul.push('Значение ' + (parseInt(this.ul.length) + 1))
-    }
-  }
-}
+      this.ul.push("Значение " + (parseInt(this.ul.length) + 1));
+    },
+  },
+};
 </script>
 
 <style lang="scss" scoped>
@@ -62,7 +94,7 @@ export default {
     position: relative;
 
     & li {
-      list-style-image: url("../assets/images/image.svg");
+      list-style-image: url("../../../public/img/img.svg");
     }
 
     & input {

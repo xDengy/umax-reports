@@ -59,7 +59,9 @@
         </div>
         <div class="listreports-buttons">
           <div
-            class="listreports-buttons__button listreports-buttons__button--points"
+            class="
+              listreports-buttons__button listreports-buttons__button--points
+            "
             :class="litstyle === true ? 'active' : ''"
             @click="points"
           >
@@ -155,7 +157,9 @@
             </svg>
           </div>
           <div
-            class="listreports-buttons__button listreports-buttons__button--line"
+            class="
+              listreports-buttons__button listreports-buttons__button--line
+            "
             :class="litstyle === false ? 'active' : ''"
             @click="line"
           >
@@ -181,11 +185,16 @@
           :key="i"
         >
           <div class="listreports-card__textblock">
-            <div class="listreports-card__data">{{ new Date(card.created_at).toISOString().split('T')[0] }}</div>
+            <div class="listreports-card__data">
+              {{ new Date(card.created_at).toISOString().split("T")[0] }}
+            </div>
             <div class="listreports-card__name">{{ card.title }}</div>
           </div>
           <div class="listreports-card__navblock">
-            <div class="listreports-card__button" @click="downloadReport(card.id)">
+            <div
+              class="listreports-card__button"
+              @click="downloadReport(card.id)"
+            >
               <svg
                 width="30"
                 height="30"
@@ -212,7 +221,10 @@
                 />
               </svg>
             </div>
-            <router-link :to="'/report/' + card.id" class="listreports-card__button">
+            <router-link
+              :to="'/report/' + card.id"
+              class="listreports-card__button"
+            >
               <svg
                 width="30"
                 height="30"
@@ -238,7 +250,10 @@
                 />
               </svg>
             </router-link>
-            <div class="listreports-card__button" @click="deleteReport(card.id, i)">
+            <div
+              class="listreports-card__button"
+              @click="deleteReport(card.id, i)"
+            >
               <svg
                 width="30"
                 height="30"
@@ -271,7 +286,8 @@
             </div>
           </div>
         </div>
-        <router-link to="/newreport"
+        <router-link
+          to="/newreport"
           class="listreports-card listreports-card--lost"
           :class="litstyle === true ? 'points' : 'list'"
         >
@@ -306,6 +322,34 @@
       </div>
     </div>
   </section>
+  <div class="pdf-view">
+    <div class="closePdf" @click="closePdf">
+      <svg
+        width="15"
+        height="15"
+        viewBox="0 0 15 15"
+        fill="none"
+        xmlns="http://www.w3.org/2000/svg"
+      >
+        <line
+          x1="1.06066"
+          y1="1"
+          x2="13"
+          y2="12.9393"
+          stroke="#222222"
+          stroke-width="1.5"
+          stroke-linecap="round"
+        />
+        <path
+          d="M1 13.293L13.2929 1.00008"
+          stroke="#222222"
+          stroke-width="1.5"
+          stroke-linecap="round"
+        />
+      </svg>
+    </div>
+    <iframe src="" frameborder="0"></iframe>
+  </div>
   <div class="shadow"></div>
 </template>
 <script>
@@ -314,12 +358,12 @@ export default {
   name: "ListReports",
   components: {
     MenuReports,
-},
+  },
   data: () => ({
     litstyle: true,
     globalBrandSurname2: null,
     activeBrandSurname2: false,
-    user: document.querySelector('meta[name="user"]').getAttribute('value'),
+    user: document.querySelector('meta[name="user"]').getAttribute("value"),
     // поиск
     fioq: "",
     listcards: [],
@@ -333,10 +377,10 @@ export default {
     ],
   }),
   beforeMount() {
-    axios.get('/api/getUserReports/' + this.user).then(result => {
+    axios.get("/api/getUserReports/" + this.user).then((result) => {
       this.listcards = result.data;
-    })
-    document.querySelector('title').textContent = 'Список отчётов'
+    });
+    document.querySelector("title").textContent = "Список отчётов";
   },
   // поиск
   computed: {
@@ -357,42 +401,50 @@ export default {
   },
   methods: {
     downloadReport(id) {
-      document.querySelector('.shadow').classList.add('active')
+      document.querySelector(".shadow").classList.add("active");
       axios.get("/api/getPdf/" + id).then((res) => {
         let dom = new DOMParser()
           .parseFromString(res.data, "text/xml")
           .querySelector("div");
 
-        let html = document.createElement("div");
+        let frame = document
+          .querySelector(".pdf-view iframe")
+          .contentDocument.querySelector("html");
 
-        html.innerHTML = dom.innerHTML
-        this.makeCanvas(html)
+        frame.innerHTML = dom.innerHTML;
 
-        axios.post('/api/downloadPdf', {
-          html: html.innerHTML,
-          user: this.user,
-          height: html.querySelectorAll("section").length * 2480,
-        }).then(res => {
-          document.querySelector('.shadow').classList.remove('active')
-          let a = document.createElement('a')
-          a.setAttribute('download', res.data.name)
-          a.href = res.data.href
-          a.click()
-        })
+        this.makeCanvas(frame);
+        this.getHeight(frame);
+
+        setTimeout(() => {
+          axios
+            .post("/api/downloadPdf", {
+              html: frame.innerHTML,
+              user: this.user,
+              height: frame.querySelectorAll("section").length * 2480,
+            })
+            .then((res) => {
+              document.querySelector(".shadow").classList.remove("active");
+              let a = document.createElement("a");
+              a.setAttribute("download", res.data.name);
+              a.href = res.data.href;
+              a.click();
+            });
+        }, 1000);
       });
     },
     makeCanvas(html) {
-      let images = html.querySelectorAll('img')
-      for(let i = 0; i < images.length; i++) {
-        this.toDataURL(images[i].getAttribute('src'), function(dataUrl) {
-          images[i].setAttribute('src', dataUrl)
-        })
+      let images = html.querySelectorAll("img");
+      for (let i = 0; i < images.length; i++) {
+        this.toDataURL(images[i].getAttribute("src"), function (dataUrl) {
+          images[i].setAttribute("src", dataUrl);
+        });
       }
 
-      let canvases = html.querySelectorAll('canvas')
+      let canvases = html.querySelectorAll("canvas");
       for (let i = 0; i < canvases.length; i++) {
         const myCanvas = canvases[i];
-        myCanvas.textContent = null
+        myCanvas.textContent = null;
 
         myCanvas.width = 300;
         myCanvas.height = 300;
@@ -427,13 +479,15 @@ export default {
           ctx.fill();
         }
 
-        var myVinyls = {}
-        var colors = []
-        let legends = myCanvas.parentNode.querySelectorAll('legend > div')
+        var myVinyls = {};
+        var colors = [];
+        let legends = myCanvas.parentNode.querySelectorAll("legend > div");
         for (let k = 0; k < legends.length; k++) {
           const element = legends[k];
-          myVinyls[element.querySelector('span').textContent] = parseFloat(element.getAttribute('value'))
-          colors.push(element.querySelector('div').getAttribute('color'));
+          myVinyls[element.querySelector("span").textContent] = parseFloat(
+            element.getAttribute("value")
+          );
+          colors.push(element.querySelector("div").getAttribute("color"));
         }
 
         var Piechart = function (options) {
@@ -516,9 +570,14 @@ export default {
               start_angle += slice_angle;
             }
             color_index = 0;
-            let legendIndex = 0
+            let legendIndex = 0;
             for (categ in this.options.data) {
-              this.canvas.parentNode.querySelectorAll('legend > div .circle')[legendIndex].style = "border-radius: 50%;width:20px;height:20px;background-color:" + this.colors[color_index++] + ";"
+              this.canvas.parentNode.querySelectorAll("legend > div .circle")[
+                legendIndex
+              ].style =
+                "border-radius: 50%;width:20px;height:20px;background-color:" +
+                this.colors[color_index++] +
+                ";";
               legendIndex++;
             }
           };
@@ -531,25 +590,56 @@ export default {
           doughnutHoleSize: 0.4,
         });
         myPiechart.draw();
+
+        let img = document.createElement("img");
+        img.setAttribute("src", myCanvas.toDataURL());
+        img.style.width = "300px";
+        img.style.height = "300px";
+        myCanvas.parentNode.replaceChild(img, myCanvas);
       }
+    },
+    getHeight(html) {
+      document.querySelector(".pdf-view").classList.add("active");
+      document.querySelector(".pdf-view").style.opacity = "0";
+      setTimeout(() => {
+        let sections = html.querySelectorAll("section");
+        for (let i = 0; i < sections.length; i++) {
+          const section = sections[i];
+          if (
+            !section.classList.contains("report") &&
+            !section.classList.contains("content") &&
+            !section.classList.contains("contacts")
+          ) {
+            let otherHeight = document.createElement("div");
+            otherHeight.style.opacity = "0";
+            otherHeight.style.height =
+              Math.ceil(section.scrollHeight / 2237.5) * 2237.5 -
+              section.scrollHeight +
+              "px";
+            section.append(otherHeight);
+          }
+        }
+        document.querySelector(".pdf-view").style.opacity = "1";
+        document.querySelector(".pdf-view").classList.remove("active");
+      }, 1000);
     },
     toDataURL(url, callback) {
       var xhr = new XMLHttpRequest();
-      xhr.onload = function() {
+      xhr.onload = function () {
         var reader = new FileReader();
-        reader.onloadend = function() {
+        reader.onloadend = function () {
           callback(reader.result);
-        }
+        };
         reader.readAsDataURL(xhr.response);
       };
-      xhr.open('GET', url);
-      xhr.responseType = 'blob';
+      xhr.open("GET", url);
+      xhr.responseType = "blob";
       xhr.send();
     },
     deleteReport(id, index) {
-      axios.post('/api/deleteReport/' + id).then(result => {
-        delete this.listcards[index]
-      })
+      axios.post("/api/deleteReport/" + id).then((result) => {
+        delete this.listcards[index];
+      });
     },
     points() {
       this.litstyle = true;
@@ -562,24 +652,24 @@ export default {
     },
     chooseBrandSurname2(item, i) {
       this.globalBrandSurname2 = item.name;
-      if (i == 0){
-        this.sortByKey(this.listcards, "name")
-      };
-      if (i == 1){
-        this.sortByKey(this.listcards, "data")
-      };
+      if (i == 0) {
+        this.sortByKey(this.listcards, "name");
+      }
+      if (i == 1) {
+        this.sortByKey(this.listcards, "data");
+      }
     },
 
-    sortByKey(array,key){
-      return array.sort(function(a,b){
-          let x = a[key];
-          let y = b[key];
-          return((x<y)?-1:((x>y)?1:0));
-      })
+    sortByKey(array, key) {
+      return array.sort(function (a, b) {
+        let x = a[key];
+        let y = b[key];
+        return x < y ? -1 : x > y ? 1 : 0;
+      });
     },
-    generateReport () {
-      this.$refs.html2Pdf.generatePdf()
-    }
+    generateReport() {
+      this.$refs.html2Pdf.generatePdf();
+    },
   },
 };
 </script>
@@ -1038,7 +1128,7 @@ export default {
   }
 }
 
-@media(max-width: 830px) {
+@media (max-width: 830px) {
   .listreports {
     padding: 100px 20px 20px 20px;
   }
@@ -1052,7 +1142,7 @@ export default {
   }
 }
 
-@media(max-width: 670px) {
+@media (max-width: 670px) {
   .listreports-nav {
     display: flex;
     flex-direction: column;
@@ -1064,7 +1154,7 @@ export default {
   }
 }
 
-@media(max-width: 380px) {
+@media (max-width: 380px) {
   .listreports h2 {
     font-size: 34px;
     margin-bottom: 20px;
@@ -1073,7 +1163,7 @@ export default {
 
 .shadow {
   display: none;
-  background: rgba(0,0,0,0.5);
+  background: rgba(0, 0, 0, 0.5);
   position: fixed;
   top: 0;
   left: 0;
@@ -1083,5 +1173,32 @@ export default {
 }
 .shadow.active {
   display: block;
+}
+
+.pdf-view {
+  position: fixed;
+  top: 0;
+  left: 0;
+  overflow: auto;
+  display: none;
+  z-index: 100000;
+  width: 100%;
+  height: 100%;
+}
+
+.pdf-view iframe {
+  width: 100%;
+  height: 100%;
+}
+
+.pdf-view.active {
+  display: block;
+}
+
+.closePdf {
+  position: fixed;
+  top: 100px;
+  right: 100px;
+  cursor: pointer;
 }
 </style>

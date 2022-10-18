@@ -46,6 +46,13 @@
         </tr>
       </tbody>
     </table>
+    <input
+      class=""
+      type="text"
+      :name="'table-link'"
+      placeholder="0"
+      :value="values ? tables[tables.length - 1] : null"
+    />
   </div>
 </template>
 
@@ -109,12 +116,14 @@ export default {
     justify-content: center;
   }
 
-  & input {
-    border: none;
-    height: 42px;
+  & .tdMain {
+    & input {
+      border: none;
+      height: 42px;
 
-    &::placeholder {
-      color: #222222;
+      &::placeholder {
+        color: #222222;
+      }
     }
   }
 

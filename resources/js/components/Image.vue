@@ -70,6 +70,7 @@ export default {
 .input-group.image label {
   display: flex;
   align-items: center;
+  margin-top: 15px;
 }
 .input__wrapper {
   width: 100%;

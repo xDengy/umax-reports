@@ -159,8 +159,6 @@
 <script>
 import MenuReports from "../components/MenuReports.vue";
 import Screen from "../components/Screen.vue";
-import html2Pdf from "html2pdf.js";
-import html2canvas from "html2canvas";
 
 export default {
   name: "Reports",
@@ -324,26 +322,37 @@ export default {
             .parseFromString(res.data, "text/xml")
             .querySelector("div");
 
-          document.body.style.overflow = "hidden";
-          
           let frame = document
             .querySelector(".pdf-view iframe")
             .contentDocument.querySelector("html");
           frame.innerHTML = dom.innerHTML;
-          this.makeCanvas(frame)
-          let a = frame.querySelectorAll(".content .content__list a");
-          for (let i = 0; i < a.length; i++) {
-            const element = a[i];
-            let id = element.getAttribute("sub-id").replace("#", "");
-            element.style.cursor = "pointer";
-            element.removeAttribute("sub-id");
-            element.addEventListener("click", function () {
-              frame
-                .querySelector('section[name="' + id + '"]')
-                .scrollIntoView({ behavior: "smooth" });
-            });
+
+          this.makeCanvas(frame);
+          this.getHeight(frame);
+
+          let sections = frame.querySelectorAll("section");
+          for (let i = 0; i < sections.length; i++) {
+            const section = sections[i];
+            if (i !== sections.length - 1) {
+              let div = document.createElement("div");
+              div.style.backgroundColor = "#999";
+              div.style.height = "30px";
+              section.after(div);
+            }
           }
-          document.querySelector(".pdf-view").classList.add("active");
+          axios
+            .post("/api/previewPdf", {
+              html: frame.innerHTML,
+              user: this.user,
+              height: frame.querySelectorAll("section").length * 2480,
+            })
+            .then((res) => {
+              document.querySelector(".shadow").classList.remove("active");
+              let a = document.createElement("a");
+              a.setAttribute("target", "blank");
+              a.href = res.data.href;
+              a.click();
+            });
         });
     },
     closePdf() {
@@ -351,44 +360,51 @@ export default {
       document.querySelector(".pdf-view").classList.remove("active");
     },
     downloadReport() {
-      document.querySelector('.shadow').classList.add('active')
+      document.querySelector(".shadow").classList.add("active");
       let id = this.id[this.id.length - 1];
       axios.get("/api/getPdf/" + id).then((res) => {
         let dom = new DOMParser()
           .parseFromString(res.data, "text/xml")
           .querySelector("div");
 
-        let html = document.createElement("div");
+        let frame = document
+          .querySelector(".pdf-view iframe")
+          .contentDocument.querySelector("html");
 
-        html.innerHTML = dom.innerHTML
+        frame.innerHTML = dom.innerHTML;
 
-        this.makeCanvas(html)
+        this.makeCanvas(frame);
+        this.getHeight(frame);
 
-        axios.post('/api/downloadPdf', {
-          html: html.innerHTML,
-          user: this.user,
-          height: html.querySelectorAll("section").length * 2480,
-        }).then(res => {
-          document.querySelector('.shadow').classList.remove('active')
-          let a = document.createElement('a')
-          a.setAttribute('download', res.data.name)
-          a.href = res.data.href
-          a.click()
-        })
+        setTimeout(() => {
+          axios
+            .post("/api/downloadPdf", {
+              html: frame.innerHTML,
+              user: this.user,
+              height: frame.querySelectorAll("section").length * 2480,
+            })
+            .then((res) => {
+              document.querySelector(".shadow").classList.remove("active");
+              let a = document.createElement("a");
+              a.setAttribute("download", res.data.name);
+              a.href = res.data.href;
+              a.click();
+            });
+        }, 1000);
       });
     },
     makeCanvas(html) {
-      let images = html.querySelectorAll('img')
-      for(let i = 0; i < images.length; i++) {
-        this.toDataURL(images[i].getAttribute('src'), function(dataUrl) {
-          images[i].setAttribute('src', dataUrl)
-        })
+      let images = html.querySelectorAll("img");
+      for (let i = 0; i < images.length; i++) {
+        this.toDataURL(images[i].getAttribute("src"), function (dataUrl) {
+          images[i].setAttribute("src", dataUrl);
+        });
       }
 
-      let canvases = html.querySelectorAll('canvas')
+      let canvases = html.querySelectorAll("canvas");
       for (let i = 0; i < canvases.length; i++) {
         const myCanvas = canvases[i];
-        myCanvas.textContent = null
+        myCanvas.textContent = null;
 
         myCanvas.width = 300;
         myCanvas.height = 300;
@@ -423,13 +439,15 @@ export default {
           ctx.fill();
         }
 
-        var myVinyls = {}
-        var colors = []
-        let legends = myCanvas.parentNode.querySelectorAll('legend > div')
+        var myVinyls = {};
+        var colors = [];
+        let legends = myCanvas.parentNode.querySelectorAll("legend > div");
         for (let k = 0; k < legends.length; k++) {
           const element = legends[k];
-          myVinyls[element.querySelector('span').textContent] = parseFloat(element.getAttribute('value'))
-          colors.push(element.querySelector('div').getAttribute('color'));
+          myVinyls[element.querySelector("span").textContent] = parseFloat(
+            element.getAttribute("value")
+          );
+          colors.push(element.querySelector("div").getAttribute("color"));
         }
 
         var Piechart = function (options) {
@@ -512,9 +530,14 @@ export default {
               start_angle += slice_angle;
             }
             color_index = 0;
-            let legendIndex = 0
+            let legendIndex = 0;
             for (categ in this.options.data) {
-              this.canvas.parentNode.querySelectorAll('legend > div .circle')[legendIndex].style = "border-radius: 50%;width:20px;height:20px;background-color:" + this.colors[color_index++] + ";"
+              this.canvas.parentNode.querySelectorAll("legend > div .circle")[
+                legendIndex
+              ].style =
+                "border-radius: 50%;width:20px;height:20px;background-color:" +
+                this.colors[color_index++] +
+                ";";
               legendIndex++;
             }
           };
@@ -527,7 +550,38 @@ export default {
           doughnutHoleSize: 0.4,
         });
         myPiechart.draw();
+
+        let img = document.createElement("img");
+        img.setAttribute("src", myCanvas.toDataURL());
+        img.style.width = "300px";
+        img.style.height = "300px";
+        myCanvas.parentNode.replaceChild(img, myCanvas);
       }
+    },
+    getHeight(html) {
+      document.querySelector(".pdf-view").classList.add("active");
+      document.querySelector(".pdf-view").style.opacity = "0";
+      setTimeout(() => {
+        let sections = html.querySelectorAll("section");
+        for (let i = 0; i < sections.length; i++) {
+          const section = sections[i];
+          if (
+            !section.classList.contains("report") &&
+            !section.classList.contains("content") &&
+            !section.classList.contains("contacts")
+          ) {
+            let otherHeight = document.createElement("div");
+            otherHeight.style.opacity = "0";
+            otherHeight.style.height =
+              Math.ceil(section.scrollHeight / 2237.5) * 2237.5 -
+              section.scrollHeight +
+              "px";
+            section.append(otherHeight);
+          }
+        }
+        document.querySelector(".pdf-view").style.opacity = "1";
+        document.querySelector(".pdf-view").classList.remove("active");
+      }, 1000);
     },
     generateArray() {
       let screens = document.querySelectorAll(".screen");
@@ -537,26 +591,27 @@ export default {
           ".screen__top-title span"
         ).textContent;
         let elementRow = screens[i].querySelectorAll(".screen__elements");
+
+        let screenImg = screens[i].querySelector(".image__wrapper");
+        let imgInput = screenImg.querySelector(".input__file");
+        let screenImgFile;
+        if (typeof imgInput.files[0] == "undefined") {
+          let img = imgInput.parentNode.querySelector("img");
+          screenImgFile = img.getAttribute("src");
+        } else screenImgFile = imgInput.files[0];
+
         arr.push({
           title: screenTitle,
+          img: screenImgFile,
         });
         for (let j = 0; j < elementRow.length; j++) {
           if (!elementRow[j].innerHTML) {
             continue;
           }
-          let screenImg =
-            elementRow[j].parentNode.querySelector(".image__wrapper");
-          let imgInput = screenImg.querySelector(".input__file");
-          let screenImgFile;
-          if (typeof imgInput.files[0] == "undefined") {
-            let img = imgInput.parentNode.querySelector("img");
-            screenImgFile = img.getAttribute("src");
-          } else screenImgFile = imgInput.files[0];
 
           let elementItem = elementRow[j].querySelectorAll(".elements-item");
           arr[i][j] = {
             count: elementItem.length,
-            img: screenImgFile,
             elements: [],
           };
           for (let z = 0; z < elementItem.length; z++) {
@@ -588,18 +643,31 @@ export default {
     },
     toDataURL(url, callback) {
       var xhr = new XMLHttpRequest();
-      xhr.onload = function() {
+      xhr.onload = function () {
         var reader = new FileReader();
-        reader.onloadend = function() {
+        reader.onloadend = function () {
           callback(reader.result);
-        }
+        };
         reader.readAsDataURL(xhr.response);
       };
-      xhr.open('GET', url);
-      xhr.responseType = 'blob';
+      xhr.open("GET", url);
+      xhr.responseType = "blob";
       xhr.send();
-    }
+    },
   },
+};
+
+window.onscroll = function () {
+  var header = document.querySelector(".reports__title");
+  var sticky = header.offsetTop;
+
+  console.log(sticky, window.pageYOffset);
+
+  if (window.pageYOffset > sticky) {
+    header.classList.add("fixed");
+  } else {
+    header.classList.remove("fixed");
+  }
 };
 </script>
 
@@ -701,6 +769,19 @@ export default {
   }
 }
 
+.reports__title.fixed {
+  position: fixed;
+  width: calc(100% - 100px);
+  z-index: 1000;
+  margin: 0 auto;
+  max-width: 1220px;
+  background: #fff;
+  padding: 20px;
+  border-radius: 10px;
+  border: 1px solid;
+  top: 0;
+}
+
 .pdf-view {
   position: fixed;
   top: 0;
@@ -730,7 +811,7 @@ export default {
 
 .shadow {
   display: none;
-  background: rgba(0,0,0,0.5);
+  background: rgba(0, 0, 0, 0.5);
   position: fixed;
   top: 0;
   left: 0;
@@ -742,7 +823,7 @@ export default {
   display: block;
 }
 
-@media(max-width: 768px) {
+@media (max-width: 768px) {
   .wrap-glob {
     width: calc(100% - 5px);
   }

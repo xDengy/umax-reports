@@ -4,8 +4,14 @@
       <div class="autorization__logo">
         <img src="../assets/images/logotip.svg" alt="" />
       </div>
-      <form class="autorization__form" method="POST" @submit.prevent="registration" enctype="multipart/form-data" action="/register">
-        <input type="hidden" name="_token" :value="csrf">
+      <form
+        class="autorization__form"
+        method="POST"
+        @submit.prevent="registration"
+        enctype="multipart/form-data"
+        action="/register"
+      >
+        <input type="hidden" name="_token" :value="csrf" />
         <div class="input-group">
           <label for="">Логин</label>
           <input
@@ -14,6 +20,7 @@
             name="login"
             required
             v-model="login"
+            @input="input"
           />
         </div>
         <div class="input-group">
@@ -50,7 +57,30 @@
           class="input-group input-group--password"
           :class="[pass === true ? 'active' : '']"
         >
-          <label for="">Пароль</label>
+          <label for="">
+            <span class="element__label">
+              <svg
+                width="20"
+                height="20"
+                viewBox="0 0 20 20"
+                fill="none"
+                xmlns="http://www.w3.org/2000/svg"
+              >
+                <path
+                  d="M10 18.75C7.67936 18.75 5.45376 17.8281 3.81282 16.1872C2.17187 14.5462 1.25 12.3206 1.25 10C1.25 7.67936 2.17187 5.45376 3.81282 3.81282C5.45376 2.17187 7.67936 1.25 10 1.25C12.3206 1.25 14.5462 2.17187 16.1872 3.81282C17.8281 5.45376 18.75 7.67936 18.75 10C18.75 12.3206 17.8281 14.5462 16.1872 16.1872C14.5462 17.8281 12.3206 18.75 10 18.75ZM10 20C12.6522 20 15.1957 18.9464 17.0711 17.0711C18.9464 15.1957 20 12.6522 20 10C20 7.34784 18.9464 4.8043 17.0711 2.92893C15.1957 1.05357 12.6522 0 10 0C7.34784 0 4.8043 1.05357 2.92893 2.92893C1.05357 4.8043 0 7.34784 0 10C0 12.6522 1.05357 15.1957 2.92893 17.0711C4.8043 18.9464 7.34784 20 10 20V20Z"
+                  fill="#9B9B9B"
+                ></path>
+                <path
+                  d="M7.27292 7.65832C7.27154 7.69267 7.27682 7.72694 7.28844 7.75905C7.30006 7.79115 7.31776 7.82041 7.34046 7.84501C7.36317 7.86961 7.39039 7.88904 7.42046 7.90211C7.45053 7.91518 7.48281 7.9216 7.51531 7.92099H8.34508C8.48387 7.92099 8.59451 7.80082 8.61261 7.65513C8.70313 6.95751 9.15573 6.44919 9.96237 6.44919C10.6523 6.44919 11.284 6.81395 11.284 7.69129C11.284 8.36658 10.9078 8.6771 10.3134 9.14927C9.6365 9.66929 9.10042 10.2765 9.13864 11.2623L9.14165 11.4931C9.14271 11.5629 9.16967 11.6294 9.21671 11.6783C9.26375 11.7273 9.3271 11.7547 9.3931 11.7547H10.2088C10.2755 11.7547 10.3394 11.7267 10.3866 11.6768C10.4337 11.627 10.4602 11.5594 10.4602 11.4888V11.3772C10.4602 10.6136 10.7348 10.3914 11.4761 9.7969C12.0886 9.30453 12.7272 8.75792 12.7272 7.61047C12.7272 6.00361 11.4439 5.22729 10.0388 5.22729C8.76449 5.22729 7.36847 5.85473 7.27292 7.65832V7.65832ZM8.83891 13.7869C8.83891 14.3538 9.26637 14.7727 9.85475 14.7727C10.4673 14.7727 10.8887 14.3538 10.8887 13.7869C10.8887 13.1999 10.4663 12.7873 9.85374 12.7873C9.26637 12.7873 8.83891 13.1999 8.83891 13.7869Z"
+                  fill="#9B9B9B"
+                ></path>
+              </svg>
+              <div class="element__popup">
+                Пароль должен содержать цифры и буквы
+              </div>
+            </span>
+            Пароль</label
+          >
           <input
             type="password"
             placeholder="password"
@@ -105,7 +135,12 @@
           </div>
         </div>
         <div class="input-file">
-          <input required type="file" id="user-avatar" name="image" @change="changeUserAvatar()" />
+          <input
+            type="file"
+            id="user-avatar"
+            name="image"
+            @change="changeUserAvatar()"
+          />
           <label for="user-avatar">
             <div class="input-file__image">
               <img src="../assets/images/inpit-file-image.png" alt="" />
@@ -155,10 +190,12 @@ export default {
     email: null,
     password: null,
     submitPass: null,
-    csrf: document.querySelector('meta[name="csrf-token"]').getAttribute('content'),
+    csrf: document
+      .querySelector('meta[name="csrf-token"]')
+      .getAttribute("content"),
   }),
   beforeMount() {
-    document.querySelector('title').textContent = 'Регистрация'
+    document.querySelector("title").textContent = "Регистрация";
   },
   methods: {
     showPass() {
@@ -191,8 +228,13 @@ export default {
         document.querySelector(".input-file input").files[0].name;
     },
     input() {
-      document.querySelector('input[name="password"]').style.borderColor = 'rgba(3, 0, 135, 0.3)';
-      document.querySelector('input[name="user-submitPass"]').style.borderColor = 'rgba(3, 0, 135, 0.3)';
+      document.querySelector('input[name="password"]').style.borderColor =
+        "rgba(3, 0, 135, 0.3)";
+      document.querySelector(
+        'input[name="user-submitPass"]'
+      ).style.borderColor = "rgba(3, 0, 135, 0.3)";
+      document.querySelector('input[name="login"]').style.borderColor =
+        "rgba(3, 0, 135, 0.3)";
     },
     registration() {
       let formResult = {
@@ -203,19 +245,35 @@ export default {
         password: this.password,
         submitPass: this.submitPass,
       };
-      if(formResult.password !== formResult.submitPass ) {
-        document.querySelector('input[name="password"]').style.borderColor = 'red';
-        document.querySelector('input[name="user-submitPass"]').style.borderColor = 'red';
+      if (formResult.password !== formResult.submitPass) {
+        document.querySelector('input[name="password"]').style.borderColor =
+          "red";
+        document.querySelector(
+          'input[name="user-submitPass"]'
+        ).style.borderColor = "red";
+      } else if (formResult.login == formResult.password) {
+        document.querySelector('input[name="password"]').style.borderColor =
+          "red";
+        document.querySelector('input[name="login"]').style.borderColor = "red";
+      } else if (
+        formResult.password.length < 8 ||
+        !formResult.password.match(/[a-zA-Z]/) ||
+        !formResult.password.match(/[0-9]/)
+      ) {
+        document.querySelector('input[name="password"]').style.borderColor =
+          "red";
       } else {
-        axios.post('/api/userExist', {
-          formResult
-        }).then(result => {
-          if(result.data) {
-            document.querySelector('.autorization__form').submit();
-          } else {
-            document.querySelector('.error').classList.add('active')
-          }
-        })
+        axios
+          .post("/api/userExist", {
+            formResult,
+          })
+          .then((result) => {
+            if (result.data) {
+              document.querySelector(".autorization__form").submit();
+            } else {
+              document.querySelector(".error").classList.add("active");
+            }
+          });
       }
     },
   },
@@ -233,5 +291,34 @@ export default {
 }
 .error.active {
   display: block;
+}
+
+.element__label {
+  cursor: pointer;
+  margin-right: 10px;
+}
+.element__popup {
+  position: absolute;
+  padding: 10px;
+  text-align: center;
+  left: 10px;
+  top: 35px;
+  background: #fff;
+  border-radius: 10px;
+  z-index: -1;
+  opacity: 0;
+  width: max-content;
+  transition: ease-in-out 0.2s;
+  cursor: default;
+}
+
+.element__label:hover .element__popup {
+  z-index: 1000;
+  opacity: 1;
+}
+
+.input-group label {
+  display: flex;
+  align-items: center;
 }
 </style>

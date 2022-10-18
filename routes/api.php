@@ -28,3 +28,4 @@ Route::get('getUserByToken/{token}', [IndexController::class, 'getUserByToken'])
 Route::get('getPdf/{report}', [IndexController::class, 'getPdf'])->name('getPdf');
 Route::post('getPdf/{report}', [IndexController::class, 'getPdfpreview'])->name('getPdfpreview');
 Route::post('downloadPdf', [IndexController::class, 'downloadPdf'])->name('downloadPdf');
+Route::post('previewPdf', [IndexController::class, 'previewPdf'])->name('previewPdf');
