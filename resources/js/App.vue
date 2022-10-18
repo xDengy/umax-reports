@@ -384,7 +384,7 @@ h2 {
     padding-left: 0;
   }
 
-  #save {
+  #save, #report-error {
     left: 25px;
   }
 
