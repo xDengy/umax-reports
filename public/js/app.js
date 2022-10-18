@@ -24556,7 +24556,7 @@ function render(_ctx, _cache, $props, $setup, $data, $options) {
     }), 128
     /* KEYED_FRAGMENT */
     ))]), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("div", {
-      "class": (0,vue__WEBPACK_IMPORTED_MODULE_0__.normalizeClass)(["image__wrapper", items.img ? 'loaded' : ''])
+      "class": (0,vue__WEBPACK_IMPORTED_MODULE_0__.normalizeClass)(["image__wrapper", items.img !== 'null' ? 'loaded' : ''])
     }, [(0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("input", {
       name: "file_screen",
       type: "file",
@@ -24573,7 +24573,7 @@ function render(_ctx, _cache, $props, $setup, $data, $options) {
     }, _hoisted_17, 8
     /* PROPS */
     , _hoisted_14), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("div", {
-      "class": (0,vue__WEBPACK_IMPORTED_MODULE_0__.normalizeClass)(["img__wrapper", items.img ? 'active' : ''])
+      "class": (0,vue__WEBPACK_IMPORTED_MODULE_0__.normalizeClass)(["img__wrapper", items.img !== 'null' ? 'active' : ''])
     }, [(0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("div", _hoisted_18, [((0,vue__WEBPACK_IMPORTED_MODULE_0__.openBlock)(), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementBlock)("svg", {
       width: "15",
       height: "15",
@@ -24583,12 +24583,11 @@ function render(_ctx, _cache, $props, $setup, $data, $options) {
       onClick: _cache[7] || (_cache[7] = function ($event) {
         return $options.delImg($event.target);
       })
-    }, _hoisted_21))]), (typeof items !== 'undefined' ? items.img !== null ? true : false : false) ? ((0,vue__WEBPACK_IMPORTED_MODULE_0__.openBlock)(), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementBlock)("img", {
-      key: 0,
+    }, _hoisted_21))]), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("img", {
       src: items.img
     }, null, 8
     /* PROPS */
-    , _hoisted_22)) : (0,vue__WEBPACK_IMPORTED_MODULE_0__.createCommentVNode)("v-if", true)], 2
+    , _hoisted_22)], 2
     /* CLASS */
     )], 2
     /* CLASS */

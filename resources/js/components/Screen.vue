@@ -108,7 +108,7 @@
         </div>
         <div
           class="image__wrapper"
-          :class="items.img ? 'loaded' : ''"
+          :class="items.img !== 'null' ? 'loaded' : ''"
         >
           <input
             name="file_screen"
@@ -141,7 +141,7 @@
           </label>
           <div
             class="img__wrapper"
-            :class="items.img ? 'active' : ''"
+            :class="items.img !== 'null' ? 'active' : ''"
           >
             <div class="elements__del">
               <svg
@@ -169,7 +169,7 @@
                 ></path>
               </svg>
             </div>
-            <img v-if="typeof items !== 'undefined' ? (items.img !== null ? true : false) : false" :src="items.img" />
+            <img :src="items.img" />
           </div>
         </div>
       </div>
