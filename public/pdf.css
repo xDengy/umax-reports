@@ -75,14 +75,6 @@ body {
   background-color: #FAFAFA;
 }
 
-
-page {
-  height: 2485px;
-  display: flex;
-  width: 100%;
-}
-
-
 section {
   font-family: "Mont";
   font-weight: normal;
@@ -94,7 +86,6 @@ section {
   width: auto;
   display: flex;
   flex-direction: column;
-  height: calc(100vh - 200px);
 }
 
 section.contacts {
@@ -232,13 +223,17 @@ img {
   text-transform: uppercase;
 }
 
+section.report, section.content, section.contacts {
+  height: calc(100vh - 200px);
+}
+
 .footer {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  position: absolute;
+  /* position: absolute; */
   bottom: 100px;
-  margin-top: 130px;
+  margin-top: 50px;
   width: calc(100% - 200px);
 }
 
@@ -810,4 +805,11 @@ legend .circle {
   flex-direction: column;
   height: 100%;
   justify-content: center;
+}
+
+.logo {
+  position: absolute;
+  top: 20%;
+  right: 5%;
+  max-width: 200px;
 }

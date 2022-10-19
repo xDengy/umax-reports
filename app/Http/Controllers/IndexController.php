@@ -216,8 +216,10 @@ class IndexController extends Controller
         } else {
             $data['0_title'] = $data['title'];
             unset($data['title']);
-            $data['0_img'] = $data['img'];
-            unset($data['img']);
+            if(array_key_exists('img', $data)) {
+                $data['0_img'] = $data['img'];
+                unset($data['img']);
+            }
             $fullAr = [];
 
             $sort = [];
@@ -391,7 +393,7 @@ class IndexController extends Controller
 
         $emailData = [];
 
-        $emailData[] = 'Ссылка на восстановление пароля <a href="' . $_SERVER['REQUEST_SCHEME'] . '://' . $_SERVER['SERVER_NAME'] . '/newpassword/' . $updateAr['remember_token'] . '">' . $_SERVER['REQUEST_SCHEME'] . '://' . $_SERVER['SERVER_NAME'] . '/newpassword/' . $updateAr['remember_token'] . '</a>';
+        $emailData[] = 'Ссылка на восстановление пароля <a href="http://127.0.0.1:8000/newpassword/' . $updateAr['remember_token'] . '">http://127.0.0.1:8000/newpassword/' . $updateAr['remember_token'] . '</a>';
 
         Mail::to($data['email'])
             ->send(new ReqMail($emailData));
@@ -467,7 +469,7 @@ class IndexController extends Controller
         $html = '
             <div>
             <div class="' . $curReport['report']->color . '">
-            <link rel="stylesheet" href="https://reports.umax.agency/pdf.css" />
+            <link rel="stylesheet" href="http://127.0.0.1:8000/pdf.css" />
         ';
         $html .= '
         
@@ -543,6 +545,7 @@ class IndexController extends Controller
                 <p>Отчетный период:</p>
                 <p>' . $dateStart . ' - ' . $dateEnd . '</p>
                 </div>
+                <div class="logo"><img src="' . $curReport['report']->logo . '" /></div>
             </section>
         
         ';
@@ -588,7 +591,7 @@ class IndexController extends Controller
 
             $style = '';
             if ($element['img'])
-                $style = 'style="background-image: url(\'https://reports.umax.agency' . str_replace(' ', '%20', $element['img']) . '\'), radial-gradient(26.44% 37.5% at 21.35% 100%, var(--main-lightColorOpacity) 0%, rgba(122, 175, 255, 0) 100%), radial-gradient(36.03% 59.54% at 79.95% -3.94%, rgba(251, 251, 251, 0.08) 0%, rgba(121, 175, 255, 0) 100%);"';
+                $style = 'style="background-image: url(\'http://127.0.0.1:8000' . str_replace(' ', '%20', $element['img']) . '\'), radial-gradient(26.44% 37.5% at 21.35% 100%, var(--main-lightColorOpacity) 0%, rgba(122, 175, 255, 0) 100%), radial-gradient(36.03% 59.54% at 79.95% -3.94%, rgba(251, 251, 251, 0.08) 0%, rgba(121, 175, 255, 0) 100%);"';
             else
                 $style = '';
 
@@ -625,7 +628,7 @@ class IndexController extends Controller
                                     $span = $elementBlock['value'][0];
                                 }
                                 if ($img) {
-                                    $elements .= '<img src="https://reports.umax.agency' . str_replace(' ', '%20', $elementBlock['value'][0]) . '" />';
+                                    $elements .= '<img src="http://127.0.0.1:8000' . str_replace(' ', '%20', $elementBlock['value'][0]) . '" />';
                                 }
                                 if ($span) {
                                     $elements .= '<span>' . $elementBlock['value'][1] . '</span>';
@@ -715,27 +718,27 @@ class IndexController extends Controller
                                         <tbody>
                                             <tr class="trHead">
                                                 <td class="table__element tdHead">
-                                                    <img src="https://reports.umax.agency/img/visitors.svg" />
+                                                    <img src="http://127.0.0.1:8000/img/visitors.svg" />
                                                     Посетители
                                                 </td>
                                                 <td class="table__element tdHead">
-                                                    <img src="https://reports.umax.agency/img/new_visitors.svg" />
+                                                    <img src="http://127.0.0.1:8000/img/new_visitors.svg" />
                                                     Новые посетители
                                                 </td>
                                                 <td class="table__element tdHead">
-                                                    <img src="https://reports.umax.agency/img/deep.svg" />
+                                                    <img src="http://127.0.0.1:8000/img/deep.svg" />
                                                     Глубина
                                                 </td>
                                                 <td class="table__element tdHead">
-                                                    <img src="https://reports.umax.agency/img/views.svg" />
+                                                    <img src="http://127.0.0.1:8000/img/views.svg" />
                                                     Просмотры
                                                 </td>
                                                 <td class="table__element tdHead">
-                                                    <img src="https://reports.umax.agency/img/cancels.svg" />
+                                                    <img src="http://127.0.0.1:8000/img/cancels.svg" />
                                                     Отказы
                                                 </td>
                                                 <td class="table__element tdHead">
-                                                    <img src="https://reports.umax.agency/img/time.svg" />
+                                                    <img src="http://127.0.0.1:8000/img/time.svg" />
                                                     Время на сайте
                                                 </td>
                                                 </tr>
@@ -877,7 +880,7 @@ class IndexController extends Controller
                 <div class="user-block">
                     <div class="user">
                         <div class="user__image" style="width:206px;height:206px;">
-                            <img src="https://reports.umax.agency' . str_replace(' ', '%20', $curReport['report']->photo) . '" style="widht:206px;height:206px;" />
+                            <img src="http://127.0.0.1:8000' . str_replace(' ', '%20', $curReport['report']->photo) . '" style="widht:206px;height:206px;" />
                         </div>
                         <div class="user__info">
                             <div class="user__info__name">' . $curReport['report']->name . '</div>
