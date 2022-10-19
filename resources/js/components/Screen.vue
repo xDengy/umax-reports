@@ -226,8 +226,7 @@ export default {
         this.$el.querySelector("#item-" + i).remove();
     }
   },
-  updated() {
-    this.curScreenItem = []
+  beforeUpdate() {
     for (const key in this.screenItem[0]) {
       if (key !== "title" && key !== "img") {
         this.curScreenItem[key] = this.screenItem[0][key];

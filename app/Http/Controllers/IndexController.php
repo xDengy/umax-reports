@@ -552,7 +552,7 @@ class IndexController extends Controller
         foreach ($curReport['elements']->values as $key => $element) {
             $element = $element[0];
             if ($key > 0) {
-                $pageCount += (count(array_column($element, 'count')) - 1);
+                $pageCount += 1;
             }
             $curTitle = $element['title'];
             foreach(array_column($element, 'elements') as $elementElement) {
@@ -598,9 +598,9 @@ class IndexController extends Controller
                 <div class="page-number">' . $elementPageCount . '</div>
                 <div class="section__content">
             ';
+            $elementPageCount += 1;
             foreach ($element as $elementKey => $elementValue) {
                 if ($elementKey !== 'title' && $elementKey !== 'img') {
-                    $elementPageCount += 1;
                     foreach ($elementValue['elements'] as $elementBlock) {
                         switch ($elementBlock['type']) {
                             case 'h1':

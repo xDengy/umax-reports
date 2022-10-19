@@ -20358,21 +20358,23 @@ __webpack_require__.r(__webpack_exports__);
       }
     }
   },
-  updated: function updated() {
-    this.global = false;
+  beforeUpdate: function beforeUpdate() {
+    if (this.element.length > 0) {
+      this.global = false;
 
-    for (var key in this.tagname) {
-      this[key] = false;
-    }
+      for (var key in this.tagname) {
+        this[key] = false;
+      }
 
-    this.curElement = this.element;
+      this.curElement = this.element;
 
-    for (var _key in this.tagname) {
-      if (this.tagname[_key] == this.curElement.type) {
-        this.activeType = this.tagname[_key];
-        this[_key] = true;
-      } else {
-        this[_key] = false;
+      for (var _key in this.tagname) {
+        if (this.tagname[_key] == this.curElement.type) {
+          this.activeType = this.tagname[_key];
+          this[_key] = true;
+        } else {
+          this[_key] = false;
+        }
       }
     }
   },
@@ -20839,9 +20841,7 @@ function _typeof(obj) { "@babel/helpers - typeof"; return _typeof = "function" =
       if (_typeof(this.curScreenItem[i]) !== "object") this.$el.querySelector("#item-" + i).remove();
     }
   },
-  updated: function updated() {
-    this.curScreenItem = [];
-
+  beforeUpdate: function beforeUpdate() {
     for (var key in this.screenItem[0]) {
       if (key !== "title" && key !== "img") {
         this.curScreenItem[key] = this.screenItem[0][key];
@@ -22191,7 +22191,7 @@ __webpack_require__.r(__webpack_exports__);
         var dom = new DOMParser().parseFromString(res.data, "text/xml").querySelector("div");
         var frame = document.querySelector(".pdf-view iframe").contentDocument.querySelector("html");
         frame.innerHTML = dom.innerHTML;
-        document.body.style.overflow = 'hidden';
+        document.body.style.overflow = "hidden";
 
         _this3.makeCanvas(frame);
 
@@ -22203,7 +22203,7 @@ __webpack_require__.r(__webpack_exports__);
             user: _this3.user
           }).then(function (res) {
             document.querySelector(".shadow").classList.remove("active");
-            document.body.style.overflow = 'auto';
+            document.body.style.overflow = "auto";
             var a = document.createElement("a");
             a.setAttribute("download", res.data.name);
             a.href = res.data.href;
@@ -22361,16 +22361,15 @@ __webpack_require__.r(__webpack_exports__);
           var section = sections[i];
 
           if (!section.classList.contains("report") && !section.classList.contains("content") && !section.classList.contains("contacts")) {
-            var otherHeight = document.createElement("div");
-            otherHeight.style.opacity = "0";
-
-            if (Math.round(section.scrollHeight / 2237.5) > Math.floor(section.scrollHeight / 2237.5)) {
-              otherHeight.style.height = Math.round(section.scrollHeight / 2237.5) * 2237.5 - section.scrollHeight + "px";
-            } else {
-              otherHeight.style.height = '0px';
-            }
-
-            section.append(otherHeight);
+            section.style.height = "calc((100vh * " + Math.ceil(section.scrollHeight / 2237.5) + ") - 200px)";
+            var pageNumber = parseInt(section.getAttribute("name")) + Math.ceil(sections[i - 1].scrollHeight / 2237.5) - 1;
+            var nav = html.querySelector('.content__list li a[href="#' + section.getAttribute("name") + '"]');
+            nav.setAttribute("sub-id", pageNumber);
+            nav.setAttribute("href", "#" + pageNumber);
+            nav.closest("li").querySelector(".content__list__number").textContent = "/" + pageNumber;
+            section.setAttribute("name", pageNumber);
+            section.setAttribute("id", pageNumber);
+            section.querySelector(".page-number").textContent = pageNumber;
           }
         }
 

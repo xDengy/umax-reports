@@ -1,6 +1,10 @@
 <template>
   <section class="reports page-glob">
-    <MenuReports ref="menuList" @deleteItem="screenDelete" @setTitle="setTitleFromMenu" />
+    <MenuReports
+      ref="menuList"
+      @deleteItem="screenDelete"
+      @setTitle="setTitleFromMenu"
+    />
     <div class="reports wrap-glob">
       <div class="reports__title">
         <h2>Отчёт по SEO продвижению</h2>
@@ -200,7 +204,7 @@ export default {
       this.current[el.id][0].title = el.title;
     },
     setTitleFromMenu(res) {
-      this.$refs.screen[res.id].setTitle(res.id, res.title)
+      this.$refs.screen[res.id].setTitle(res.id, res.title);
     },
     addSreen() {
       this.current.push([
@@ -332,18 +336,19 @@ export default {
               section.after(div);
             }
           }
-          axios
-            .post("/api/previewPdf", {
-              html: frame.innerHTML,
-              user: this.user,
-            })
-            .then((res) => {
-              document.querySelector(".shadow").classList.remove("active");
-              let a = document.createElement("a");
-              a.setAttribute("target", "blank");
-              a.href = res.data.href;
-              a.click();
-            });
+
+            axios
+              .post("/api/previewPdf", {
+                html: frame.innerHTML,
+                user: this.user,
+              })
+              .then((res) => {
+                document.querySelector(".shadow").classList.remove("active");
+                let a = document.createElement("a");
+                a.setAttribute("target", "blank");
+                a.href = res.data.href;
+                a.click();
+              });
         });
     },
     closePdf() {
@@ -364,7 +369,7 @@ export default {
 
         frame.innerHTML = dom.innerHTML;
 
-        document.body.style.overflow = 'hidden'
+        document.body.style.overflow = "hidden";
 
         this.makeCanvas(frame);
         this.getHeight(frame);
@@ -377,7 +382,7 @@ export default {
             })
             .then((res) => {
               document.querySelector(".shadow").classList.remove("active");
-              document.body.style.overflow = 'auto'
+              document.body.style.overflow = "auto";
               let a = document.createElement("a");
               a.setAttribute("download", res.data.name);
               a.href = res.data.href;
@@ -563,17 +568,30 @@ export default {
             !section.classList.contains("content") &&
             !section.classList.contains("contacts")
           ) {
-            let otherHeight = document.createElement("div");
-            otherHeight.style.opacity = "0";
-            if(Math.round(section.scrollHeight / 2237.5) > Math.floor(section.scrollHeight / 2237.5)) {
-              otherHeight.style.height =
-                Math.round(section.scrollHeight / 2237.5) * 2237.5 -
-                section.scrollHeight +
-                "px";
-            } else {
-              otherHeight.style.height = '0px'
-            }
-            section.append(otherHeight);
+            section.style.height =
+              "calc((100vh * " +
+              Math.ceil(section.scrollHeight / 2237.5) +
+              ") - 200px)";
+
+            let pageNumber =
+              parseInt(section.getAttribute("name")) +
+              Math.ceil(sections[i - 1].scrollHeight / 2237.5) - 1;
+
+            let nav = html.querySelector(
+              '.content__list li a[href="#' +
+                section.getAttribute("name") +
+                '"]'
+            );
+            nav.setAttribute("sub-id", pageNumber);
+            nav.setAttribute("href", "#" + pageNumber);
+            nav
+              .closest("li")
+              .querySelector(".content__list__number").textContent =
+              "/" + pageNumber;
+
+            section.setAttribute("name", pageNumber);
+            section.setAttribute("id", pageNumber);
+            section.querySelector(".page-number").textContent = pageNumber;
           }
         }
         document.querySelector(".pdf-view").style.opacity = "1";
@@ -653,13 +671,14 @@ export default {
     },
   },
 };
-function array_values( input ) {
- var tmp_arr = new Array(), cnt = 0;
- for (let key in input ){
-  tmp_arr[cnt] = input[key];
-  cnt++;
- }
- return tmp_arr;
+function array_values(input) {
+  var tmp_arr = new Array(),
+    cnt = 0;
+  for (let key in input) {
+    tmp_arr[cnt] = input[key];
+    cnt++;
+  }
+  return tmp_arr;
 }
 
 window.onscroll = function () {
