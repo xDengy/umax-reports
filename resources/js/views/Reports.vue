@@ -570,21 +570,19 @@ export default {
           ) {
             section.style.height =
               "calc((100vh * " +
-              Math.ceil(section.scrollHeight / 2237.5) +
+              Math.round(section.scrollHeight / 2237.5) +
               ") - 200px)";
 
             let newSections = html.querySelectorAll("section");
             var del = 0;
-            if (Math.ceil(newSections[i - 1].scrollHeight / 2237.5) > 1) {
-              del = 1;
+            if (Math.round(newSections[i - 1].scrollHeight / 2237.5) > 1) {
+              del = Math.round(newSections[i - 1].scrollHeight / 2237.5) - 1;
             }
 
             let pageNumber =
               parseInt(section.getAttribute("name")) +
-              Math.ceil(newSections[i - 1].scrollHeight / 2237.5) -
+              Math.round(newSections[i - 1].scrollHeight / 2237.5) -
               del;
-
-            console.log(pageNumber, del, Math.ceil(newSections[i - 1].scrollHeight / 2237.5), section, newSections[i]);
 
             if (i > 2) {
               let nav = html.querySelectorAll('.content__list li a')[i - 2];

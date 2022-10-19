@@ -22361,16 +22361,15 @@ __webpack_require__.r(__webpack_exports__);
           var section = sections[i];
 
           if (!section.classList.contains("report") && !section.classList.contains("content") && !section.classList.contains("contacts")) {
-            section.style.height = "calc((100vh * " + Math.ceil(section.scrollHeight / 2237.5) + ") - 200px)";
+            section.style.height = "calc((100vh * " + Math.round(section.scrollHeight / 2237.5) + ") - 200px)";
             var newSections = html.querySelectorAll("section");
             var del = 0;
 
-            if (Math.ceil(newSections[i - 1].scrollHeight / 2237.5) > 1) {
-              del = 1;
+            if (Math.round(newSections[i - 1].scrollHeight / 2237.5) > 1) {
+              del = Math.round(newSections[i - 1].scrollHeight / 2237.5) - 1;
             }
 
-            var pageNumber = parseInt(section.getAttribute("name")) + Math.ceil(newSections[i - 1].scrollHeight / 2237.5) - del;
-            console.log(pageNumber, del, Math.ceil(newSections[i - 1].scrollHeight / 2237.5), section, newSections[i]);
+            var pageNumber = parseInt(section.getAttribute("name")) + Math.round(newSections[i - 1].scrollHeight / 2237.5) - del;
 
             if (i > 2) {
               var nav = html.querySelectorAll('.content__list li a')[i - 2];
