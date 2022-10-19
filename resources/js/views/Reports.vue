@@ -344,7 +344,6 @@ export default {
             .post("/api/previewPdf", {
               html: frame.innerHTML,
               user: this.user,
-              height: frame.querySelectorAll("section").length * 2480,
             })
             .then((res) => {
               document.querySelector(".shadow").classList.remove("active");
@@ -373,6 +372,8 @@ export default {
 
         frame.innerHTML = dom.innerHTML;
 
+        document.body.style.overflow = 'hidden'
+
         this.makeCanvas(frame);
         this.getHeight(frame);
 
@@ -381,10 +382,10 @@ export default {
             .post("/api/downloadPdf", {
               html: frame.innerHTML,
               user: this.user,
-              height: frame.querySelectorAll("section").length * 2480,
             })
             .then((res) => {
               document.querySelector(".shadow").classList.remove("active");
+              document.body.style.overflow = 'auto'
               let a = document.createElement("a");
               a.setAttribute("download", res.data.name);
               a.href = res.data.href;
@@ -572,10 +573,14 @@ export default {
           ) {
             let otherHeight = document.createElement("div");
             otherHeight.style.opacity = "0";
-            otherHeight.style.height =
-              Math.ceil(section.scrollHeight / 2237.5) * 2237.5 -
-              section.scrollHeight +
-              "px";
+            if(Math.round(section.scrollHeight / 2237.5) > Math.floor(section.scrollHeight / 2237.5)) {
+              otherHeight.style.height =
+                Math.round(section.scrollHeight / 2237.5) * 2237.5 -
+                section.scrollHeight +
+                "px";
+            } else {
+              otherHeight.style.height = '0px'
+            }
             section.append(otherHeight);
           }
         }
@@ -660,8 +665,6 @@ export default {
 window.onscroll = function () {
   var header = document.querySelector(".reports__title");
   var sticky = header.offsetTop;
-
-  console.log(sticky, window.pageYOffset);
 
   if (window.pageYOffset > sticky) {
     header.classList.add("fixed");

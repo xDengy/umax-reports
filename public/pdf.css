@@ -86,6 +86,7 @@ section {
   width: auto;
   display: flex;
   flex-direction: column;
+  min-height: calc(100% - 200px);
 }
 
 section.contacts {
@@ -131,10 +132,11 @@ img {
 .report {
   background-image: url('/img/pdfBack.png');
   background-repeat: no-repeat;
-  background-position: right center;
+  background-position: right calc(50% - 200px), right center, right center, right center, right center, right center, right center, right center;
   display: flex;
   flex-direction: column;
   justify-content: space-between;
+  background-size: 350px, auto, auto, auto, auto, auto, auto, auto;
 }
 
 .report__item {
