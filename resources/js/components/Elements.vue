@@ -642,6 +642,21 @@ export default {
       }
     }
   },
+  updated() {
+    this.global = false;
+    for (const key in this.tagname) {
+      this[key] = false;
+    }
+    this.curElement = this.element; 
+    for (const key in this.tagname) {
+      if (this.tagname[key] == this.curElement.type) {
+        this.activeType = this.tagname[key];
+        this[key] = true;
+      } else {
+        this[key] = false;
+      }
+    }
+  },
   methods: {
     elementDel() {
       this.clickChecker++;

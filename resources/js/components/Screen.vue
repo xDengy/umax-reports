@@ -1,11 +1,12 @@
 <template>
   <div class="screen" :id="'screen-' + screenNumber">
+    <div :id="'screenElement-scroll-' + (screenNumber - 1)" class="screenElement-scroll"></div>
     <div class="screen__top">
-      <div class="screen__top-title" @mouseleave="leaveTitle(screenNumber)">
+      <div class="screen__top-title" @mouseleave="leaveTitle($event.target.closest('.screen'))">
         <input
           type="text"
           :value="curtitle"
-          @input="setTitle(screenNumber - 1, $event.target.value)"
+          @input="setTitle($event.target.closest('.screen').id.split('-')[1], $event.target.value)"
         />
         <span>{{ curtitle }}</span>
         <svg
@@ -14,7 +15,7 @@
           viewBox="0 0 14 16"
           fill="none"
           xmlns="http://www.w3.org/2000/svg"
-          @click="editTitle(screenNumber)"
+          @click="editTitle($event.target.closest('.screen'))"
         >
           <path
             fill-rule="evenodd"
@@ -131,7 +132,7 @@
     </div>
     <div
       class="image__wrapper"
-      :class="curimg !== 'null' ? 'loaded' : ''"
+      :class="typeof curimg == 'string' ? 'loaded' : ''"
     >
       <input
         name="file_screen"
@@ -159,7 +160,7 @@
         </span>
         <span class="input__file-button-text">Добавить изображение</span>
       </label>
-      <div class="img__wrapper" :class="curimg !== 'null' ? 'active' : ''">
+      <div class="img__wrapper" :class="typeof curimg == 'string' ? 'active' : ''">
         <div class="elements__del">
           <svg
             width="15"
@@ -212,7 +213,7 @@ export default {
   }),
   beforeMount() {
     for (const key in this.screenItem[0]) {
-      if (typeof this.screenItem[0][key] == "object") {
+      if (key !== "title" && key !== "img") {
         this.curScreenItem[key] = this.screenItem[0][key];
       } else {
         this["cur" + key] = this.screenItem[0][key];
@@ -223,6 +224,16 @@ export default {
     for (const i in this.curScreenItem) {
       if (typeof this.curScreenItem[i] !== "object")
         this.$el.querySelector("#item-" + i).remove();
+    }
+  },
+  updated() {
+    this.curScreenItem = []
+    for (const key in this.screenItem[0]) {
+      if (key !== "title" && key !== "img") {
+        this.curScreenItem[key] = this.screenItem[0][key];
+      } else {
+        this["cur" + key] = this.screenItem[0][key];
+      }
     }
   },
   methods: {
@@ -305,19 +316,19 @@ export default {
     screenDel() {
       this.$emit("screenClose", {});
     },
-    editTitle(id) {
-      document
-        .querySelector("#screenElement-" + (id - 1) + " .screen__top-title")
+    editTitle(el) {
+      el
+        .querySelector(".screen__top-title")
         .classList.toggle("active");
     },
-    leaveTitle(id) {
+    leaveTitle(el) {
       if (
-        document
-          .querySelector("#screenElement-" + (id - 1) + " .screen__top-title")
+        el
+          .querySelector(".screen__top-title")
           .classList.contains("active")
       ) {
-        document
-          .querySelector("#screenElement-" + (id - 1) + " .screen__top-title")
+        el
+          .querySelector(".screen__top-title")
           .classList.remove("active");
       }
     },
@@ -349,6 +360,7 @@ export default {
 <style lang="scss" scoped>
 .screen {
   margin-top: 30px;
+  position: relative;
 
   &__top {
     display: flex;
@@ -525,5 +537,10 @@ export default {
 
 .image__wrapper {
   border-top: 1px solid;
+}
+
+.screenElement-scroll {
+  position: absolute;
+  top: -110px;
 }
 </style>

@@ -126,7 +126,7 @@
             v-for="(item, index) in currentAr"
             :id="'element-' + index"
             :key="index"
-            @mouseleave="leaveTitle(index)"
+            @mouseleave="leaveTitle($event.target)"
           >
             <div class="elements__text">
               <svg
@@ -163,9 +163,9 @@
               <input
                 type="text"
                 :value="item[0].title"
-                @input="setTitle(index, $event.target.value)"
+                @input="setTitle(parseInt($event.target.closest('.menureports-buttons__elements').id.split('-')[1]), $event.target.value)"
               />
-              <a @click="scroll('#screen-' + (index + 1))">{{
+              <a @click="scroll($event.target.closest('.menureports-buttons__elements').id.split('-')[1])">{{
                 item[0].title
               }}</a>
             </div>
@@ -176,7 +176,7 @@
                 viewBox="0 0 14 16"
                 fill="none"
                 xmlns="http://www.w3.org/2000/svg"
-                @click="editTitle(index)"
+                @click="editTitle($event.target.closest('.menureports-buttons__elements'))"
               >
                 <path
                   fill-rule="evenodd"
@@ -192,7 +192,7 @@
                 fill="none"
                 xmlns="http://www.w3.org/2000/svg"
                 data-v-59c35ec8=""
-                @click="deleteItem(index)"
+                @click="deleteItem(parseInt($event.target.closest('.menureports-buttons__elements').id.split('-')[1]))"
               >
                 <line
                   x1="1.06066"
@@ -279,7 +279,7 @@ export default {
     currentAr: [],
     userId: document.querySelector('meta[name="user"]').getAttribute("value"),
     user: null,
-    window: window.location.pathname,
+    window: window.location.pathname
   }),
   beforeMount() {
     axios.get("/api/user/" + this.userId).then((result) => {
@@ -288,13 +288,20 @@ export default {
   },
   methods: {
     setTitle(id, title) {
-      this.$.parent.data.current[id][0].title = title;
+      this.$emit('setTitle', {id, title})
     },
-    scroll(selector) {
-      document.querySelector(selector).scrollIntoView({
-        behavior: "smooth",
-        block: "start",
-      });
+    scroll(id) {
+      if(id == 0) {
+        document.body.scrollIntoView({
+          behavior: "smooth",
+          block: "start",
+        });
+      } else {
+        document.querySelector('#screenElement-scroll-' + id).scrollIntoView({
+          behavior: "smooth",
+          block: "start",
+        });
+      }
     },
     hideMenu() {
       let menureports = document.querySelector(".menureports");
@@ -306,34 +313,31 @@ export default {
         else menureports.classList.toggle("hidden");
       }, 250);
     },
-    editTitle(id) {
-      document
-        .querySelector("#element-" + id + " .elements__text")
+    editTitle(elem) {
+      elem
+        .querySelector(".elements__text")
         .classList.toggle("active");
     },
-    leaveTitle(id) {
+    leaveTitle(elem) {
       if (
-        document
-          .querySelector("#element-" + id + " .elements__text")
+        elem
+          .querySelector(".elements__text")
           .classList.contains("active")
       ) {
-        document
-          .querySelector("#element-" + id + " .elements__text")
+        elem
+          .querySelector(".elements__text")
           .classList.remove("active");
       }
     },
     updateAr(ar) {
       this.currentAr = ar;
+      this.$.parent.data.current = ar;
     },
     drag(res) {
-      this.$.parent.data.current = this.currentAr;
       this.$.parent.type.methods.changeWrap(res.moved);
     },
     deleteItem(index) {
-      this.$.parent.type.methods.screenDelete(
-        index,
-        this.$.parent.data.current
-      );
+      this.$emit('deleteItem', index)
     },
     exit() {
       axios.post("/exit").then((responce) => {

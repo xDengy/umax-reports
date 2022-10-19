@@ -1,6 +1,6 @@
 <template>
   <section class="reports page-glob">
-    <MenuReports ref="menuList" />
+    <MenuReports ref="menuList" @deleteItem="screenDelete" @setTitle="setTitleFromMenu" />
     <div class="reports wrap-glob">
       <div class="reports__title">
         <h2>Отчёт по SEO продвижению</h2>
@@ -193,26 +193,18 @@ export default {
       });
   },
   methods: {
-    screenDelete(i, current = this.current) {
-      current.splice(i, 1);
-      for (let j = 0; j < current.length; j++) {
-        current[j] = {
-          id: j,
-          title: current[j].title,
-        };
-      }
-      if (typeof this.$refs !== "undefined")
-        this.$refs.menuList.updateAr(this.current);
-
-      document.querySelector("#screenElement-" + i).remove();
+    screenDelete(i) {
+      this.current.splice(i, 1);
     },
     setTitle(el) {
-      this.current[0][el.id].title = el.title;
+      this.current[el.id][0].title = el.title;
+    },
+    setTitleFromMenu(res) {
+      this.$refs.screen[res.id].setTitle(res.id, res.title)
     },
     addSreen() {
       this.current.push([
         {
-          id: this.current.length,
           title: this.current.length + 1 + " экран",
         },
       ]);
@@ -661,6 +653,14 @@ export default {
     },
   },
 };
+function array_values( input ) {
+ var tmp_arr = new Array(), cnt = 0;
+ for (let key in input ){
+  tmp_arr[cnt] = input[key];
+  cnt++;
+ }
+ return tmp_arr;
+}
 
 window.onscroll = function () {
   var header = document.querySelector(".reports__title");
