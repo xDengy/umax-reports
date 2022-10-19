@@ -9,7 +9,7 @@
       <div class="reports__title">
         <h2>Отчёт по SEO продвижению</h2>
         <div class="reports__icons">
-          <a href="#" class="reports__icon" @click="previewReport()">
+          <div class="reports__icon" @click="previewReport()">
             <svg
               width="20"
               height="14"
@@ -23,8 +23,8 @@
                 d="M9.41406 0.637928C6.50414 0.858279 3.34836 2.75816 0.677266 5.89769C0.0764843 6.60387 0 6.72883 0 7.00445C0 7.28008 0.0764843 7.40504 0.677266 8.11121C2.8784 10.6984 5.52129 12.5209 7.9575 13.1317C8.66027 13.3079 9.25895 13.381 10 13.381C10.7583 13.381 11.361 13.3053 12.0879 13.1188C14.5159 12.4957 17.1343 10.6834 19.3227 8.11121C19.9235 7.40504 20 7.28008 20 7.00445C20 6.72883 19.9235 6.60387 19.3227 5.89769C17.1216 3.31055 14.4787 1.48797 12.0425 0.877186C11.2018 0.666404 10.2192 0.576951 9.41406 0.637928ZM11.0742 2.06265C13.1173 2.42496 15.2046 3.64961 17.2293 5.67375C17.8962 6.34051 18.4375 6.93668 18.4375 7.00445C18.4375 7.12676 16.8439 8.76535 16.1914 9.31398C14.4586 10.771 12.7611 11.6427 11.0547 11.952C10.5968 12.035 9.49766 12.0448 9.04297 11.97C7.15621 11.6594 5.21348 10.6067 3.31164 8.86437C2.63559 8.24496 1.5625 7.10394 1.5625 7.00445C1.5625 6.88215 3.15609 5.24355 3.80859 4.69492C5.70992 3.09625 7.59316 2.19066 9.43359 1.99C9.73555 1.95707 10.7264 2.00094 11.0742 2.06265ZM9.49891 3.06344C8.40141 3.19094 7.32484 3.85797 6.69719 4.79941C5.64809 6.37301 5.85617 8.47328 7.19367 9.81078C8.74359 11.3607 11.2564 11.3607 12.8063 9.81078C14.3563 8.26086 14.3563 5.74805 12.8063 4.19812C12.1689 3.5607 11.3449 3.16312 10.4492 3.06086C10.0528 3.01558 9.90758 3.01597 9.49891 3.06344ZM10.5273 4.44566C11.2847 4.60371 11.9766 5.13984 12.3194 5.83426C12.7157 6.63726 12.7157 7.37164 12.3194 8.17465C12.0639 8.69215 11.6877 9.06836 11.1702 9.32383C10.3672 9.72019 9.63281 9.72019 8.8298 9.32383C7.96375 8.89629 7.38418 7.96644 7.38418 7.00445C7.38418 6.61781 7.47941 6.24191 7.68062 5.83426C8.19805 4.78605 9.38469 4.20726 10.5273 4.44566Z"
               />
             </svg>
-          </a>
-          <a href="#" class="reports__icon" @click="save()">
+          </div>
+          <div class="reports__icon" @click="save()">
             <svg
               width="20"
               height="20"
@@ -67,8 +67,8 @@
                 />
               </defs>
             </svg>
-          </a>
-          <a href="#" class="reports__icon" @click="downloadReport()">
+          </div>
+          <div class="reports__icon" @click="downloadReport()">
             <svg
               width="18"
               height="16"
@@ -82,7 +82,7 @@
                 d="M8.60243 0.0651318C8.37894 0.151015 8.15195 0.381132 8.06713 0.607811C8.00231 0.781109 8.00194 0.804205 8.00194 4.72547V8.66886L7.0404 7.71061C5.92754 6.6015 5.89188 6.57603 5.45481 6.57872C5.14684 6.58059 4.95691 6.65723 4.74552 6.86487C4.53881 7.06789 4.45886 7.26497 4.45655 7.57729C4.45311 8.04421 4.37236 7.94589 6.52651 10.0973C8.32113 11.8897 8.43364 11.9959 8.60475 12.0585C8.72395 12.102 8.8594 12.1246 9.00204 12.1246C9.14468 12.1246 9.28013 12.102 9.39933 12.0585C9.57044 11.9959 9.68295 11.8897 11.4776 10.0973C13.6317 7.94589 13.551 8.04421 13.5475 7.57729C13.5452 7.26497 13.4653 7.06789 13.2586 6.86487C13.0472 6.65723 12.8572 6.58059 12.5493 6.57872C12.1122 6.57603 12.0765 6.6015 10.9637 7.71061L10.0021 8.66886V4.72547C10.0021 0.804205 10.0018 0.781109 9.93694 0.607811C9.7959 0.230867 9.43249 -0.00312503 8.99304 3.15394e-05C8.84496 0.00109415 8.71098 0.0234401 8.60243 0.0651318ZM1.60174 14.0665C1.49991 14.1057 1.37809 14.1885 1.28411 14.2825C0.78456 14.782 0.964641 15.6931 1.61064 15.9348L1.78491 16H9.00204H16.2192L16.3934 15.9348C17.2058 15.6309 17.2058 14.3689 16.3934 14.065L16.2192 13.9998L8.99304 14.0014C1.80716 14.0031 1.76603 14.0034 1.60174 14.0665Z"
               />
             </svg>
-          </a>
+          </div>
         </div>
       </div>
       <Screen
@@ -337,18 +337,18 @@ export default {
             }
           }
 
-            axios
-              .post("/api/previewPdf", {
-                html: frame.innerHTML,
-                user: this.user,
-              })
-              .then((res) => {
-                document.querySelector(".shadow").classList.remove("active");
-                let a = document.createElement("a");
-                a.setAttribute("target", "blank");
-                a.href = res.data.href;
-                a.click();
-              });
+          axios
+            .post("/api/previewPdf", {
+              html: frame.innerHTML,
+              user: this.user,
+            })
+            .then((res) => {
+              document.querySelector(".shadow").classList.remove("active");
+              let a = document.createElement("a");
+              a.setAttribute("target", "blank");
+              a.href = res.data.href;
+              a.click();
+            });
         });
     },
     closePdf() {
@@ -573,25 +573,33 @@ export default {
               Math.ceil(section.scrollHeight / 2237.5) +
               ") - 200px)";
 
+            let newSections = html.querySelectorAll("section");
+            var del = 0;
+            if (Math.ceil(newSections[i - 1].scrollHeight / 2237.5) > 1) {
+              del = 1;
+            }
+
             let pageNumber =
               parseInt(section.getAttribute("name")) +
-              Math.ceil(sections[i - 1].scrollHeight / 2237.5) - 1;
+              Math.ceil(newSections[i - 1].scrollHeight / 2237.5) -
+              del;
 
-            let nav = html.querySelector(
-              '.content__list li a[href="#' +
-                section.getAttribute("name") +
-                '"]'
-            );
-            nav.setAttribute("sub-id", pageNumber);
-            nav.setAttribute("href", "#" + pageNumber);
-            nav
-              .closest("li")
-              .querySelector(".content__list__number").textContent =
-              "/" + pageNumber;
+            console.log(pageNumber, del, Math.ceil(newSections[i - 1].scrollHeight / 2237.5), section, newSections[i]);
 
-            section.setAttribute("name", pageNumber);
-            section.setAttribute("id", pageNumber);
-            section.querySelector(".page-number").textContent = pageNumber;
+            if (i > 2) {
+              let nav = html.querySelectorAll('.content__list li a')[i - 2];
+              nav.setAttribute("sub-id", pageNumber);
+              nav.setAttribute("href", "#" + pageNumber);
+              nav
+                .closest("li")
+                .querySelector(".content__list__number").textContent =
+                "/" + pageNumber;
+
+              newSections[i].setAttribute("name", pageNumber);
+              newSections[i].setAttribute("id", pageNumber);
+              newSections[i].querySelector(".page-number").textContent =
+                pageNumber;
+            }
           }
         }
         document.querySelector(".pdf-view").style.opacity = "1";
@@ -720,6 +728,7 @@ window.onscroll = function () {
     border-radius: 5px;
     transition: ease-in-out 0.25s;
     margin-right: 15px;
+    cursor: pointer;
 
     &:last-of-type {
       margin-right: 0;

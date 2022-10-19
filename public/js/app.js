@@ -22362,14 +22362,25 @@ __webpack_require__.r(__webpack_exports__);
 
           if (!section.classList.contains("report") && !section.classList.contains("content") && !section.classList.contains("contacts")) {
             section.style.height = "calc((100vh * " + Math.ceil(section.scrollHeight / 2237.5) + ") - 200px)";
-            var pageNumber = parseInt(section.getAttribute("name")) + Math.ceil(sections[i - 1].scrollHeight / 2237.5) - 1;
-            var nav = html.querySelector('.content__list li a[href="#' + section.getAttribute("name") + '"]');
-            nav.setAttribute("sub-id", pageNumber);
-            nav.setAttribute("href", "#" + pageNumber);
-            nav.closest("li").querySelector(".content__list__number").textContent = "/" + pageNumber;
-            section.setAttribute("name", pageNumber);
-            section.setAttribute("id", pageNumber);
-            section.querySelector(".page-number").textContent = pageNumber;
+            var newSections = html.querySelectorAll("section");
+            var del = 0;
+
+            if (Math.ceil(newSections[i - 1].scrollHeight / 2237.5) > 1) {
+              del = 1;
+            }
+
+            var pageNumber = parseInt(section.getAttribute("name")) + Math.ceil(newSections[i - 1].scrollHeight / 2237.5) - del;
+            console.log(pageNumber, del, Math.ceil(newSections[i - 1].scrollHeight / 2237.5), section, newSections[i]);
+
+            if (i > 2) {
+              var nav = html.querySelectorAll('.content__list li a')[i - 2];
+              nav.setAttribute("sub-id", pageNumber);
+              nav.setAttribute("href", "#" + pageNumber);
+              nav.closest("li").querySelector(".content__list__number").textContent = "/" + pageNumber;
+              newSections[i].setAttribute("name", pageNumber);
+              newSections[i].setAttribute("id", pageNumber);
+              newSections[i].querySelector(".page-number").textContent = pageNumber;
+            }
           }
         }
 
@@ -27702,20 +27713,17 @@ function render(_ctx, _cache, $props, $setup, $data, $options) {
     onSetTitle: $options.setTitleFromMenu
   }, null, 8
   /* PROPS */
-  , ["onDeleteItem", "onSetTitle"]), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("div", _hoisted_2, [(0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("div", _hoisted_3, [_hoisted_4, (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("div", _hoisted_5, [(0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("a", {
-    href: "#",
+  , ["onDeleteItem", "onSetTitle"]), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("div", _hoisted_2, [(0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("div", _hoisted_3, [_hoisted_4, (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("div", _hoisted_5, [(0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("div", {
     "class": "reports__icon",
     onClick: _cache[0] || (_cache[0] = function ($event) {
       return $options.previewReport();
     })
-  }, _hoisted_7), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("a", {
-    href: "#",
+  }, _hoisted_7), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("div", {
     "class": "reports__icon",
     onClick: _cache[1] || (_cache[1] = function ($event) {
       return $options.save();
     })
-  }, _hoisted_9), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("a", {
-    href: "#",
+  }, _hoisted_9), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("div", {
     "class": "reports__icon",
     onClick: _cache[2] || (_cache[2] = function ($event) {
       return $options.downloadReport();
@@ -31116,7 +31124,7 @@ __webpack_require__.r(__webpack_exports__);
 
 var ___CSS_LOADER_EXPORT___ = _node_modules_laravel_mix_node_modules_css_loader_dist_runtime_api_js__WEBPACK_IMPORTED_MODULE_0___default()(function(i){return i[1]});
 // Module
-___CSS_LOADER_EXPORT___.push([module.id, ".reports h2[data-v-0d7aee70] {\n  margin-bottom: 0;\n}\n.reports__title[data-v-0d7aee70] {\n  display: flex;\n  align-items: center;\n  justify-content: space-between;\n}\n.reports__icons[data-v-0d7aee70] {\n  display: flex;\n  align-items: center;\n}\n.reports__icon[data-v-0d7aee70] {\n  display: flex;\n  align-items: center;\n  justify-content: center;\n  width: 44px;\n  height: 44px;\n  border: 1px solid #030087;\n  border-radius: 5px;\n  transition: ease-in-out 0.25s;\n  margin-right: 15px;\n}\n.reports__icon[data-v-0d7aee70]:last-of-type {\n  margin-right: 0;\n}\n.reports__icon[data-v-0d7aee70]:hover {\n  background: #030087;\n}\n.reports__icon:hover svg[data-v-0d7aee70] {\n  fill: #fff;\n}\n.reports__icon svg[data-v-0d7aee70] {\n  fill: #030087;\n  transition: ease-in-out 0.25s;\n}\n.reports__add[data-v-0d7aee70] {\n  margin-top: 25px;\n  cursor: pointer;\n}\n.reports__add-title[data-v-0d7aee70] {\n  font-size: 14px;\n  line-height: 18px;\n  color: #222222;\n  font-weight: 600;\n}\n.reports__add-btn[data-v-0d7aee70] {\n  width: 100%;\n  height: 80px;\n  display: flex;\n  justify-content: center;\n  align-items: center;\n  border: 1px dashed #030087;\n  border-radius: 7px;\n  margin-top: 10px;\n}\n@media (max-width: 1170px) {\n.page-glob[data-v-0d7aee70] {\n    padding-left: 0;\n}\n.wrap-glob[data-v-0d7aee70] {\n    width: calc(100% - 100px);\n}\n.reports__title[data-v-0d7aee70] {\n    flex-direction: column;\n}\n.reports__title h2[data-v-0d7aee70] {\n    font-size: 24px;\n    line-height: 31px;\n}\n.reports__title .reports__icons[data-v-0d7aee70] {\n    width: 100%;\n    margin-top: 30px;\n}\n.reports__title .reports__icon[data-v-0d7aee70] {\n    width: 33.33333%;\n}\n}\n.reports__title.fixed[data-v-0d7aee70] {\n  position: fixed;\n  width: calc(100% - 100px);\n  z-index: 1000;\n  margin: 0 auto;\n  max-width: 1220px;\n  background: #fff;\n  padding: 20px;\n  border-radius: 10px;\n  border: 1px solid;\n  top: 0;\n}\n.pdf-view[data-v-0d7aee70] {\n  position: fixed;\n  top: 0;\n  left: 0;\n  overflow: auto;\n  display: none;\n  z-index: 100000;\n  width: 100%;\n  height: 100%;\n}\n.pdf-view iframe[data-v-0d7aee70] {\n  width: 100%;\n  height: 100%;\n}\n.pdf-view.active[data-v-0d7aee70] {\n  display: block;\n}\n.closePdf[data-v-0d7aee70] {\n  position: fixed;\n  top: 100px;\n  right: 100px;\n  cursor: pointer;\n}\n.shadow[data-v-0d7aee70] {\n  display: none;\n  background: rgba(0, 0, 0, 0.5);\n  position: fixed;\n  top: 0;\n  left: 0;\n  width: 100%;\n  height: 100%;\n  z-index: 1000;\n}\n.shadow.active[data-v-0d7aee70] {\n  display: block;\n}\n@media (max-width: 768px) {\n.wrap-glob[data-v-0d7aee70] {\n    width: calc(100% - 5px);\n}\n}\n", ""]);
+___CSS_LOADER_EXPORT___.push([module.id, ".reports h2[data-v-0d7aee70] {\n  margin-bottom: 0;\n}\n.reports__title[data-v-0d7aee70] {\n  display: flex;\n  align-items: center;\n  justify-content: space-between;\n}\n.reports__icons[data-v-0d7aee70] {\n  display: flex;\n  align-items: center;\n}\n.reports__icon[data-v-0d7aee70] {\n  display: flex;\n  align-items: center;\n  justify-content: center;\n  width: 44px;\n  height: 44px;\n  border: 1px solid #030087;\n  border-radius: 5px;\n  transition: ease-in-out 0.25s;\n  margin-right: 15px;\n  cursor: pointer;\n}\n.reports__icon[data-v-0d7aee70]:last-of-type {\n  margin-right: 0;\n}\n.reports__icon[data-v-0d7aee70]:hover {\n  background: #030087;\n}\n.reports__icon:hover svg[data-v-0d7aee70] {\n  fill: #fff;\n}\n.reports__icon svg[data-v-0d7aee70] {\n  fill: #030087;\n  transition: ease-in-out 0.25s;\n}\n.reports__add[data-v-0d7aee70] {\n  margin-top: 25px;\n  cursor: pointer;\n}\n.reports__add-title[data-v-0d7aee70] {\n  font-size: 14px;\n  line-height: 18px;\n  color: #222222;\n  font-weight: 600;\n}\n.reports__add-btn[data-v-0d7aee70] {\n  width: 100%;\n  height: 80px;\n  display: flex;\n  justify-content: center;\n  align-items: center;\n  border: 1px dashed #030087;\n  border-radius: 7px;\n  margin-top: 10px;\n}\n@media (max-width: 1170px) {\n.page-glob[data-v-0d7aee70] {\n    padding-left: 0;\n}\n.wrap-glob[data-v-0d7aee70] {\n    width: calc(100% - 100px);\n}\n.reports__title[data-v-0d7aee70] {\n    flex-direction: column;\n}\n.reports__title h2[data-v-0d7aee70] {\n    font-size: 24px;\n    line-height: 31px;\n}\n.reports__title .reports__icons[data-v-0d7aee70] {\n    width: 100%;\n    margin-top: 30px;\n}\n.reports__title .reports__icon[data-v-0d7aee70] {\n    width: 33.33333%;\n}\n}\n.reports__title.fixed[data-v-0d7aee70] {\n  position: fixed;\n  width: calc(100% - 100px);\n  z-index: 1000;\n  margin: 0 auto;\n  max-width: 1220px;\n  background: #fff;\n  padding: 20px;\n  border-radius: 10px;\n  border: 1px solid;\n  top: 0;\n}\n.pdf-view[data-v-0d7aee70] {\n  position: fixed;\n  top: 0;\n  left: 0;\n  overflow: auto;\n  display: none;\n  z-index: 100000;\n  width: 100%;\n  height: 100%;\n}\n.pdf-view iframe[data-v-0d7aee70] {\n  width: 100%;\n  height: 100%;\n}\n.pdf-view.active[data-v-0d7aee70] {\n  display: block;\n}\n.closePdf[data-v-0d7aee70] {\n  position: fixed;\n  top: 100px;\n  right: 100px;\n  cursor: pointer;\n}\n.shadow[data-v-0d7aee70] {\n  display: none;\n  background: rgba(0, 0, 0, 0.5);\n  position: fixed;\n  top: 0;\n  left: 0;\n  width: 100%;\n  height: 100%;\n  z-index: 1000;\n}\n.shadow.active[data-v-0d7aee70] {\n  display: block;\n}\n@media (max-width: 768px) {\n.wrap-glob[data-v-0d7aee70] {\n    width: calc(100% - 5px);\n}\n}\n", ""]);
 // Exports
 /* harmony default export */ __webpack_exports__["default"] = (___CSS_LOADER_EXPORT___);
 
