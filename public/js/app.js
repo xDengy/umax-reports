@@ -22041,10 +22041,9 @@ __webpack_require__.r(__webpack_exports__);
   },
   methods: {
     screenDelete: function screenDelete(i) {
-      console.log(i);
-      var screen = document.querySelector(".screen[sub-id=\"" + i + "\"]");
+      var screen = document.querySelectorAll(".screen")[i];
       screen.remove();
-      var element = document.querySelector(".menureports-buttons__elements[sub-id=\"" + i + "\"]");
+      var element = document.querySelectorAll(".menureports-buttons__elements")[i];
       element.remove(); // this.current.splice(i, 1);
       // this.updateIds()
     },
@@ -23940,7 +23939,7 @@ var _hoisted_14 = /*#__PURE__*/_withScopeId(function () {
   );
 });
 
-var _hoisted_15 = ["id"];
+var _hoisted_15 = ["id", "sub-id"];
 var _hoisted_16 = {
   "class": "elements__text"
 };
@@ -24155,6 +24154,7 @@ function render(_ctx, _cache, $props, $setup, $data, $options) {
           "class": "menureports-buttons__elements",
           id: 'element-' + index,
           key: index,
+          "sub-id": index,
           onMouseleave: _cache[4] || (_cache[4] = function ($event) {
             return $options.leaveTitle($event.target);
           })

@@ -199,10 +199,9 @@ export default {
   },
   methods: {
     screenDelete(i) {
-      console.log(i);
-      let screen = document.querySelector(".screen[sub-id=\"" + i + "\"]");
+      let screen = document.querySelectorAll(".screen")[i];
       screen.remove()
-      let element = document.querySelector(".menureports-buttons__elements[sub-id=\"" + i + "\"]");
+      let element = document.querySelectorAll(".menureports-buttons__elements")[i];
       element.remove()
       // this.current.splice(i, 1);
       // this.updateIds()

@@ -126,6 +126,7 @@
             v-for="(item, index) in currentAr"
             :id="'element-' + index"
             :key="index"
+            :sub-id="index"
             @mouseleave="leaveTitle($event.target)"
           >
             <div class="elements__text">
