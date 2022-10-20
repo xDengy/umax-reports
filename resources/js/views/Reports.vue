@@ -200,9 +200,11 @@ export default {
   methods: {
     screenDelete(i) {
       let screen = document.querySelectorAll(".screen")[i];
-      screen.remove()
-      let element = document.querySelectorAll(".menureports-buttons__elements")[i];
-      element.remove()
+      screen.remove();
+      let element = document.querySelectorAll(".menureports-buttons__elements")[
+        i
+      ];
+      element.remove();
       // this.current.splice(i, 1);
       // this.updateIds()
     },
@@ -257,19 +259,19 @@ export default {
       }
     },
     drag(res) {
-      let screens = document.querySelectorAll(".screen");
-      if (res.newIndex > res.oldIndex) {
-        screens[res.newIndex].parentNode.insertBefore(
-          screens[res.newIndex],
-          screens[res.oldIndex]
-        );
-      } else {
-        screens[res.newIndex].parentNode.insertBefore(
-          screens[res.oldIndex],
-          screens[res.newIndex]
-        );
-      }
-      this.updateIds()
+      // let screens = document.querySelectorAll(".screen");
+      // if (res.newIndex > res.oldIndex) {
+      //   screens[res.newIndex].parentNode.insertBefore(
+      //     screens[res.newIndex],
+      //     screens[res.oldIndex]
+      //   );
+      // } else {
+      //   screens[res.newIndex].parentNode.insertBefore(
+      //     screens[res.oldIndex],
+      //     screens[res.newIndex]
+      //   );
+      // }
+      this.changeWrap(res);
     },
     changeWrap(res) {
       // this.current = this.array_move(this.current, res.newIndex, res.oldIndex);
@@ -288,35 +290,35 @@ export default {
       // console.log(this.current, newAr);
 
       let screens = document.querySelectorAll(".screen");
-      let elements = document.querySelectorAll(
-        ".menureports-buttons__elements"
-      );
+      let elements = document.querySelector(".menureports-buttons__button--list");
       if (res.newIndex > res.oldIndex) {
         screens[res.newIndex].parentNode.insertBefore(
           screens[res.newIndex],
           screens[res.oldIndex]
-        );
-
-        elements[res.newIndex].parentNode.insertBefore(
-          elements[res.newIndex],
-          elements[res.oldIndex]
         );
       } else {
         screens[res.newIndex].parentNode.insertBefore(
           screens[res.oldIndex],
           screens[res.newIndex]
         );
-
-        elements[res.newIndex].parentNode.insertBefore(
-          elements[res.oldIndex],
-          elements[res.newIndex]
-        );
       }
-      this.updateIds()
+      screens = document.querySelectorAll(".screen");
+      for (let i = 0; i < screens.length; i++) {
+        const element = screens[i];
+        let curElem = document.querySelector(
+          '.menureports-buttons__elements[sub-id="' +
+            element.getAttribute("sub-id") +
+            '"]'
+        );
+        elements.append(curElem);
+      }
+      this.updateIds();
     },
     updateIds() {
       let screens = document.querySelectorAll(".screen");
-      let elements = document.querySelectorAll(".menureports-buttons__elements");
+      let elements = document.querySelectorAll(
+        ".menureports-buttons__elements"
+      );
       for (let i = 0; i < screens.length; i++) {
         screens[i].id = "screenElement-" + i;
         elements[i].id = "element-" + i;

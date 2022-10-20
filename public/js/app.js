@@ -22094,15 +22094,19 @@ __webpack_require__.r(__webpack_exports__);
       }
     },
     drag: function drag(res) {
-      var screens = document.querySelectorAll(".screen");
-
-      if (res.newIndex > res.oldIndex) {
-        screens[res.newIndex].parentNode.insertBefore(screens[res.newIndex], screens[res.oldIndex]);
-      } else {
-        screens[res.newIndex].parentNode.insertBefore(screens[res.oldIndex], screens[res.newIndex]);
-      }
-
-      this.updateIds();
+      // let screens = document.querySelectorAll(".screen");
+      // if (res.newIndex > res.oldIndex) {
+      //   screens[res.newIndex].parentNode.insertBefore(
+      //     screens[res.newIndex],
+      //     screens[res.oldIndex]
+      //   );
+      // } else {
+      //   screens[res.newIndex].parentNode.insertBefore(
+      //     screens[res.oldIndex],
+      //     screens[res.newIndex]
+      //   );
+      // }
+      this.changeWrap(res);
     },
     changeWrap: function changeWrap(res) {
       // this.current = this.array_move(this.current, res.newIndex, res.oldIndex);
@@ -22120,14 +22124,20 @@ __webpack_require__.r(__webpack_exports__);
       // return newAr;
       // console.log(this.current, newAr);
       var screens = document.querySelectorAll(".screen");
-      var elements = document.querySelectorAll(".menureports-buttons__elements");
+      var elements = document.querySelector(".menureports-buttons__button--list");
 
       if (res.newIndex > res.oldIndex) {
         screens[res.newIndex].parentNode.insertBefore(screens[res.newIndex], screens[res.oldIndex]);
-        elements[res.newIndex].parentNode.insertBefore(elements[res.newIndex], elements[res.oldIndex]);
       } else {
         screens[res.newIndex].parentNode.insertBefore(screens[res.oldIndex], screens[res.newIndex]);
-        elements[res.newIndex].parentNode.insertBefore(elements[res.oldIndex], elements[res.newIndex]);
+      }
+
+      screens = document.querySelectorAll(".screen");
+
+      for (var i = 0; i < screens.length; i++) {
+        var element = screens[i];
+        var curElem = document.querySelector('.menureports-buttons__elements[sub-id="' + element.getAttribute("sub-id") + '"]');
+        elements.append(curElem);
       }
 
       this.updateIds();
