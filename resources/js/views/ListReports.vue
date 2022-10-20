@@ -849,7 +849,7 @@ export default {
     background: #ffffff;
     border: 1px solid rgba(3, 0, 135, 0.3);
     border-radius: 5px;
-
+    height: 150px;
     display: flex;
     justify-content: space-between;
     &.points {

@@ -1,5 +1,5 @@
 <template>
-  <div class="screen" :id="'screen-' + screenNumber">
+  <div class="screen" :id="'screen-' + screenNumber" :sub-id="screenNumber - 1">
     <div :id="'screenElement-scroll-' + (screenNumber - 1)" class="screenElement-scroll"></div>
     <div class="screen__top">
       <div class="screen__top-title" @mouseleave="leaveTitle($event.target.closest('.screen'))">
@@ -532,10 +532,6 @@ export default {
 .screen__wrap__elements {
   border-bottom: 1px solid;
   margin-bottom: 30px;
-}
-
-.image__wrapper {
-  border-top: 1px solid;
 }
 
 .screenElement-scroll {

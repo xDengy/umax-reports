@@ -117,9 +117,9 @@
         <div class="menureports-buttons__button">Список слайдов</div>
         <draggable
           class="menureports-buttons__button menureports-buttons__button--list"
-          v-model="currentAr"
           handle="svg"
-          @change="drag"
+          tag="transition-group"
+          @end="drag"
         >
           <div
             class="menureports-buttons__elements"
@@ -163,9 +163,9 @@
               <input
                 type="text"
                 :value="item[0].title"
-                @input="setTitle(parseInt($event.target.closest('.menureports-buttons__elements').id.split('-')[1]), $event.target.value)"
+                @input="setTitle(index, $event.target.value)"
               />
-              <a @click="scroll($event.target.closest('.menureports-buttons__elements').id.split('-')[1])">{{
+              <a @click="scroll(index)">{{
                 item[0].title
               }}</a>
             </div>
@@ -192,7 +192,7 @@
                 fill="none"
                 xmlns="http://www.w3.org/2000/svg"
                 data-v-59c35ec8=""
-                @click="deleteItem(parseInt($event.target.closest('.menureports-buttons__elements').id.split('-')[1]))"
+                @click="deleteItem($event.target.closest('.menureports-buttons__elements').id.split('-')[1])"
               >
                 <line
                   x1="1.06066"
@@ -284,6 +284,13 @@ export default {
   beforeMount() {
     axios.get("/api/user/" + this.userId).then((result) => {
       this.user = result.data;
+      let elements = document.querySelectorAll(
+        ".menureports-buttons__elements"
+      );
+      for (let i = 0; i < elements.length; i++) {
+        const element = elements[i];
+        element.setAttribute('sub-id', i)
+      }
     });
   },
   methods: {
@@ -297,7 +304,7 @@ export default {
           block: "start",
         });
       } else {
-        document.querySelector('#screenElement-scroll-' + id).scrollIntoView({
+        document.querySelector('.screen[sub-id="' + id + '"] .screenElement-scroll').scrollIntoView({
           behavior: "smooth",
           block: "start",
         });
@@ -331,10 +338,18 @@ export default {
     },
     updateAr(ar) {
       this.currentAr = ar;
-      this.$.parent.data.current = ar;
+      let elements = document.querySelectorAll(
+        ".menureports-buttons__elements"
+      );
+      for (let i = 0; i < elements.length; i++) {
+        const element = elements[i];
+        element.setAttribute('sub-id', i)
+      }
+      // this.$.parent.data.current = ar;
     },
     drag(res) {
-      this.$.parent.type.methods.changeWrap(res.moved);
+      // this.$.parent.type.methods.changeWrap(res.moved);
+      this.$emit('drag', res)
     },
     deleteItem(index) {
       this.$emit('deleteItem', index)

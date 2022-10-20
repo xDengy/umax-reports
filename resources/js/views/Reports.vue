@@ -4,6 +4,7 @@
       ref="menuList"
       @deleteItem="screenDelete"
       @setTitle="setTitleFromMenu"
+      @drag="drag"
     />
     <div class="reports wrap-glob">
       <div class="reports__title">
@@ -198,7 +199,13 @@ export default {
   },
   methods: {
     screenDelete(i) {
-      this.current.splice(i, 1);
+      console.log(i);
+      let screen = document.querySelector(".screen[sub-id=\"" + i + "\"]");
+      screen.remove()
+      let element = document.querySelector(".menureports-buttons__elements[sub-id=\"" + i + "\"]");
+      element.remove()
+      // this.current.splice(i, 1);
+      // this.updateIds()
     },
     setTitle(el) {
       this.current[el.id][0].title = el.title;
@@ -207,6 +214,18 @@ export default {
       this.$refs.screen[res.id].setTitle(res.id, res.title);
     },
     addSreen() {
+      // let screens = document.querySelectorAll(".screen");
+      // let ids = []
+      // for (let i = 0; i < screens.length; i++) {
+      //   const screen = screens[i];
+      //   ids.push(screen.getAttribute('sub-id'))
+      // }
+      // let newAr = []
+      // for (let i = 0; i < ids.length; i++) {
+      //   newAr.push(this.current[parseInt(ids[i])])
+      // }
+      // console.log(newAr);
+      // this.current = newAr
       this.current.push([
         {
           title: this.current.length + 1 + " экран",
@@ -216,29 +235,29 @@ export default {
     },
     screenDown(res) {
       if (res) {
-        this.current = this.array_move(
-          this.current,
-          res.newIndex,
-          res.oldIndex
-        );
+        // this.current = this.array_move(
+        //   this.current,
+        //   res.newIndex,
+        //   res.oldIndex
+        // );
 
-        this.$refs.menuList.updateAr(this.current);
-        this.changeWrap(res);
+        // this.$refs.menuList.updateAr(this.current);
+        this.changeWrap(res, this.current);
       }
     },
     screenUp(res) {
       if (res) {
-        this.current = this.array_move(
-          this.current,
-          res.newIndex,
-          res.oldIndex
-        );
+        // this.current = this.array_move(
+        //   this.current,
+        //   res.newIndex,
+        //   res.oldIndex
+        // );
 
-        this.$refs.menuList.updateAr(this.current);
-        this.changeWrap(res);
+        // this.$refs.menuList.updateAr(this.current);
+        this.changeWrap(res, this.current);
       }
     },
-    changeWrap(res) {
+    drag(res) {
       let screens = document.querySelectorAll(".screen");
       if (res.newIndex > res.oldIndex) {
         screens[res.newIndex].parentNode.insertBefore(
@@ -250,6 +269,58 @@ export default {
           screens[res.oldIndex],
           screens[res.newIndex]
         );
+      }
+      this.updateIds()
+    },
+    changeWrap(res) {
+      // this.current = this.array_move(this.current, res.newIndex, res.oldIndex);
+      // let newAr = [];
+      // for (let i = 0; i < ar.length; i++) {
+      //   if (i == res.newIndex) {
+      //     newAr[res.oldIndex] = ar[res.newIndex];
+      //   } else if (i == res.oldIndex) {
+      //     newAr[res.newIndex] = ar[res.oldIndex];
+      //   } else {
+      //     newAr[i] = ar[i];
+      //   }
+      // }
+      // console.log(newAr);
+      // return newAr;
+      // console.log(this.current, newAr);
+
+      let screens = document.querySelectorAll(".screen");
+      let elements = document.querySelectorAll(
+        ".menureports-buttons__elements"
+      );
+      if (res.newIndex > res.oldIndex) {
+        screens[res.newIndex].parentNode.insertBefore(
+          screens[res.newIndex],
+          screens[res.oldIndex]
+        );
+
+        elements[res.newIndex].parentNode.insertBefore(
+          elements[res.newIndex],
+          elements[res.oldIndex]
+        );
+      } else {
+        screens[res.newIndex].parentNode.insertBefore(
+          screens[res.oldIndex],
+          screens[res.newIndex]
+        );
+
+        elements[res.newIndex].parentNode.insertBefore(
+          elements[res.oldIndex],
+          elements[res.newIndex]
+        );
+      }
+      this.updateIds()
+    },
+    updateIds() {
+      let screens = document.querySelectorAll(".screen");
+      let elements = document.querySelectorAll(".menureports-buttons__elements");
+      for (let i = 0; i < screens.length; i++) {
+        screens[i].id = "screenElement-" + i;
+        elements[i].id = "element-" + i;
       }
     },
     array_move(arr, old_index, new_index) {
@@ -326,6 +397,7 @@ export default {
           this.makeCanvas(frame);
           this.getHeight(frame);
 
+          frame.querySelector("body").classList.add("full");
           let sections = frame.querySelectorAll("section");
           for (let i = 0; i < sections.length; i++) {
             const section = sections[i];
@@ -559,6 +631,7 @@ export default {
     getHeight(html) {
       document.querySelector(".pdf-view").classList.add("active");
       document.querySelector(".pdf-view").style.opacity = "0";
+      let pageNumberGlobal = 3;
       setTimeout(() => {
         let sections = html.querySelectorAll("section");
         for (let i = 0; i < sections.length; i++) {
@@ -570,34 +643,36 @@ export default {
           ) {
             section.style.height =
               "calc((100vh * " +
-              Math.round(section.scrollHeight / 2237.5) +
+              Math.round(section.scrollHeight / 2500) +
               ") - 200px)";
 
-            let newSections = html.querySelectorAll("section");
-            var del = 0;
-            if (Math.round(newSections[i - 1].scrollHeight / 2237.5) > 1) {
-              del = Math.round(newSections[i - 1].scrollHeight / 2237.5) - 1;
-            }
-
-            let pageNumber =
-              parseInt(section.getAttribute("name")) +
-              Math.round(newSections[i - 1].scrollHeight / 2237.5) -
-              del;
-
+            var del = 1;
             if (i > 2) {
-              let nav = html.querySelectorAll('.content__list li a')[i - 2];
-              nav.setAttribute("sub-id", pageNumber);
-              nav.setAttribute("href", "#" + pageNumber);
+              del = 1;
+              let newSections = html.querySelectorAll("section");
+              if (Math.round(newSections[i - 1].scrollHeight / 2500) > 1) {
+                del = Math.round(newSections[i - 1].scrollHeight / 2500);
+              }
+
+              // let pageNumber =
+              //   parseInt(section.getAttribute("name")) +
+              //   Math.round(newSections[i - 1].scrollHeight / 2500) -
+              //   del;
+
+              let nav = html.querySelectorAll(".content__list li a")[i - 2];
+              nav.setAttribute("sub-id", pageNumberGlobal);
+              nav.setAttribute("href", "#" + pageNumberGlobal);
               nav
                 .closest("li")
                 .querySelector(".content__list__number").textContent =
-                "/" + pageNumber;
+                "/" + pageNumberGlobal;
 
-              newSections[i].setAttribute("name", pageNumber);
-              newSections[i].setAttribute("id", pageNumber);
+              newSections[i].setAttribute("name", pageNumberGlobal);
+              newSections[i].setAttribute("id", pageNumberGlobal);
               newSections[i].querySelector(".page-number").textContent =
-                pageNumber;
+                pageNumberGlobal;
             }
+            pageNumberGlobal += del;
           }
         }
         document.querySelector(".pdf-view").style.opacity = "1";
@@ -689,12 +764,14 @@ function array_values(input) {
 
 window.onscroll = function () {
   var header = document.querySelector(".reports__title");
-  var sticky = header.offsetTop;
+  if (header) {
+    var sticky = header.offsetTop;
 
-  if (window.pageYOffset > sticky) {
-    header.classList.add("fixed");
-  } else {
-    header.classList.remove("fixed");
+    if (window.pageYOffset > sticky) {
+      header.classList.add("fixed");
+    } else {
+      header.classList.remove("fixed");
+    }
   }
 };
 </script>
