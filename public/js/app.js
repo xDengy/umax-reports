@@ -20578,12 +20578,6 @@ __webpack_require__.r(__webpack_exports__);
 
     axios.get("/api/user/" + this.userId).then(function (result) {
       _this.user = result.data;
-      var elements = document.querySelectorAll(".menureports-buttons__elements");
-
-      for (var i = 0; i < elements.length; i++) {
-        var element = elements[i];
-        element.setAttribute('sub-id', i);
-      }
     });
   },
   methods: {
@@ -20623,14 +20617,7 @@ __webpack_require__.r(__webpack_exports__);
       }
     },
     updateAr: function updateAr(ar) {
-      this.currentAr = ar;
-      var elements = document.querySelectorAll(".menureports-buttons__elements");
-
-      for (var i = 0; i < elements.length; i++) {
-        var element = elements[i];
-        element.setAttribute('sub-id', i);
-      } // this.$.parent.data.current = ar;
-
+      this.currentAr = ar; // this.$.parent.data.current = ar;
     },
     drag: function drag(res) {
       // this.$.parent.type.methods.changeWrap(res.moved);
@@ -22054,93 +22041,50 @@ __webpack_require__.r(__webpack_exports__);
       this.$refs.screen[res.id].setTitle(res.id, res.title);
     },
     addSreen: function addSreen() {
-      // let screens = document.querySelectorAll(".screen");
-      // let ids = []
-      // for (let i = 0; i < screens.length; i++) {
-      //   const screen = screens[i];
-      //   ids.push(screen.getAttribute('sub-id'))
-      // }
-      // let newAr = []
-      // for (let i = 0; i < ids.length; i++) {
-      //   newAr.push(this.current[parseInt(ids[i])])
-      // }
-      // console.log(newAr);
-      // this.current = newAr
+      var _this2 = this;
+
       this.current.push([{
         title: this.current.length + 1 + " экран"
       }]);
       this.$refs.menuList.updateAr(this.current);
+      setTimeout(function () {
+        _this2.updateMenu();
+      }, 1);
     },
     screenDown: function screenDown(res) {
       if (res) {
-        // this.current = this.array_move(
-        //   this.current,
-        //   res.newIndex,
-        //   res.oldIndex
-        // );
-        // this.$refs.menuList.updateAr(this.current);
         this.changeWrap(res, this.current);
       }
     },
     screenUp: function screenUp(res) {
       if (res) {
-        // this.current = this.array_move(
-        //   this.current,
-        //   res.newIndex,
-        //   res.oldIndex
-        // );
-        // this.$refs.menuList.updateAr(this.current);
         this.changeWrap(res, this.current);
       }
     },
     drag: function drag(res) {
-      // let screens = document.querySelectorAll(".screen");
-      // if (res.newIndex > res.oldIndex) {
-      //   screens[res.newIndex].parentNode.insertBefore(
-      //     screens[res.newIndex],
-      //     screens[res.oldIndex]
-      //   );
-      // } else {
-      //   screens[res.newIndex].parentNode.insertBefore(
-      //     screens[res.oldIndex],
-      //     screens[res.newIndex]
-      //   );
-      // }
       this.changeWrap(res);
     },
     changeWrap: function changeWrap(res) {
-      // this.current = this.array_move(this.current, res.newIndex, res.oldIndex);
-      // let newAr = [];
-      // for (let i = 0; i < ar.length; i++) {
-      //   if (i == res.newIndex) {
-      //     newAr[res.oldIndex] = ar[res.newIndex];
-      //   } else if (i == res.oldIndex) {
-      //     newAr[res.newIndex] = ar[res.oldIndex];
-      //   } else {
-      //     newAr[i] = ar[i];
-      //   }
-      // }
-      // console.log(newAr);
-      // return newAr;
-      // console.log(this.current, newAr);
       var screens = document.querySelectorAll(".screen");
-      var elements = document.querySelector(".menureports-buttons__button--list");
 
       if (res.newIndex > res.oldIndex) {
         screens[res.newIndex].parentNode.insertBefore(screens[res.newIndex], screens[res.oldIndex]);
       } else {
         screens[res.newIndex].parentNode.insertBefore(screens[res.oldIndex], screens[res.newIndex]);
-      }
+      } // this.updateIds();
 
-      screens = document.querySelectorAll(".screen");
+
+      this.updateMenu();
+    },
+    updateMenu: function updateMenu() {
+      var elements = document.querySelector(".menureports-buttons__button--list");
+      var screens = document.querySelectorAll(".screen");
 
       for (var i = 0; i < screens.length; i++) {
         var element = screens[i];
         var curElem = document.querySelector('.menureports-buttons__elements[sub-id="' + element.getAttribute("sub-id") + '"]');
         elements.append(curElem);
       }
-
-      this.updateIds();
     },
     updateIds: function updateIds() {
       var screens = document.querySelectorAll(".screen");
@@ -22205,7 +22149,7 @@ __webpack_require__.r(__webpack_exports__);
       });
     },
     previewReport: function previewReport() {
-      var _this2 = this;
+      var _this3 = this;
 
       var arr = this.generateArray();
       var arLength = arr.length;
@@ -22230,9 +22174,9 @@ __webpack_require__.r(__webpack_exports__);
         var frame = document.querySelector(".pdf-view iframe").contentDocument.querySelector("html");
         frame.innerHTML = dom.innerHTML;
 
-        _this2.makeCanvas(frame);
+        _this3.makeCanvas(frame);
 
-        _this2.getHeight(frame);
+        _this3.getHeight(frame);
 
         frame.querySelector("body").classList.add("full");
         var sections = frame.querySelectorAll("section");
@@ -22250,7 +22194,7 @@ __webpack_require__.r(__webpack_exports__);
 
         axios.post("/api/previewPdf", {
           html: frame.innerHTML,
-          user: _this2.user
+          user: _this3.user
         }).then(function (res) {
           document.querySelector(".shadow").classList.remove("active");
           var a = document.createElement("a");
@@ -22265,7 +22209,7 @@ __webpack_require__.r(__webpack_exports__);
       document.querySelector(".pdf-view").classList.remove("active");
     },
     downloadReport: function downloadReport() {
-      var _this3 = this;
+      var _this4 = this;
 
       document.querySelector(".shadow").classList.add("active");
       var id = this.id[this.id.length - 1];
@@ -22275,14 +22219,14 @@ __webpack_require__.r(__webpack_exports__);
         frame.innerHTML = dom.innerHTML;
         document.body.style.overflow = "hidden";
 
-        _this3.makeCanvas(frame);
+        _this4.makeCanvas(frame);
 
-        _this3.getHeight(frame);
+        _this4.getHeight(frame);
 
         setTimeout(function () {
           axios.post("/api/downloadPdf", {
             html: frame.innerHTML,
-            user: _this3.user
+            user: _this4.user
           }).then(function (res) {
             document.querySelector(".shadow").classList.remove("active");
             document.body.style.overflow = "auto";
@@ -22295,12 +22239,12 @@ __webpack_require__.r(__webpack_exports__);
       });
     },
     makeCanvas: function makeCanvas(html) {
-      var _this4 = this;
+      var _this5 = this;
 
       var images = html.querySelectorAll("img");
 
       var _loop = function _loop(i) {
-        _this4.toDataURL(images[i].getAttribute("src"), function (dataUrl) {
+        _this5.toDataURL(images[i].getAttribute("src"), function (dataUrl) {
           images[i].setAttribute("src", dataUrl);
         });
       };

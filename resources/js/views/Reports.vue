@@ -215,82 +215,31 @@ export default {
       this.$refs.screen[res.id].setTitle(res.id, res.title);
     },
     addSreen() {
-      // let screens = document.querySelectorAll(".screen");
-      // let ids = []
-      // for (let i = 0; i < screens.length; i++) {
-      //   const screen = screens[i];
-      //   ids.push(screen.getAttribute('sub-id'))
-      // }
-      // let newAr = []
-      // for (let i = 0; i < ids.length; i++) {
-      //   newAr.push(this.current[parseInt(ids[i])])
-      // }
-      // console.log(newAr);
-      // this.current = newAr
       this.current.push([
         {
           title: this.current.length + 1 + " экран",
         },
       ]);
       this.$refs.menuList.updateAr(this.current);
+      setTimeout(() => {
+        this.updateMenu();
+      }, 1);
     },
     screenDown(res) {
       if (res) {
-        // this.current = this.array_move(
-        //   this.current,
-        //   res.newIndex,
-        //   res.oldIndex
-        // );
-
-        // this.$refs.menuList.updateAr(this.current);
         this.changeWrap(res, this.current);
       }
     },
     screenUp(res) {
       if (res) {
-        // this.current = this.array_move(
-        //   this.current,
-        //   res.newIndex,
-        //   res.oldIndex
-        // );
-
-        // this.$refs.menuList.updateAr(this.current);
         this.changeWrap(res, this.current);
       }
     },
     drag(res) {
-      // let screens = document.querySelectorAll(".screen");
-      // if (res.newIndex > res.oldIndex) {
-      //   screens[res.newIndex].parentNode.insertBefore(
-      //     screens[res.newIndex],
-      //     screens[res.oldIndex]
-      //   );
-      // } else {
-      //   screens[res.newIndex].parentNode.insertBefore(
-      //     screens[res.oldIndex],
-      //     screens[res.newIndex]
-      //   );
-      // }
       this.changeWrap(res);
     },
     changeWrap(res) {
-      // this.current = this.array_move(this.current, res.newIndex, res.oldIndex);
-      // let newAr = [];
-      // for (let i = 0; i < ar.length; i++) {
-      //   if (i == res.newIndex) {
-      //     newAr[res.oldIndex] = ar[res.newIndex];
-      //   } else if (i == res.oldIndex) {
-      //     newAr[res.newIndex] = ar[res.oldIndex];
-      //   } else {
-      //     newAr[i] = ar[i];
-      //   }
-      // }
-      // console.log(newAr);
-      // return newAr;
-      // console.log(this.current, newAr);
-
       let screens = document.querySelectorAll(".screen");
-      let elements = document.querySelector(".menureports-buttons__button--list");
       if (res.newIndex > res.oldIndex) {
         screens[res.newIndex].parentNode.insertBefore(
           screens[res.newIndex],
@@ -302,7 +251,12 @@ export default {
           screens[res.newIndex]
         );
       }
-      screens = document.querySelectorAll(".screen");
+      // this.updateIds();
+      this.updateMenu();
+    },
+    updateMenu() {
+      let elements = document.querySelector(".menureports-buttons__button--list");
+      let screens = document.querySelectorAll(".screen");
       for (let i = 0; i < screens.length; i++) {
         const element = screens[i];
         let curElem = document.querySelector(
@@ -312,7 +266,6 @@ export default {
         );
         elements.append(curElem);
       }
-      this.updateIds();
     },
     updateIds() {
       let screens = document.querySelectorAll(".screen");

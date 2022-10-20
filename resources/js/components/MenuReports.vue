@@ -285,13 +285,6 @@ export default {
   beforeMount() {
     axios.get("/api/user/" + this.userId).then((result) => {
       this.user = result.data;
-      let elements = document.querySelectorAll(
-        ".menureports-buttons__elements"
-      );
-      for (let i = 0; i < elements.length; i++) {
-        const element = elements[i];
-        element.setAttribute('sub-id', i)
-      }
     });
   },
   methods: {
@@ -339,13 +332,6 @@ export default {
     },
     updateAr(ar) {
       this.currentAr = ar;
-      let elements = document.querySelectorAll(
-        ".menureports-buttons__elements"
-      );
-      for (let i = 0; i < elements.length; i++) {
-        const element = elements[i];
-        element.setAttribute('sub-id', i)
-      }
       // this.$.parent.data.current = ar;
     },
     drag(res) {
